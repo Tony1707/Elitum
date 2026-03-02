@@ -1,947 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#080808"/>
+  <meta name="description" content="Elitum — RicherThanYou. The global wealth ranking game."/>
   <title>Elitum — RicherThanYou</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="apple-mobile-web-app-title" content="Elitum"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://js.stripe.com/v3/" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <style>
     :root {
-      --gold: #c9a84c;
-      --gold-light: #e8c97a;
-      --gold-dim: #7a5f28;
-      --black: #080808;
-      --dark: #111111;
-      --dark2: #1a1a1a;
-      --dark3: #242424;
-      --white: #f5f0e8;
-      --white-dim: #9a9080;
+      --gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#7a5f28;
+      --black:#080808;--dark:#111;--dark2:#1a1a1a;--dark3:#242424;
+      --white:#f5f0e8;--white-dim:#6a6058;--white-mid:#9a9080;
+      --red:#c0392b;--silver:#a8a8b0;--bronze:#cd7f32;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Background grain */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
-    }
-
-    /* Gold line top */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      z-index: 100;
-    }
-
-    /* ===== HEADER ===== */
-    header {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 60px 20px 40px;
-      border-bottom: 1px solid rgba(201,168,76,0.15);
-    }
-
-    .logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 300;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold-light), var(--gold), var(--gold-dim));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 4s ease-in-out infinite;
-      background-size: 200% auto;
-    }
-
-    @keyframes shimmer {
-      0%, 100% { background-position: 0% center; }
-      50% { background-position: 100% center; }
-    }
-
-    .tagline {
-      font-size: 11px;
-      letter-spacing: 0.5em;
-      color: var(--gold-dim);
-      text-transform: uppercase;
-      margin-top: 8px;
-      font-weight: 300;
-    }
-
-    /* ===== NAV TABS ===== */
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      margin: 40px auto 0;
-      max-width: 600px;
-      border: 1px solid rgba(201,168,76,0.2);
-    }
-
-    .nav-tab {
-      flex: 1;
-      padding: 12px 20px;
-      background: transparent;
-      border: none;
-      color: var(--white-dim);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-      border-right: 1px solid rgba(201,168,76,0.2);
-    }
-    .nav-tab:last-child { border-right: none; }
-    .nav-tab.active {
-      background: rgba(201,168,76,0.1);
-      color: var(--gold);
-    }
-    .nav-tab:hover:not(.active) {
-      background: rgba(201,168,76,0.05);
-      color: var(--white);
-    }
-
-    /* ===== MAIN ===== */
-    main {
-      position: relative;
-      z-index: 10;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px 100px;
-    }
-
-    /* ===== #1 HERO ===== */
-    .top-hero {
-      text-align: center;
-      padding: 40px 20px;
-      margin-bottom: 40px;
-      border: 1px solid rgba(201,168,76,0.15);
-      background: linear-gradient(180deg, rgba(201,168,76,0.05) 0%, transparent 100%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .top-hero::before {
-      content: '👑';
-      position: absolute;
-      font-size: 200px;
-      opacity: 0.03;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .top-label {
-      font-size: 10px;
-      letter-spacing: 0.6em;
-      color: var(--gold-dim);
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .top-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 5vw, 56px);
-      font-weight: 600;
-      color: var(--gold-light);
-      margin-bottom: 8px;
-    }
-
-    .top-amount {
-      font-size: 14px;
-      letter-spacing: 0.2em;
-      color: var(--white-dim);
-    }
-
-    .top-amount span {
-      color: var(--gold);
-      font-weight: 600;
-      font-size: 18px;
-    }
-
-    /* ===== LEADERBOARD ===== */
-    .leaderboard-header {
-      display: grid;
-      grid-template-columns: 60px 1fr 140px;
-      padding: 10px 20px;
-      border-bottom: 1px solid rgba(201,168,76,0.2);
-      margin-bottom: 4px;
-    }
-
-    .leaderboard-header span {
-      font-size: 9px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-    }
-
-    .leaderboard-header span:last-child { text-align: right; }
-
-    .leaderboard-row {
-      display: grid;
-      grid-template-columns: 60px 1fr 140px;
-      align-items: center;
-      padding: 14px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: background 0.2s;
-      cursor: default;
-      animation: fadeInUp 0.4s ease both;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .leaderboard-row:hover {
-      background: rgba(201,168,76,0.04);
-    }
-
-    .leaderboard-row.rank-1 {
-      background: linear-gradient(90deg, rgba(201,168,76,0.1), transparent);
-      border-bottom: 1px solid rgba(201,168,76,0.15);
-    }
-
-    .rank-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      color: var(--white-dim);
-      font-weight: 300;
-    }
-
-    .rank-1 .rank-number { color: var(--gold); }
-    .rank-2 .rank-number { color: #C0C0C0; }
-    .rank-3 .rank-number { color: #CD7F32; }
-
-    .rank-pseudo {
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      color: var(--white);
-      font-weight: 400;
-    }
-
-    .rank-1 .rank-pseudo { color: var(--gold-light); font-weight: 600; }
-
-    .rank-flag {
-      font-size: 16px;
-      margin-right: 8px;
-    }
-
-    .rank-amount {
-      text-align: right;
-      font-size: 13px;
-      color: var(--gold);
-      font-weight: 500;
-      letter-spacing: 0.05em;
-    }
-
-    .loading-rows {
-      text-align: center;
-      padding: 60px;
-      color: var(--white-dim);
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-    }
-
-    /* ===== CTA BUTTON ===== */
-    .cta-container {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 20px;
-      background: linear-gradient(0deg, var(--black) 60%, transparent);
-      text-align: center;
-    }
-
-    .cta-btn {
-      display: inline-block;
-      padding: 18px 48px;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold), var(--gold-light), var(--gold));
-      color: var(--black);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s;
-      background-size: 200% auto;
-      animation: btnShimmer 3s linear infinite;
-      position: relative;
-      overflow: hidden;
-    }
-
-    @keyframes btnShimmer {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    .cta-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(201,168,76,0.4);
-    }
-
-    .cta-btn:active { transform: translateY(0); }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(4px);
-    }
-
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--dark);
-      border: 1px solid rgba(201,168,76,0.3);
-      max-width: 460px;
-      width: 100%;
-      padding: 40px;
-      position: relative;
-      animation: modalIn 0.3s ease;
-    }
-
-    @keyframes modalIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px; right: 20px;
-      background: none;
-      border: none;
-      color: var(--white-dim);
-      font-size: 24px;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .modal-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      color: var(--gold-light);
-      margin-bottom: 8px;
-    }
-
-    .modal-subtitle {
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      color: var(--white-dim);
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 10px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 8px;
-    }
-
-    .form-input {
-      width: 100%;
-      background: var(--dark2);
-      border: 1px solid rgba(201,168,76,0.2);
-      color: var(--white);
-      padding: 12px 16px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    .form-input:focus {
-      border-color: var(--gold);
-    }
-
-    .form-input::placeholder { color: var(--white-dim); }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .form-select {
-      width: 100%;
-      background: var(--dark2);
-      border: 1px solid rgba(201,168,76,0.2);
-      color: var(--white);
-      padding: 12px 16px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      outline: none;
-      cursor: pointer;
-      appearance: none;
-    }
-
-    .amount-options {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .amount-option {
-      padding: 10px;
-      background: var(--dark2);
-      border: 1px solid rgba(201,168,76,0.15);
-      color: var(--white-dim);
-      font-size: 12px;
-      font-family: 'Montserrat', sans-serif;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-    }
-
-    .amount-option:hover, .amount-option.selected {
-      background: rgba(201,168,76,0.1);
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .current-rank-info {
-      background: var(--dark3);
-      border: 1px solid rgba(201,168,76,0.1);
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      font-size: 12px;
-      color: var(--white-dim);
-      text-align: center;
-    }
-
-    .current-rank-info strong { color: var(--gold); }
-
-    .submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-      color: var(--black);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 8px;
-    }
-
-    .submit-btn:hover {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      box-shadow: 0 4px 20px rgba(201,168,76,0.3);
-    }
-
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .legal-note {
-      font-size: 9px;
-      color: var(--white-dim);
-      text-align: center;
-      margin-top: 16px;
-      line-height: 1.6;
-      letter-spacing: 0.05em;
-    }
-
-    /* ===== STATS BAR ===== */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(201,168,76,0.1);
-      margin-bottom: 40px;
-      border: 1px solid rgba(201,168,76,0.1);
-    }
-
-    .stat-item {
-      background: var(--black);
-      padding: 20px;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      color: var(--gold);
-      font-weight: 300;
-      display: block;
-    }
-
-    .stat-label {
-      font-size: 9px;
-      letter-spacing: 0.4em;
-      color: var(--white-dim);
-      text-transform: uppercase;
-      margin-top: 4px;
-      display: block;
-    }
-
-    /* ===== TOAST ===== */
-    .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--dark2);
-      border: 1px solid var(--gold);
-      color: var(--white);
-      padding: 14px 28px;
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 300;
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* ===== SECTION TITLES ===== */
-    .section-title {
-      font-size: 9px;
-      letter-spacing: 0.6em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(201,168,76,0.15);
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .leaderboard-header, .leaderboard-row {
-        grid-template-columns: 50px 1fr 100px;
-        padding: 12px;
-      }
-      .amount-options { grid-template-columns: repeat(2, 1fr); }
-      .form-row { grid-template-columns: 1fr; }
-      .modal { padding: 28px 20px; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:1000}
+    header{position:relative;z-index:10;text-align:center;padding:50px 20px 0}
+    .logo{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,100px);font-weight:300;letter-spacing:.35em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold-light) 40%,var(--gold) 60%,var(--gold-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:logoShimmer 6s ease-in-out infinite;line-height:1}
+    @keyframes logoShimmer{0%,100%{background-position:0% center}50%{background-position:100% center}}
+    .tagline{font-size:10px;letter-spacing:.55em;color:var(--gold-dim);text-transform:uppercase;margin-top:10px;font-weight:300}
+    .season-badge{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:5px 14px;border:1px solid rgba(201,168,76,.25);font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim)}
+    nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(201,168,76,.1);margin-top:30px}
+    .nav-pages{display:flex;justify-content:center;max-width:700px;margin:0 auto}
+    .nav-page{flex:1;padding:14px 10px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .nav-page.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .nav-page:hover:not(.active){color:var(--white-mid)}
+    .page{display:none}.page.active{display:block}
+    main{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:40px 16px 120px}
+    .lb-tabs{display:flex;border:1px solid rgba(201,168,76,.15);margin-bottom:30px;overflow-x:auto}
+    .lb-tab{flex:1;min-width:80px;padding:11px 8px;background:transparent;border:none;border-right:1px solid rgba(201,168,76,.1);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .lb-tab:last-child{border-right:none}.lb-tab.active{background:rgba(201,168,76,.08);color:var(--gold)}.lb-tab:hover:not(.active){background:rgba(201,168,76,.04);color:var(--white-mid)}
+    .top-hero{text-align:center;padding:36px 20px;margin-bottom:30px;border:1px solid rgba(201,168,76,.15);background:linear-gradient(180deg,rgba(201,168,76,.06) 0%,transparent 100%);position:relative;overflow:hidden}
+    .top-hero::before{content:'👑';position:absolute;font-size:180px;opacity:.025;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+    .hero-period{font-size:9px;letter-spacing:.6em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:12px}
+    .hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,52px);font-weight:600;color:var(--gold-light);margin-bottom:6px}
+    .hero-title-badge{display:inline-block;padding:3px 12px;border:1px solid var(--gold-dim);font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px}
+    .hero-amount{font-size:13px;color:var(--white-mid);letter-spacing:.15em}.hero-amount span{color:var(--gold);font-weight:600;font-size:17px}
+    .hero-streak{margin-top:8px;font-size:11px;color:var(--white-mid)}
+    .gender-filter{display:flex;gap:8px;margin-bottom:20px}
+    .gender-btn{padding:7px 18px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .gender-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
+    .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.08);margin-bottom:30px;border:1px solid rgba(201,168,76,.08)}
+    .stat-item{background:var(--black);padding:18px 10px;text-align:center}
+    .stat-val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300;display:block}
+    .stat-lbl{font-size:8px;letter-spacing:.4em;color:var(--white-dim);text-transform:uppercase;margin-top:3px;display:block}
+    .section-title{font-size:9px;letter-spacing:.55em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:16px;display:flex;align-items:center;gap:14px}
+    .section-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.12)}
+    .lb-header{display:grid;grid-template-columns:52px 1fr auto 120px;padding:8px 16px;border-bottom:1px solid rgba(201,168,76,.15);margin-bottom:2px}
+    .lb-header span{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--white-dim)}
+    .lb-header span:last-child{text-align:right}
+    .lb-row{display:grid;grid-template-columns:52px 1fr auto 120px;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s;animation:rowIn .35s ease both}
+    @keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+    .lb-row:hover{background:rgba(201,168,76,.03)}.lb-row.r1{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.12)}.lb-row.r2{background:linear-gradient(90deg,rgba(192,192,192,.04),transparent)}.lb-row.r3{background:linear-gradient(90deg,rgba(205,127,50,.04),transparent)}
+    .lb-rank{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--white-dim)}
+    .r1 .lb-rank{color:var(--gold)}.r2 .lb-rank{color:var(--silver)}.r3 .lb-rank{color:var(--bronze)}
+    .lb-info{min-width:0}
+    .lb-pseudo{font-size:13px;color:var(--white);font-weight:400;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .r1 .lb-pseudo{color:var(--gold-light);font-weight:600}
+    .lb-sub{font-size:9px;color:var(--white-dim);letter-spacing:.15em;margin-top:2px}
+    .lb-title-tag{font-size:8px;padding:2px 7px;border:1px solid;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+    .lb-amount{text-align:right;font-size:13px;color:var(--gold);font-weight:500;letter-spacing:.05em}
+    .dethroned-badge{font-size:8px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:2px}
+    .streak-display{font-size:10px;margin-top:1px}
+    .empty-lb{text-align:center;padding:60px 20px;color:var(--white-dim);font-size:10px;letter-spacing:.4em;text-transform:uppercase}
+    .titles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:30px}
+    .title-card{border:1px solid;padding:20px;position:relative;overflow:hidden}
+    .title-card::before{content:attr(data-emoji);position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.15}
+    .title-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:4px}
+    .title-threshold{font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:8px}
+    .title-desc{font-size:10px;color:var(--white-mid);line-height:1.6}
+    .hof-grid{display:grid;gap:10px}
+    .hof-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:16px 20px;border:1px solid rgba(201,168,76,.1);background:linear-gradient(90deg,rgba(201,168,76,.04),transparent);animation:rowIn .4s ease both}
+    .hof-season-badge{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid;font-size:20px;flex-shrink:0}
+    .hof-pseudo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--gold-light)}
+    .hof-meta{font-size:9px;letter-spacing:.25em;color:var(--white-dim);text-transform:uppercase;margin-top:3px}
+    .hof-amount{text-align:right;font-size:15px;color:var(--gold);font-weight:600}
+    .hof-period{font-size:8px;color:var(--white-dim);letter-spacing:.2em;text-transform:uppercase;margin-top:3px;text-align:right}
+    .hof-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .hof-btn{padding:6px 14px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:8px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .hof-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
+    .cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px;background:linear-gradient(0deg,rgba(8,8,8,.98) 70%,transparent);text-align:center}
+    .cta-btn{display:inline-block;padding:16px 44px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-light),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;background-size:200% auto;animation:btnShimmer 3s linear infinite;transition:transform .2s,box-shadow .2s}
+    @keyframes btnShimmer{0%{background-position:0% center}100%{background-position:200% center}}
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35)}.cta-btn:active{transform:translateY(0)}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}.overlay.open{display:flex}
+    .modal{background:var(--dark);border:1px solid rgba(201,168,76,.25);max-width:460px;width:100%;max-height:90vh;overflow-y:auto;padding:36px 32px;position:relative;animation:modalIn .28s ease}
+    @keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .modal-x{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--white-dim);font-size:22px;cursor:pointer;line-height:1}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:.1em;color:var(--gold-light);margin-bottom:6px}
+    .modal-sub{font-size:9px;letter-spacing:.35em;color:var(--white-dim);text-transform:uppercase;margin-bottom:28px}
+    .fgroup{margin-bottom:18px}
+    .flabel{display:block;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:7px}
+    .finput,.fselect{width:100%;background:var(--dark2);border:1px solid rgba(201,168,76,.18);color:var(--white);padding:11px 14px;font-family:'Montserrat',sans-serif;font-size:13px;outline:none;transition:border .2s;appearance:none}
+    .finput:focus,.fselect:focus{border-color:var(--gold)}.finput::placeholder{color:var(--white-dim)}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+    .amt-opt{padding:9px 4px;background:var(--dark2);border:1px solid rgba(201,168,76,.15);color:var(--white-dim);font-size:11px;font-family:'Montserrat',sans-serif;cursor:pointer;text-align:center;transition:all .18s}
+    .amt-opt:hover,.amt-opt.sel{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
+    .rank-preview{background:var(--dark3);border:1px solid rgba(201,168,76,.1);padding:11px 14px;margin-bottom:18px;font-size:11px;color:var(--white-mid);text-align:center;min-height:38px;display:flex;align-items:center;justify-content:center}
+    .rank-preview strong{color:var(--gold)}
+    .submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;transition:all .25s;margin-top:6px}
+    .submit-btn:hover{background:linear-gradient(135deg,var(--gold),var(--gold-light));box-shadow:0 4px 18px rgba(201,168,76,.28)}.submit-btn:disabled{opacity:.45;cursor:not-allowed}
+    .legal{font-size:9px;color:var(--white-dim);text-align:center;margin-top:14px;line-height:1.7;letter-spacing:.04em}.legal label{cursor:pointer}
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark2);border:1px solid var(--gold);color:var(--white);padding:12px 24px;font-size:11px;letter-spacing:.1em;opacity:0;transition:all .28s;z-index:400;white-space:nowrap;max-width:90vw;text-align:center}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:500px){
+      .lb-header,.lb-row{grid-template-columns:44px 1fr 90px}
+      .lb-header span:nth-child(3),.lb-row .lb-title-tag{display:none}
+      .modal{padding:28px 18px}.amount-grid{grid-template-columns:repeat(2,1fr)}.frow{grid-template-columns:1fr}.titles-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">Elitum</div>
-    <div class="tagline">RicherThanYou</div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="switchTab('global')" id="tab-global">Global</button>
-      <button class="nav-tab" onclick="switchTab('country')" id="tab-country">Country</button>
-      <button class="nav-tab" onclick="switchTab('male')" id="tab-male">Men</button>
-      <button class="nav-tab" onclick="switchTab('female')" id="tab-female">Women</button>
-    </div>
-  </header>
+<header>
+  <div class="logo">Elitum</div>
+  <div class="tagline">RicherThanYou</div>
+  <div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div>
+</header>
 
-  <main>
-    <!-- Top #1 Hero -->
-    <div class="top-hero" id="topHero">
-      <div class="top-label" id="heroLabel">Global #1</div>
-      <div class="top-name" id="heroName">—</div>
-      <div class="top-amount">Total: <span id="heroAmount">€0.00</span></div>
-    </div>
+<nav>
+  <div class="nav-pages">
+    <button class="nav-page active" onclick="showPage('leaderboard')" id="np-leaderboard">Rankings</button>
+    <button class="nav-page" onclick="showPage('hof')" id="np-hof">Hall of Fame</button>
+    <button class="nav-page" onclick="showPage('titles')" id="np-titles">Titles</button>
+  </div>
+</nav>
 
-    <!-- Stats -->
+<main>
+  <!-- LEADERBOARD PAGE -->
+  <div class="page active" id="page-leaderboard">
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchLbTab('global')" id="lbt-global">🌍 Global</button>
+      <button class="lb-tab" onclick="switchLbTab('monthly')" id="lbt-monthly">📅 Month</button>
+      <button class="lb-tab" onclick="switchLbTab('yearly')" id="lbt-yearly">🏆 Year</button>
+      <button class="lb-tab" onclick="switchLbTab('daily')" id="lbt-daily">⚡ 24h</button>
+    </div>
+    <div class="gender-filter">
+      <button class="gender-btn active" onclick="switchGender('all')" id="gb-all">All</button>
+      <button class="gender-btn" onclick="switchGender('male')" id="gb-male">♂ Men</button>
+      <button class="gender-btn" onclick="switchGender('female')" id="gb-female">♀ Women</button>
+    </div>
+    <div class="top-hero">
+      <div class="hero-period" id="heroPeriod">Global All-Time</div>
+      <div class="hero-name" id="heroName">—</div>
+      <div class="hero-title-badge" id="heroTitleBadge">—</div>
+      <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
+      <div class="hero-streak" id="heroStreak"></div>
+    </div>
     <div class="stats-bar">
-      <div class="stat-item">
-        <span class="stat-value" id="statPlayers">—</span>
-        <span class="stat-label">Players</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value" id="statTotal">—</span>
-        <span class="stat-label">Total Paid</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value" id="statCountries">—</span>
-        <span class="stat-label">Countries</span>
-      </div>
+      <div class="stat-item"><span class="stat-val" id="statPlayers">—</span><span class="stat-lbl">Players</span></div>
+      <div class="stat-item"><span class="stat-val" id="statTotal">—</span><span class="stat-lbl">Total Paid</span></div>
+      <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl">Countries</span></div>
     </div>
-
-    <!-- Leaderboard -->
-    <div class="section-title" id="leaderboardTitle">Leaderboard</div>
-    <div class="leaderboard-header">
-      <span>Rank</span>
-      <span>Player</span>
-      <span style="text-align:right">Total</span>
+    <div class="section-title">Leaderboard</div>
+    <div class="lb-header">
+      <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
     </div>
-    <div id="leaderboard">
-      <div class="loading-rows">Loading...</div>
-    </div>
-  </main>
-
-  <!-- Fixed CTA -->
-  <div class="cta-container">
-    <button class="cta-btn" onclick="openModal()">
-      ✦ Claim Your Rank ✦
-    </button>
+    <div id="leaderboard"><div class="empty-lb">Loading...</div></div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">×</button>
-      <div class="modal-title">Join Elitum</div>
-      <div class="modal-subtitle" id="modalSubtitle">Secure your rank · RicherThanYou</div>
-
-      <div id="formStep">
-        <div class="form-group">
-          <label class="form-label">Pseudo / Display Name</label>
-          <input class="form-input" type="text" id="inputPseudo" placeholder="YourName" maxlength="30"/>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Gender</label>
-            <select class="form-select" id="inputGender">
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Country</label>
-            <select class="form-select" id="inputCountry">
-              <option value="">Select</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Amount (€) — minimum €1</label>
-          <div class="amount-options">
-            <div class="amount-option" onclick="selectAmount(5)">€5</div>
-            <div class="amount-option" onclick="selectAmount(20)">€20</div>
-            <div class="amount-option" onclick="selectAmount(50)">€50</div>
-            <div class="amount-option" onclick="selectAmount(100)">€100</div>
-          </div>
-          <input class="form-input" type="number" id="inputAmount" placeholder="Custom amount (€)" min="1" step="1"/>
-        </div>
-
-        <div class="current-rank-info" id="rankPreview">
-          Enter an amount to see your projected rank
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Email (for confirmation)</label>
-          <input class="form-input" type="email" id="inputEmail" placeholder="you@example.com"/>
-        </div>
-
-        <button class="submit-btn" onclick="handleSubmit()" id="submitBtn">
-          Pay & Claim Rank
-        </button>
-
-        <div class="legal-note">
-          By paying you agree that this purchase is voluntary, non-refundable,<br/>
-          and grants no financial return — only glory. ✦
-          <br/><br/>
-          <input type="checkbox" id="checkRetract" style="accent-color:var(--gold)"/>
-          <label for="checkRetract" style="margin-left:6px; font-size:9px; color:var(--white-dim)">
-            I agree to waive my 14-day withdrawal right as the digital content is delivered immediately.
-          </label>
-        </div>
-      </div>
+  <!-- HOF PAGE -->
+  <div class="page" id="page-hof">
+    <div class="section-title">Hall of Fame</div>
+    <div class="hof-filter">
+      <button class="hof-btn active" onclick="switchHofFilter('all')" id="hf-all">All</button>
+      <button class="hof-btn" onclick="switchHofFilter('yearly')" id="hf-yearly">Annual</button>
+      <button class="hof-btn" onclick="switchHofFilter('monthly')" id="hf-monthly">Monthly</button>
+      <button class="hof-btn" onclick="switchHofFilter('male')" id="hf-male">♂ Men</button>
+      <button class="hof-btn" onclick="switchHofFilter('female')" id="hf-female">♀ Women</button>
     </div>
+    <div class="hof-grid" id="hofGrid"><div class="empty-lb">No champions yet. Be the first.</div></div>
   </div>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <!-- TITLES PAGE -->
+  <div class="page" id="page-titles">
+    <div class="section-title">Titles & Ranks</div>
+    <p style="font-size:11px;color:var(--white-mid);margin-bottom:24px;line-height:1.8">
+      Your title is determined by your all-time total. Titles are lost if you drop in the rankings.
+    </p>
+    <div class="titles-grid" id="titlesGrid"></div>
+  </div>
+</main>
 
-  <script>
-    // ===== CONFIG =====
-    const SUPABASE_URL = 'https://yswhejkonijnxmdyeyri.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzd2hlamtvbmlqbnhtZHlleXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODgxMjYsImV4cCI6MjA4ODA2NDEyNn0.pcmCusr4426UfLuf9PfURQyc0NHAUXrNnlBozSNuhSA';
-    const STRIPE_KEY   = 'pk_test_51T6eSaBxPA5O3Y8aCHD1oCYiyti77Vjh1ix7sLGa0FyMaUwnpH1ymPDKZLvO9NVz42iwmCCzH1V5qYDoqViG9oTl00sshf3JqQ';
+<div class="cta-bar">
+  <button class="cta-btn" onclick="openModal()">✦ Claim Your Rank ✦</button>
+</div>
 
-    let db, stripe;
+<!-- Modal -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">×</button>
+    <div class="modal-title">Join Elitum</div>
+    <div class="modal-sub">Secure your rank · RicherThanYou</div>
+    <div class="fgroup">
+      <label class="flabel">Pseudo</label>
+      <input class="finput" id="iPseudo" maxlength="30" placeholder="YourName"/>
+    </div>
+    <div class="frow">
+      <div class="fgroup">
+        <label class="flabel">Gender</label>
+        <select class="fselect" id="iGender">
+          <option value="">—</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Country</label>
+        <select class="fselect" id="iCountry"><option value="">—</option></select>
+      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Amount (€ minimum 1€)</label>
+      <div class="amount-grid">
+        <div class="amt-opt" onclick="pickAmt(5,this)">€5</div>
+        <div class="amt-opt" onclick="pickAmt(20,this)">€20</div>
+        <div class="amt-opt" onclick="pickAmt(50,this)">€50</div>
+        <div class="amt-opt" onclick="pickAmt(100,this)">€100</div>
+        <div class="amt-opt" onclick="pickAmt(500,this)">€500</div>
+        <div class="amt-opt" onclick="pickAmt(1000,this)">€1k</div>
+        <div class="amt-opt" onclick="pickAmt(5000,this)">€5k</div>
+        <div class="amt-opt" onclick="pickAmt(10000,this)">€10k</div>
+      </div>
+      <input class="finput" type="number" id="iAmount" placeholder="Custom amount" min="1" step="1"/>
+    </div>
+    <div class="rank-preview" id="rankPreview"><span>Enter an amount to see your projected rank</span></div>
+    <div class="fgroup">
+      <label class="flabel">Email</label>
+      <input class="finput" type="email" id="iEmail" placeholder="you@example.com"/>
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Pay & Claim Rank</button>
+    <div class="legal">
+      <input type="checkbox" id="chkRetract" style="accent-color:var(--gold)"/>
+      <label for="chkRetract">I waive my 14-day withdrawal right as the digital content is delivered immediately.</label>
+      <br/><br/>
+      Purchase is voluntary and non-refundable. No financial return.
+    </div>
+  </div>
+</div>
 
-    window.addEventListener('load', () => {
-      const { createClient } = supabase;
-      db = createClient(SUPABASE_URL, SUPABASE_KEY);
-      stripe = Stripe(STRIPE_KEY);
+<div class="toast" id="toast"></div>
 
-      // Realtime
-      db.channel('leaderboard-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
-          loadLeaderboard();
-        })
-        .subscribe();
+<script>
+const SUPABASE_URL = 'https://yswhejkonijnxmdyeyri.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzd2hlamtvbmlqbnhtZHlleXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODgxMjYsImV4cCI6MjA4ODA2NDEyNn0.pcmCusr4426UfLuf9PfURQyc0NHAUXrNnlBozSNuhSA';
+const STRIPE_KEY   = 'pk_test_51T6eSaBxPA5O3Y8aCHD1oCYiyti77Vjh1ix7sLGa0FyMaUwnpH1ymPDKZLvO9NVz42iwmCCzH1V5qYDoqViG9oTl00sshf3JqQ';
 
-      loadLeaderboard();
-    });
+const TITLES = [
+  {name:'Challenger',   emoji:'⚡', min:1,     max:9.99,    color:'#666'},
+  {name:'Aristocrat',   emoji:'🎩', min:10,    max:49.99,   color:'#888'},
+  {name:'Bourgeois',    emoji:'🏛️', min:50,    max:99.99,   color:'#a0a0a0'},
+  {name:'Magnate',      emoji:'💼', min:100,   max:499.99,  color:'#c9a84c'},
+  {name:'Tycoon',       emoji:'🏆', min:500,   max:999.99,  color:'#e8c97a'},
+  {name:'Oligarch',     emoji:'💎', min:1000,  max:4999.99, color:'#7ec8e3'},
+  {name:'Sultan',       emoji:'👑', min:5000,  max:9999.99, color:'#f0a500'},
+  {name:'Emperor',      emoji:'⚜️', min:10000, max:49999.99,color:'#c9a84c'},
+  {name:'God of Wealth',emoji:'🌟', min:50000, max:Infinity, color:'#fff'},
+];
 
-    let currentTab = 'global';
-    let selectedAmount = null;
-    let leaderboardData = [];
+function getTitle(amt) { return TITLES.find(t => amt >= t.min && amt <= t.max) || {name:'—',emoji:'',color:'#666'}; }
 
-    // ===== COUNTRIES =====
-    const COUNTRIES = [
-      {code:'FR',name:'France',flag:'🇫🇷'},{code:'US',name:'United States',flag:'🇺🇸'},
-      {code:'GB',name:'United Kingdom',flag:'🇬🇧'},{code:'DE',name:'Germany',flag:'🇩🇪'},
-      {code:'ES',name:'Spain',flag:'🇪🇸'},{code:'IT',name:'Italy',flag:'🇮🇹'},
-      {code:'BR',name:'Brazil',flag:'🇧🇷'},{code:'CA',name:'Canada',flag:'🇨🇦'},
-      {code:'AU',name:'Australia',flag:'🇦🇺'},{code:'JP',name:'Japan',flag:'🇯🇵'},
-      {code:'CN',name:'China',flag:'🇨🇳'},{code:'IN',name:'India',flag:'🇮🇳'},
-      {code:'RU',name:'Russia',flag:'🇷🇺'},{code:'MX',name:'Mexico',flag:'🇲🇽'},
-      {code:'AR',name:'Argentina',flag:'🇦🇷'},{code:'AE',name:'UAE',flag:'🇦🇪'},
-      {code:'SA',name:'Saudi Arabia',flag:'🇸🇦'},{code:'CH',name:'Switzerland',flag:'🇨🇭'},
-      {code:'NL',name:'Netherlands',flag:'🇳🇱'},{code:'BE',name:'Belgium',flag:'🇧🇪'},
-      {code:'PT',name:'Portugal',flag:'🇵🇹'},{code:'MC',name:'Monaco',flag:'🇲🇨'},
-      {code:'LU',name:'Luxembourg',flag:'🇱🇺'},{code:'SG',name:'Singapore',flag:'🇸🇬'},
-      {code:'KR',name:'South Korea',flag:'🇰🇷'},{code:'ZA',name:'South Africa',flag:'🇿🇦'},
-    ];
+const COUNTRIES = [
+  {code:'AD',name:'Andorra',flag:'🇦🇩'},{code:'AE',name:'UAE',flag:'🇦🇪'},{code:'AR',name:'Argentina',flag:'🇦🇷'},
+  {code:'AT',name:'Austria',flag:'🇦🇹'},{code:'AU',name:'Australia',flag:'🇦🇺'},{code:'BE',name:'Belgium',flag:'🇧🇪'},
+  {code:'BR',name:'Brazil',flag:'🇧🇷'},{code:'CA',name:'Canada',flag:'🇨🇦'},{code:'CH',name:'Switzerland',flag:'🇨🇭'},
+  {code:'CN',name:'China',flag:'🇨🇳'},{code:'DE',name:'Germany',flag:'🇩🇪'},{code:'DK',name:'Denmark',flag:'🇩🇰'},
+  {code:'ES',name:'Spain',flag:'🇪🇸'},{code:'FR',name:'France',flag:'🇫🇷'},{code:'GB',name:'United Kingdom',flag:'🇬🇧'},
+  {code:'HK',name:'Hong Kong',flag:'🇭🇰'},{code:'IN',name:'India',flag:'🇮🇳'},{code:'IT',name:'Italy',flag:'🇮🇹'},
+  {code:'JP',name:'Japan',flag:'🇯🇵'},{code:'KR',name:'South Korea',flag:'🇰🇷'},{code:'LU',name:'Luxembourg',flag:'🇱🇺'},
+  {code:'MC',name:'Monaco',flag:'🇲🇨'},{code:'MX',name:'Mexico',flag:'🇲🇽'},{code:'NL',name:'Netherlands',flag:'🇳🇱'},
+  {code:'NO',name:'Norway',flag:'🇳🇴'},{code:'NZ',name:'New Zealand',flag:'🇳🇿'},{code:'PT',name:'Portugal',flag:'🇵🇹'},
+  {code:'QA',name:'Qatar',flag:'🇶🇦'},{code:'RU',name:'Russia',flag:'🇷🇺'},{code:'SA',name:'Saudi Arabia',flag:'🇸🇦'},
+  {code:'SE',name:'Sweden',flag:'🇸🇪'},{code:'SG',name:'Singapore',flag:'🇸🇬'},{code:'TR',name:'Turkey',flag:'🇹🇷'},
+  {code:'US',name:'United States',flag:'🇺🇸'},{code:'ZA',name:'South Africa',flag:'🇿🇦'},
+  {code:'OTHER',name:'Other',flag:'🌍'},
+].sort((a,b)=>a.name.localeCompare(b.name));
 
-    // Populate country select
-    const countrySelect = document.getElementById('inputCountry');
-    COUNTRIES.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.code;
-      opt.textContent = c.flag + ' ' + c.name;
-      countrySelect.appendChild(opt);
-    });
+function getFlag(code){return(COUNTRIES.find(c=>c.code===code)||{flag:'🌍'}).flag}
 
-    function getFlag(code) {
-      const c = COUNTRIES.find(x => x.code === code);
-      return c ? c.flag : '🌍';
+function getDisplayName(user){
+  if(user.display_mode==='real' && user.is_verified && user.real_name){
+    return user.real_name+' <span style="color:#4caf50;font-size:11px">✅</span>';
+  }
+  return user.pseudo;
+}
+
+function getDisplayName(user){
+  if(user.display_mode==='real' && user.is_verified && user.real_name){
+    return user.real_name+' <span style="color:#2ecc71">✅</span>';
+  }
+  return user.pseudo;
+}
+
+// Populate country
+const cSel=document.getElementById('iCountry');
+COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+' '+c.name;cSel.appendChild(o)});
+
+let db,stripe,lbTab='global',lbGender='all',hofFilter='all',lbData=[];
+
+window.addEventListener('load',()=>{
+  const{createClient}=supabase;
+  db=createClient(SUPABASE_URL,SUPABASE_KEY);
+  stripe=Stripe(STRIPE_KEY);
+  renderTitles();
+  loadLeaderboard();
+  loadHof();
+  db.channel('lb').on('postgres_changes',{event:'*',schema:'public',table:'users'},()=>loadLeaderboard()).subscribe();
+});
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-page').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('np-'+id).classList.add('active');
+}
+
+function switchLbTab(tab){
+  lbTab=tab;
+  document.querySelectorAll('.lb-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('lbt-'+tab).classList.add('active');
+  loadLeaderboard();
+}
+
+function switchGender(g){
+  lbGender=g;
+  document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('gb-'+g).classList.add('active');
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  const cols={global:'total_paid',monthly:'monthly_paid',yearly:'yearly_paid',daily:'daily_paid'};
+  const col=cols[lbTab];
+  let q=db.from('users').select('*').order(col,{ascending:false}).gt(col,0).limit(100);
+  if(lbGender!=='all') q=q.eq('gender',lbGender);
+  const{data,error}=await q;
+  if(error){console.error(error);return}
+  lbData=data||[];
+  renderLeaderboard(lbData,col);
+  renderStats(lbData);
+}
+
+function renderLeaderboard(data,col){
+  const periods={total_paid:'Global All-Time',monthly_paid:'This Month',yearly_paid:'This Year',daily_paid:'Last 24h'};
+  document.getElementById('heroPeriod').textContent=periods[col]||'';
+  if(!data.length){
+    document.getElementById('leaderboard').innerHTML='<div class="empty-lb">No players yet. Be the first!</div>';
+    document.getElementById('heroName').textContent='—';
+    document.getElementById('heroTitleBadge').textContent='—';
+    document.getElementById('heroAmount').textContent='€0.00';
+    document.getElementById('heroStreak').textContent='';
+    return;
+  }
+  const top=data[0];
+  const topTitle=getTitle(Number(top.total_paid));
+  document.getElementById('heroName').innerHTML=getDisplayName(top);
+  document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+topTitle.name;
+  document.getElementById('heroTitleBadge').style.color=topTitle.color;
+  document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
+  document.getElementById('heroAmount').textContent=fmt(Number(top[col]));
+  document.getElementById('heroStreak').textContent=top.current_streak>1?'🔥 '+top.current_streak+' months at #1':'';
+
+  document.getElementById('leaderboard').innerHTML=data.map((u,i)=>{
+    const r=i+1,rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
+    const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
+    const title=getTitle(Number(u.total_paid));
+    const streak=u.current_streak>1?` <span style="font-size:10px">🔥${u.current_streak}</span>`:'';
+    const dethroned=u.is_dethroned?'<span class="dethroned-badge">⚠ Dethroned</span>':'';
+    return`<div class="lb-row ${rc}" style="animation-delay:${i*.03}s">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info">
+        <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
+        <div class="lb-sub">${u.country}${dethroned}</div>
+      </div>
+      <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${title.name}</span></div>
+      <div class="lb-amount">${fmt(Number(u[col]))}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderStats(data){
+  const total=data.reduce((s,u)=>s+Number(u.total_paid),0);
+  const countries=new Set(data.map(u=>u.country)).size;
+  document.getElementById('statPlayers').textContent=data.length;
+  document.getElementById('statTotal').textContent='€'+total.toLocaleString('en',{maximumFractionDigits:0});
+  document.getElementById('statCountries').textContent=countries;
+}
+
+async function loadHof(){
+  const{data,error}=await db.from('hall_of_fame').select('*').order('created_at',{ascending:false});
+  if(error){console.error(error);return}
+  renderHof(data||[]);
+}
+
+function switchHofFilter(f){
+  hofFilter=f;
+  document.querySelectorAll('.hof-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('hf-'+f).classList.add('active');
+  loadHof();
+}
+
+function renderHof(data){
+  let d=data;
+  if(hofFilter==='yearly') d=data.filter(x=>x.period_type==='yearly');
+  else if(hofFilter==='monthly') d=data.filter(x=>x.period_type==='monthly');
+  else if(hofFilter==='male') d=data.filter(x=>x.gender==='male');
+  else if(hofFilter==='female') d=data.filter(x=>x.gender==='female');
+  if(!d.length){document.getElementById('hofGrid').innerHTML='<div class="empty-lb">No champions yet. Be the first.</div>';return}
+  document.getElementById('hofGrid').innerHTML=d.map((h,i)=>`
+    <div class="hof-card" style="animation-delay:${i*.05}s">
+      <div class="hof-season-badge" style="color:${h.season_color};border-color:${h.season_color}">${h.season_badge}</div>
+      <div><div class="hof-pseudo">${getFlag(h.country)} ${getDisplayName(h)}</div><div class="hof-meta">${h.period_label} · ${h.gender==='male'?'♂':'♀'}</div></div>
+      <div><div class="hof-amount">${fmt(h.amount)}</div><div class="hof-period">${h.period_type==='yearly'?'🏆':'📅'} ${h.period_type}</div></div>
+    </div>`).join('');
+}
+
+function renderTitles(){
+  document.getElementById('titlesGrid').innerHTML=TITLES.map(tt=>`
+    <div class="title-card" data-emoji="${tt.emoji}" style="border-color:${tt.color}33">
+      <div class="title-name" style="color:${tt.color}">${tt.emoji} ${tt.name}</div>
+      <div class="title-threshold" style="color:${tt.color}88">${tt.max===Infinity?'€'+fmt2(tt.min)+'+':'€'+fmt2(tt.min)+' – €'+fmt2(tt.max)}</div>
+      <div class="title-desc">All-time total required to hold this title.</div>
+    </div>`).join('');
+}
+
+function openModal(){document.getElementById('modalOverlay').classList.add('open')}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function pickAmt(val,el){
+  document.querySelectorAll('.amt-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('iAmount').value=val;
+  updatePreview();
+}
+
+document.getElementById('iAmount').addEventListener('input',updatePreview);
+
+function updatePreview(){
+  const amt=parseFloat(document.getElementById('iAmount').value)||0;
+  const prev=document.getElementById('rankPreview');
+  if(!amt||amt<1){prev.innerHTML='<span>Enter an amount to see your projected rank</span>';return}
+  const above=lbData.filter(u=>Number(u.total_paid)>=amt).length;
+  const title=getTitle(amt);
+  prev.innerHTML=`With <strong>${fmt(amt)}</strong> → <strong>#${above+1}</strong> &nbsp; ${title.emoji} <span style="color:${title.color}">${title.name}</span>`;
+}
+
+async function handleSubmit(){
+  const pseudo=document.getElementById('iPseudo').value.trim();
+  const gender=document.getElementById('iGender').value;
+  const country=document.getElementById('iCountry').value;
+  const amount=parseFloat(document.getElementById('iAmount').value);
+  const email=document.getElementById('iEmail').value.trim();
+  const checked=document.getElementById('chkRetract').checked;
+  if(!pseudo) return toast('⚠ Enter a pseudo');
+  if(!gender) return toast('⚠ Select a gender');
+  if(!country) return toast('⚠ Select a country');
+  if(!amount||amount<1) return toast('⚠ Minimum €1');
+  if(!email||!email.includes('@')) return toast('⚠ Enter a valid email');
+  if(!checked) return toast('⚠ Please accept the terms');
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='...';
+  try{
+    let userId,existingTotal=0,existingMonthly=0,existingYearly=0,existingDaily=0;
+    const{data:ex}=await db.from('users').select('id,total_paid,monthly_paid,yearly_paid,daily_paid').eq('email',email).maybeSingle();
+    if(ex){userId=ex.id;existingTotal=Number(ex.total_paid);existingMonthly=Number(ex.monthly_paid);existingYearly=Number(ex.yearly_paid);existingDaily=Number(ex.daily_paid)}
+    else{
+      const{data:nu,error:ce}=await db.from('users').insert({pseudo,email,gender,country,total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,current_streak:0}).select('id').single();
+      if(ce) throw ce;
+      userId=nu.id;
     }
+    const{error:ue}=await db.from('users').update({
+      total_paid:existingTotal+amount,monthly_paid:existingMonthly+amount,
+      yearly_paid:existingYearly+amount,daily_paid:existingDaily+amount,
+      pseudo,gender,country,is_dethroned:false
+    }).eq('id',userId);
+    if(ue) throw ue;
+    await db.from('payments').insert({user_id:userId,amount,stripe_payment_id:'test_'+Date.now()});
+    closeModal();
+    const title=getTitle(existingTotal+amount);
+    toast('🎉 '+pseudo+' — '+title.emoji+' '+title.name);
+    loadLeaderboard();
+  }catch(err){console.error(err);toast('Error: '+err.message)}
+  finally{btn.disabled=false;btn.textContent='Pay & Claim Rank'}
+}
 
-    // ===== TABS =====
-    function switchTab(tab) {
-      currentTab = tab;
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('tab-' + tab).classList.add('active');
-      loadLeaderboard();
-    }
+function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmt2(n){return Number(n).toLocaleString('en',{maximumFractionDigits:0})}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200)}
+</script>
 
-    // ===== LOAD LEADERBOARD =====
-    async function loadLeaderboard() {
-      document.getElementById('leaderboard').innerHTML = '<div class="loading-rows">Loading...</div>';
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
 
-      let query = db.from('users').select('*').order('total_paid', {ascending: false}).limit(50);
-
-      if (currentTab === 'male') query = query.eq('gender', 'male');
-      else if (currentTab === 'female') query = query.eq('gender', 'female');
-      else if (currentTab === 'country') {
-        // detect user country (we just show all sorted for MVP)
-      }
-
-      const { data, error } = await query;
-      if (error) { console.error(error); return; }
-
-      leaderboardData = data || [];
-      renderLeaderboard(leaderboardData);
-      renderStats(leaderboardData);
-    }
-
-    function renderLeaderboard(data) {
-      if (!data.length) {
-        document.getElementById('leaderboard').innerHTML = '<div class="loading-rows">Be the first to claim #1 !</div>';
-        document.getElementById('heroName').textContent = '—';
-        document.getElementById('heroAmount').textContent = '€0.00';
-        return;
-      }
-
-      // Hero
-      const top = data[0];
-      document.getElementById('heroName').textContent = top.pseudo;
-      document.getElementById('heroAmount').textContent = '€' + Number(top.total_paid).toLocaleString('en', {minimumFractionDigits:2});
-
-      const labels = {global:'Global #1', male:'Men\'s #1', female:'Women\'s #1', country:'Country #1'};
-      document.getElementById('heroLabel').textContent = labels[currentTab] || 'Global #1';
-
-      // Rows
-      const html = data.map((u, i) => {
-        const rank = i + 1;
-        const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
-        const medal = rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        return `
-          <div class="leaderboard-row ${rankClass}" style="animation-delay:${i*0.04}s">
-            <div class="rank-number">${medal}</div>
-            <div class="rank-pseudo">
-              <span class="rank-flag">${getFlag(u.country)}</span>${u.pseudo}
-            </div>
-            <div class="rank-amount">€${Number(u.total_paid).toLocaleString('en', {minimumFractionDigits:2})}</div>
-          </div>`;
-      }).join('');
-
-      document.getElementById('leaderboard').innerHTML = html;
-    }
-
-    function renderStats(data) {
-      const total = data.reduce((s, u) => s + Number(u.total_paid), 0);
-      const countries = new Set(data.map(u => u.country)).size;
-      document.getElementById('statPlayers').textContent = data.length;
-      document.getElementById('statTotal').textContent = '€' + total.toLocaleString('en', {minimumFractionDigits:0});
-      document.getElementById('statCountries').textContent = countries;
-    }
-
-    // ===== RANK PREVIEW =====
-    document.getElementById('inputAmount').addEventListener('input', updateRankPreview);
-
-    function updateRankPreview() {
-      const amount = parseFloat(document.getElementById('inputAmount').value) || 0;
-      if (!amount || amount < 1) {
-        document.getElementById('rankPreview').innerHTML = 'Enter an amount to see your projected rank';
-        return;
-      }
-      const above = leaderboardData.filter(u => Number(u.total_paid) >= amount).length;
-      const projectedRank = above + 1;
-      document.getElementById('rankPreview').innerHTML =
-        `With <strong>€${amount.toFixed(2)}</strong> you would be ranked <strong>#${projectedRank}</strong> globally`;
-    }
-
-    // ===== AMOUNT OPTIONS =====
-    function selectAmount(val) {
-      selectedAmount = val;
-      document.querySelectorAll('.amount-option').forEach(el => el.classList.remove('selected'));
-      event.target.classList.add('selected');
-      document.getElementById('inputAmount').value = val;
-      updateRankPreview();
-    }
-
-    // ===== MODAL =====
-    function openModal() {
-      document.getElementById('modalOverlay').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('open');
-    }
-
-    document.getElementById('modalOverlay').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    // ===== SUBMIT =====
-    async function handleSubmit() {
-      const pseudo  = document.getElementById('inputPseudo').value.trim();
-      const gender  = document.getElementById('inputGender').value;
-      const country = document.getElementById('inputCountry').value;
-      const amount  = parseFloat(document.getElementById('inputAmount').value);
-      const email   = document.getElementById('inputEmail').value.trim();
-      const checked = document.getElementById('checkRetract').checked;
-
-      if (!pseudo) return showToast('Please enter a pseudo');
-      if (!gender) return showToast('Please select a gender');
-      if (!country) return showToast('Please select a country');
-      if (!amount || amount < 1) return showToast('Minimum amount is €1');
-      if (!email || !email.includes('@')) return showToast('Please enter a valid email');
-      if (!checked) return showToast('Please accept the terms to continue');
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-
-      try {
-        // 1. Check if user exists or create
-        let userId;
-        const { data: existing } = await db.from('users').select('id, total_paid').eq('email', email).single();
-
-        if (existing) {
-          userId = existing.id;
-        } else {
-          const { data: newUser, error: createErr } = await db.from('users').insert({
-            pseudo, email, gender, country, total_paid: 0
-          }).select('id').single();
-          if (createErr) throw createErr;
-          userId = newUser.id;
-        }
-
-        // 2. In test mode: simulate payment and update directly
-        // In production: redirect to Stripe Checkout
-        const amountCents = Math.round(amount * 100);
-
-        // For MVP test: directly update (in prod this would be a webhook from Stripe)
-        const newTotal = (existing ? Number(existing.total_paid) : 0) + amount;
-
-        const { error: updateErr } = await db.from('users')
-          .update({ total_paid: newTotal })
-          .eq('id', userId);
-
-        if (updateErr) throw updateErr;
-
-        await db.from('payments').insert({
-          user_id: userId,
-          amount: amount,
-          stripe_payment_id: 'test_' + Date.now()
-        });
-
-        closeModal();
-        showToast('🎉 Welcome to Elitum, ' + pseudo + '!');
-        loadLeaderboard();
-
-      } catch(err) {
-        console.error(err);
-        showToast('An error occurred. Please try again.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Pay & Claim Rank';
-      }
-    }
-
-    // ===== TOAST =====
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // ===== INIT =====
-    window.addEventListener('load', () => {
-      loadLeaderboard();
-    });
-  </script>
 </body>
 </html>
