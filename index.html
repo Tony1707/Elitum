@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#080808"/>
   <meta name="description" content="Elitum — RicherThanYou. The global wealth ranking game."/>
+  <meta property="og:title" content="Elitum — RicherThanYou"/>
+  <meta property="og:description" content="Pay to prove you're richer than everyone. The global wealth ranking game."/>
+  <meta property="og:image" content="https://via.placeholder.com/1200x630/080808/c9a84c?text=ELITUM"/>
+  <meta property="og:url" content="https://elitum.github.io/Elitum"/>
+  <meta name="twitter:card" content="summary_large_image"/>
   <title>Elitum — RicherThanYou</title>
   <link rel="manifest" href="manifest.json"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -14,119 +19,173 @@
   <script src="https://js.stripe.com/v3/" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <style>
-    :root {
-      --gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#7a5f28;
-      --black:#080808;--dark:#111;--dark2:#1a1a1a;--dark3:#242424;
-      --white:#f5f0e8;--white-dim:#6a6058;--white-mid:#9a9080;
-      --red:#c0392b;--silver:#a8a8b0;--bronze:#cd7f32;
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    :root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#7a5f28;--black:#080808;--dark:#111;--dark2:#1a1a1a;--dark3:#242424;--white:#f5f0e8;--white-dim:#6a6058;--white-mid:#9a9080;--red:#c0392b;--silver:#a8a8b0;--bronze:#cd7f32;--green:#2ecc71}
+    *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
     body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;min-height:100vh;overflow-x:hidden}
     body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
     body::after{content:'';position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:1000}
-    header{position:relative;z-index:10;text-align:center;padding:50px 20px 0}
-    .logo{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,100px);font-weight:300;letter-spacing:.35em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold-light) 40%,var(--gold) 60%,var(--gold-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:logoShimmer 6s ease-in-out infinite;line-height:1}
+    /* HEADER */
+    header{position:relative;z-index:10;text-align:center;padding:40px 20px 0}
+    .logo-svg{width:clamp(160px,40vw,320px);height:auto;margin-bottom:6px}
+    .logo-text{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,100px);font-weight:300;letter-spacing:.35em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold-light) 40%,var(--gold) 60%,var(--gold-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:logoShimmer 6s ease-in-out infinite;line-height:1}
     @keyframes logoShimmer{0%,100%{background-position:0% center}50%{background-position:100% center}}
-    .tagline{font-size:10px;letter-spacing:.55em;color:var(--gold-dim);text-transform:uppercase;margin-top:10px;font-weight:300}
-    .season-badge{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:5px 14px;border:1px solid rgba(201,168,76,.25);font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim)}
-    nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(201,168,76,.1);margin-top:30px}
-    .nav-pages{display:flex;justify-content:center;max-width:700px;margin:0 auto}
-    .nav-page{flex:1;padding:14px 10px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;transition:all .25s}
-    .nav-page.active{color:var(--gold);border-bottom-color:var(--gold)}
-    .nav-page:hover:not(.active){color:var(--white-mid)}
+    .tagline{font-size:10px;letter-spacing:.55em;color:var(--gold-dim);text-transform:uppercase;margin-top:8px;font-weight:300}
+    .season-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:5px 14px;border:1px solid rgba(201,168,76,.25);font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim)}
+    .header-actions{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .header-btn{padding:7px 16px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .header-btn:hover{border-color:var(--gold);color:var(--gold)}
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(201,168,76,.1);margin-top:24px}
+    .nav-pages{display:flex;justify-content:center;max-width:800px;margin:0 auto}
+    .nav-page{flex:1;padding:13px 8px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .nav-page.active{color:var(--gold);border-bottom-color:var(--gold)}.nav-page:hover:not(.active){color:var(--white-mid)}
     .page{display:none}.page.active{display:block}
-    main{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:40px 16px 120px}
-    .lb-tabs{display:flex;border:1px solid rgba(201,168,76,.15);margin-bottom:30px;overflow-x:auto}
-    .lb-tab{flex:1;min-width:80px;padding:11px 8px;background:transparent;border:none;border-right:1px solid rgba(201,168,76,.1);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+    main{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:36px 16px 120px}
+    /* LB TABS */
+    .lb-tabs{display:flex;border:1px solid rgba(201,168,76,.15);margin-bottom:28px;overflow-x:auto}
+    .lb-tab{flex:1;min-width:76px;padding:11px 6px;background:transparent;border:none;border-right:1px solid rgba(201,168,76,.1);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
     .lb-tab:last-child{border-right:none}.lb-tab.active{background:rgba(201,168,76,.08);color:var(--gold)}.lb-tab:hover:not(.active){background:rgba(201,168,76,.04);color:var(--white-mid)}
-    .top-hero{text-align:center;padding:36px 20px;margin-bottom:30px;border:1px solid rgba(201,168,76,.15);background:linear-gradient(180deg,rgba(201,168,76,.06) 0%,transparent 100%);position:relative;overflow:hidden}
+    /* HERO */
+    .top-hero{text-align:center;padding:36px 20px;margin-bottom:28px;border:1px solid rgba(201,168,76,.15);background:linear-gradient(180deg,rgba(201,168,76,.06) 0%,transparent 100%);position:relative;overflow:hidden}
     .top-hero::before{content:'👑';position:absolute;font-size:180px;opacity:.025;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
     .hero-period{font-size:9px;letter-spacing:.6em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:12px}
     .hero-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,52px);font-weight:600;color:var(--gold-light);margin-bottom:6px}
     .hero-title-badge{display:inline-block;padding:3px 12px;border:1px solid var(--gold-dim);font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px}
     .hero-amount{font-size:13px;color:var(--white-mid);letter-spacing:.15em}.hero-amount span{color:var(--gold);font-weight:600;font-size:17px}
     .hero-streak{margin-top:8px;font-size:11px;color:var(--white-mid)}
-    .gender-filter{display:flex;gap:8px;margin-bottom:20px}
-    .gender-btn{padding:7px 18px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+    .hero-share{margin-top:14px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+    /* GENDER FILTER */
+    .gender-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .gender-btn{padding:7px 16px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s}
     .gender-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
-    .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.08);margin-bottom:30px;border:1px solid rgba(201,168,76,.08)}
-    .stat-item{background:var(--black);padding:18px 10px;text-align:center}
+    /* STATS */
+    .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.08);margin-bottom:28px;border:1px solid rgba(201,168,76,.08)}
+    .stat-item{background:var(--black);padding:16px 10px;text-align:center}
     .stat-val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300;display:block}
     .stat-lbl{font-size:8px;letter-spacing:.4em;color:var(--white-dim);text-transform:uppercase;margin-top:3px;display:block}
+    /* SECTION TITLE */
     .section-title{font-size:9px;letter-spacing:.55em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:16px;display:flex;align-items:center;gap:14px}
     .section-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.12)}
+    /* LB */
     .lb-header{display:grid;grid-template-columns:52px 1fr auto 120px;padding:8px 16px;border-bottom:1px solid rgba(201,168,76,.15);margin-bottom:2px}
-    .lb-header span{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--white-dim)}
-    .lb-header span:last-child{text-align:right}
-    .lb-row{display:grid;grid-template-columns:52px 1fr auto 120px;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s;animation:rowIn .35s ease both}
+    .lb-header span{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--white-dim)}.lb-header span:last-child{text-align:right}
+    .lb-row{display:grid;grid-template-columns:52px 1fr auto 120px;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s;animation:rowIn .35s ease both;cursor:pointer}
     @keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-    .lb-row:hover{background:rgba(201,168,76,.03)}.lb-row.r1{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.12)}.lb-row.r2{background:linear-gradient(90deg,rgba(192,192,192,.04),transparent)}.lb-row.r3{background:linear-gradient(90deg,rgba(205,127,50,.04),transparent)}
-    .lb-rank{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--white-dim)}
-    .r1 .lb-rank{color:var(--gold)}.r2 .lb-rank{color:var(--silver)}.r3 .lb-rank{color:var(--bronze)}
-    .lb-info{min-width:0}
-    .lb-pseudo{font-size:13px;color:var(--white);font-weight:400;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .r1 .lb-pseudo{color:var(--gold-light);font-weight:600}
+    .lb-row:hover{background:rgba(201,168,76,.04)}.lb-row.r1{background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);border-bottom:1px solid rgba(201,168,76,.12)}.lb-row.r2{background:linear-gradient(90deg,rgba(192,192,192,.04),transparent)}.lb-row.r3{background:linear-gradient(90deg,rgba(205,127,50,.04),transparent)}
+    .lb-rank{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--white-dim)}.r1 .lb-rank{color:var(--gold)}.r2 .lb-rank{color:var(--silver)}.r3 .lb-rank{color:var(--bronze)}
+    .lb-info{min-width:0}.lb-pseudo{font-size:13px;color:var(--white);font-weight:400;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.r1 .lb-pseudo{color:var(--gold-light);font-weight:600}
     .lb-sub{font-size:9px;color:var(--white-dim);letter-spacing:.15em;margin-top:2px}
     .lb-title-tag{font-size:8px;padding:2px 7px;border:1px solid;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
     .lb-amount{text-align:right;font-size:13px;color:var(--gold);font-weight:500;letter-spacing:.05em}
     .dethroned-badge{font-size:8px;color:var(--red);letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:2px}
-    .streak-display{font-size:10px;margin-top:1px}
     .empty-lb{text-align:center;padding:60px 20px;color:var(--white-dim);font-size:10px;letter-spacing:.4em;text-transform:uppercase}
+    /* TITLES */
     .titles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:30px}
-    .title-card{border:1px solid;padding:20px;position:relative;overflow:hidden}
-    .title-card::before{content:attr(data-emoji);position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.15}
-    .title-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:4px}
-    .title-threshold{font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:8px}
-    .title-desc{font-size:10px;color:var(--white-mid);line-height:1.6}
+    .title-card{border:1px solid;padding:20px;position:relative;overflow:hidden}.title-card::before{content:attr(data-emoji);position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.15}
+    .title-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:4px}.title-threshold{font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:8px}.title-desc{font-size:10px;color:var(--white-mid);line-height:1.6}
+    /* HOF */
     .hof-grid{display:grid;gap:10px}
     .hof-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:16px 20px;border:1px solid rgba(201,168,76,.1);background:linear-gradient(90deg,rgba(201,168,76,.04),transparent);animation:rowIn .4s ease both}
     .hof-season-badge{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid;font-size:20px;flex-shrink:0}
-    .hof-pseudo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--gold-light)}
-    .hof-meta{font-size:9px;letter-spacing:.25em;color:var(--white-dim);text-transform:uppercase;margin-top:3px}
-    .hof-amount{text-align:right;font-size:15px;color:var(--gold);font-weight:600}
-    .hof-period{font-size:8px;color:var(--white-dim);letter-spacing:.2em;text-transform:uppercase;margin-top:3px;text-align:right}
+    .hof-pseudo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--gold-light)}.hof-meta{font-size:9px;letter-spacing:.25em;color:var(--white-dim);text-transform:uppercase;margin-top:3px}
+    .hof-amount{text-align:right;font-size:15px;color:var(--gold);font-weight:600}.hof-period{font-size:8px;color:var(--white-dim);letter-spacing:.2em;text-transform:uppercase;margin-top:3px;text-align:right}
     .hof-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
     .hof-btn{padding:6px 14px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:8px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .2s}
     .hof-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
-    .cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px;background:linear-gradient(0deg,rgba(8,8,8,.98) 70%,transparent);text-align:center}
-    .cta-btn{display:inline-block;padding:16px 44px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-light),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;background-size:200% auto;animation:btnShimmer 3s linear infinite;transition:transform .2s,box-shadow .2s}
+    /* SHARE BUTTONS */
+    .share-btn{padding:7px 14px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+    .share-btn:hover{border-color:var(--gold);color:var(--gold)}
+    .share-btn.twitter:hover{border-color:#1DA1F2;color:#1DA1F2}
+    .share-btn.whatsapp:hover{border-color:#25D366;color:#25D366}
+    .share-btn.copy:hover{border-color:var(--gold);color:var(--gold)}
+    /* INVITE SECTION */
+    .invite-box{border:1px solid rgba(201,168,76,.15);padding:24px;margin-bottom:28px;background:linear-gradient(135deg,rgba(201,168,76,.04),transparent)}
+    .invite-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-light);margin-bottom:8px}
+    .invite-sub{font-size:10px;color:var(--white-mid);letter-spacing:.1em;margin-bottom:16px;line-height:1.6}
+    .invite-link-box{display:flex;gap:8px;flex-wrap:wrap}
+    .invite-link{flex:1;background:var(--dark2);border:1px solid rgba(201,168,76,.2);color:var(--white-mid);padding:10px 14px;font-size:11px;font-family:'Montserrat',sans-serif;outline:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    /* CTA */
+    .cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:14px 20px;background:linear-gradient(0deg,rgba(8,8,8,.98) 70%,transparent);text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .cta-btn{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-light),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;background-size:200% auto;animation:btnShimmer 3s linear infinite;transition:transform .2s,box-shadow .2s}
     @keyframes btnShimmer{0%{background-position:0% center}100%{background-position:200% center}}
     .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35)}.cta-btn:active{transform:translateY(0)}
+    .cta-secondary{display:inline-block;padding:15px 24px;background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold-dim);font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none}
+    .cta-secondary:hover{border-color:var(--gold);color:var(--gold)}
+    /* MODAL */
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}.overlay.open{display:flex}
     .modal{background:var(--dark);border:1px solid rgba(201,168,76,.25);max-width:460px;width:100%;max-height:90vh;overflow-y:auto;padding:36px 32px;position:relative;animation:modalIn .28s ease}
     @keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
     .modal-x{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--white-dim);font-size:22px;cursor:pointer;line-height:1}
     .modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:.1em;color:var(--gold-light);margin-bottom:6px}
     .modal-sub{font-size:9px;letter-spacing:.35em;color:var(--white-dim);text-transform:uppercase;margin-bottom:28px}
-    .fgroup{margin-bottom:18px}
-    .flabel{display:block;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:7px}
+    .fgroup{margin-bottom:18px}.flabel{display:block;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:7px}
     .finput,.fselect{width:100%;background:var(--dark2);border:1px solid rgba(201,168,76,.18);color:var(--white);padding:11px 14px;font-family:'Montserrat',sans-serif;font-size:13px;outline:none;transition:border .2s;appearance:none}
     .finput:focus,.fselect:focus{border-color:var(--gold)}.finput::placeholder{color:var(--white-dim)}
     .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
     .amt-opt{padding:9px 4px;background:var(--dark2);border:1px solid rgba(201,168,76,.15);color:var(--white-dim);font-size:11px;font-family:'Montserrat',sans-serif;cursor:pointer;text-align:center;transition:all .18s}
     .amt-opt:hover,.amt-opt.sel{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
-    .rank-preview{background:var(--dark3);border:1px solid rgba(201,168,76,.1);padding:11px 14px;margin-bottom:18px;font-size:11px;color:var(--white-mid);text-align:center;min-height:38px;display:flex;align-items:center;justify-content:center}
-    .rank-preview strong{color:var(--gold)}
+    .rank-preview{background:var(--dark3);border:1px solid rgba(201,168,76,.1);padding:11px 14px;margin-bottom:18px;font-size:11px;color:var(--white-mid);text-align:center;min-height:38px;display:flex;align-items:center;justify-content:center}.rank-preview strong{color:var(--gold)}
     .submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;transition:all .25s;margin-top:6px}
     .submit-btn:hover{background:linear-gradient(135deg,var(--gold),var(--gold-light));box-shadow:0 4px 18px rgba(201,168,76,.28)}.submit-btn:disabled{opacity:.45;cursor:not-allowed}
     .legal{font-size:9px;color:var(--white-dim);text-align:center;margin-top:14px;line-height:1.7;letter-spacing:.04em}.legal label{cursor:pointer}
+    /* LANG SWITCHER */
+    .lang-switcher{position:fixed;top:16px;right:16px;z-index:500;display:flex;gap:4px}
+    .lang-btn{padding:4px 10px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.2em;cursor:pointer;transition:all .2s}
+    .lang-btn.active{border-color:var(--gold);color:var(--gold)}
+    /* TOAST */
     .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark2);border:1px solid var(--gold);color:var(--white);padding:12px 24px;font-size:11px;letter-spacing:.1em;opacity:0;transition:all .28s;z-index:400;white-space:nowrap;max-width:90vw;text-align:center}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     @media(max-width:500px){
-      .lb-header,.lb-row{grid-template-columns:44px 1fr 90px}
-      .lb-header span:nth-child(3),.lb-row .lb-title-tag{display:none}
+      .lb-header,.lb-row{grid-template-columns:44px 1fr 90px}.lb-header span:nth-child(3),.lb-row .lb-title-tag{display:none}
       .modal{padding:28px 18px}.amount-grid{grid-template-columns:repeat(2,1fr)}.frow{grid-template-columns:1fr}.titles-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
+<!-- Language switcher -->
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="setLang('en')" id="lbtn-en">EN</button>
+  <button class="lang-btn" onclick="setLang('fr')" id="lbtn-fr">FR</button>
+</div>
+
 <header>
-  <div class="logo">Elitum</div>
-  <div class="tagline">RicherThanYou</div>
+  <!-- SVG Logo -->
+  <svg class="logo-svg" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#7a5f28"/>
+        <stop offset="40%" style="stop-color:#e8c97a"/>
+        <stop offset="60%" style="stop-color:#c9a84c"/>
+        <stop offset="100%" style="stop-color:#7a5f28"/>
+      </linearGradient>
+      <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#c9a84c"/>
+        <stop offset="50%" style="stop-color:#e8c97a"/>
+        <stop offset="100%" style="stop-color:#c9a84c"/>
+      </linearGradient>
+    </defs>
+    <!-- Decorative lines -->
+    <line x1="0" y1="40" x2="60" y2="40" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <line x1="340" y1="40" x2="400" y2="40" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <!-- Diamond ornament left -->
+    <polygon points="52,40 58,34 64,40 58,46" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <polygon points="336,40 342,34 348,40 342,46" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <!-- Main text -->
+    <text x="200" y="52" font-family="Cormorant Garamond, serif" font-size="52" font-weight="300"
+          letter-spacing="18" text-anchor="middle" fill="url(#goldGrad)">ELITUM</text>
+    <!-- Subtitle -->
+    <text x="200" y="68" font-family="Montserrat, sans-serif" font-size="7" font-weight="300"
+          letter-spacing="8" text-anchor="middle" fill="#7a5f28">RICHER THAN YOU</text>
+  </svg>
+
   <div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div>
+  <div class="header-actions">
+    <a href="profile.html" class="header-btn">👤 <span id="hdr-profile">My Profile</span></a>
+    <button class="header-btn" onclick="openInvite()">✉ <span id="hdr-invite">Invite Friends</span></button>
+    <a href="legal.html" class="header-btn">📜 <span id="hdr-legal">Legal</span></a>
+  </div>
 </header>
 
 <nav>
@@ -134,11 +193,12 @@
     <button class="nav-page active" onclick="showPage('leaderboard')" id="np-leaderboard">Rankings</button>
     <button class="nav-page" onclick="showPage('hof')" id="np-hof">Hall of Fame</button>
     <button class="nav-page" onclick="showPage('titles')" id="np-titles">Titles</button>
+    <button class="nav-page" onclick="showPage('invite')" id="np-invite">Invite</button>
   </div>
 </nav>
 
 <main>
-  <!-- LEADERBOARD PAGE -->
+  <!-- LEADERBOARD -->
   <div class="page active" id="page-leaderboard">
     <div class="lb-tabs">
       <button class="lb-tab active" onclick="switchLbTab('global')" id="lbt-global">🌍 Global</button>
@@ -157,22 +217,23 @@
       <div class="hero-title-badge" id="heroTitleBadge">—</div>
       <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
       <div class="hero-streak" id="heroStreak"></div>
+      <div class="hero-share" id="heroShare"></div>
     </div>
     <div class="stats-bar">
-      <div class="stat-item"><span class="stat-val" id="statPlayers">—</span><span class="stat-lbl">Players</span></div>
-      <div class="stat-item"><span class="stat-val" id="statTotal">—</span><span class="stat-lbl">Total Paid</span></div>
-      <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl">Countries</span></div>
+      <div class="stat-item"><span class="stat-val" id="statPlayers">—</span><span class="stat-lbl" id="lbl-players">Players</span></div>
+      <div class="stat-item"><span class="stat-val" id="statTotal">—</span><span class="stat-lbl" id="lbl-total">Total Paid</span></div>
+      <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl" id="lbl-countries">Countries</span></div>
     </div>
-    <div class="section-title">Leaderboard</div>
+    <div class="section-title" id="lbl-leaderboard">Leaderboard</div>
     <div class="lb-header">
-      <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
+      <span id="col-rank">Rank</span><span id="col-player">Player</span><span id="col-title">Title</span><span style="text-align:right" id="col-total">Total</span>
     </div>
     <div id="leaderboard"><div class="empty-lb">Loading...</div></div>
   </div>
 
-  <!-- HOF PAGE -->
+  <!-- HOF -->
   <div class="page" id="page-hof">
-    <div class="section-title">Hall of Fame</div>
+    <div class="section-title" id="lbl-hof">Hall of Fame</div>
     <div class="hof-filter">
       <button class="hof-btn active" onclick="switchHofFilter('all')" id="hf-all">All</button>
       <button class="hof-btn" onclick="switchHofFilter('yearly')" id="hf-yearly">Annual</button>
@@ -180,49 +241,82 @@
       <button class="hof-btn" onclick="switchHofFilter('male')" id="hf-male">♂ Men</button>
       <button class="hof-btn" onclick="switchHofFilter('female')" id="hf-female">♀ Women</button>
     </div>
-    <div class="hof-grid" id="hofGrid"><div class="empty-lb">No champions yet. Be the first.</div></div>
+    <div class="hof-grid" id="hofGrid"><div class="empty-lb" id="hof-empty-msg">No champions yet. Be the first.</div></div>
   </div>
 
-  <!-- TITLES PAGE -->
+  <!-- TITLES -->
   <div class="page" id="page-titles">
-    <div class="section-title">Titles & Ranks</div>
-    <p style="font-size:11px;color:var(--white-mid);margin-bottom:24px;line-height:1.8">
+    <div class="section-title" id="lbl-titles">Titles & Ranks</div>
+    <p style="font-size:11px;color:var(--white-mid);margin-bottom:24px;line-height:1.8" id="titles-desc">
       Your title is determined by your all-time total. Titles are lost if you drop in the rankings.
     </p>
     <div class="titles-grid" id="titlesGrid"></div>
   </div>
+
+  <!-- INVITE -->
+  <div class="page" id="page-invite">
+    <div class="section-title" id="lbl-invite-page">Invite Friends</div>
+
+    <div class="invite-box">
+      <div class="invite-title" id="invite-title">Challenge Your Friends</div>
+      <div class="invite-sub" id="invite-sub">Share Elitum with friends and see who's really richer. The leaderboard doesn't lie.</div>
+      <div class="invite-link-box">
+        <input class="invite-link" id="inviteLink" readonly value="https://elitum.github.io/Elitum"/>
+        <button class="share-btn copy" onclick="copyInviteLink()" id="invite-copy-btn">📋 Copy</button>
+      </div>
+    </div>
+
+    <div class="section-title" id="lbl-share-on">Share On</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px">
+      <button class="share-btn twitter" onclick="shareTwitter()">🐦 Twitter / X</button>
+      <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+      <button class="share-btn" onclick="shareFacebook()">👍 Facebook</button>
+      <button class="share-btn" onclick="shareNative()" id="share-more-btn">📤 More</button>
+    </div>
+
+    <div class="section-title" id="lbl-share-rank">Share Your Rank</div>
+    <p style="font-size:11px;color:var(--white-mid);margin-bottom:16px;line-height:1.7" id="share-rank-desc">
+      Enter your email to generate a personalized share card with your rank.
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input class="finput" style="flex:1;min-width:200px" id="shareEmail" placeholder="your@email.com" type="email"/>
+      <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="generateShareCard()" id="share-card-btn">Generate</button>
+    </div>
+    <div id="shareCardResult" style="margin-top:16px"></div>
+  </div>
 </main>
 
 <div class="cta-bar">
-  <button class="cta-btn" onclick="openModal()">✦ Claim Your Rank ✦</button>
+  <button class="cta-btn" onclick="openModal()" id="cta-main">✦ Claim Your Rank ✦</button>
+  <a href="profile.html" class="cta-secondary" id="cta-profile">👤 My Profile</a>
 </div>
 
-<!-- Modal -->
+<!-- Pay Modal -->
 <div class="overlay" id="modalOverlay">
   <div class="modal">
     <button class="modal-x" onclick="closeModal()">×</button>
-    <div class="modal-title">Join Elitum</div>
-    <div class="modal-sub">Secure your rank · RicherThanYou</div>
+    <div class="modal-title" id="modal-title">Join Elitum</div>
+    <div class="modal-sub" id="modal-sub">Secure your rank · RicherThanYou</div>
     <div class="fgroup">
-      <label class="flabel">Pseudo</label>
+      <label class="flabel" id="lbl-pseudo">Pseudo</label>
       <input class="finput" id="iPseudo" maxlength="30" placeholder="YourName"/>
     </div>
     <div class="frow">
       <div class="fgroup">
-        <label class="flabel">Gender</label>
+        <label class="flabel" id="lbl-gender">Gender</label>
         <select class="fselect" id="iGender">
           <option value="">—</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
+          <option value="male" id="opt-male">Male</option>
+          <option value="female" id="opt-female">Female</option>
         </select>
       </div>
       <div class="fgroup">
-        <label class="flabel">Country</label>
+        <label class="flabel" id="lbl-country">Country</label>
         <select class="fselect" id="iCountry"><option value="">—</option></select>
       </div>
     </div>
     <div class="fgroup">
-      <label class="flabel">Amount (€ minimum 1€)</label>
+      <label class="flabel" id="lbl-amount">Amount (€ minimum 1€)</label>
       <div class="amount-grid">
         <div class="amt-opt" onclick="pickAmt(5,this)">€5</div>
         <div class="amt-opt" onclick="pickAmt(20,this)">€20</div>
@@ -235,17 +329,37 @@
       </div>
       <input class="finput" type="number" id="iAmount" placeholder="Custom amount" min="1" step="1"/>
     </div>
-    <div class="rank-preview" id="rankPreview"><span>Enter an amount to see your projected rank</span></div>
+    <div class="rank-preview" id="rankPreview"><span id="preview-default">Enter an amount to see your projected rank</span></div>
     <div class="fgroup">
-      <label class="flabel">Email</label>
+      <label class="flabel" id="lbl-email">Email</label>
       <input class="finput" type="email" id="iEmail" placeholder="you@example.com"/>
     </div>
     <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Pay & Claim Rank</button>
     <div class="legal">
       <input type="checkbox" id="chkRetract" style="accent-color:var(--gold)"/>
-      <label for="chkRetract">I waive my 14-day withdrawal right as the digital content is delivered immediately.</label>
+      <label for="chkRetract" id="legal-retract">I waive my 14-day withdrawal right as the digital content is delivered immediately.</label>
       <br/><br/>
-      Purchase is voluntary and non-refundable. No financial return.
+      <span id="legal-note">Purchase is voluntary and non-refundable. No financial return.</span>
+      <br/><a href="legal.html" style="color:var(--gold-dim);text-decoration:underline;font-size:9px" id="legal-link">Terms & Conditions</a>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div class="overlay" id="inviteOverlay">
+  <div class="modal">
+    <button class="modal-x" onclick="closeInvite()">×</button>
+    <div class="modal-title" id="invite-modal-title">Invite Friends</div>
+    <div class="modal-sub" id="invite-modal-sub">Challenge them to beat your rank</div>
+    <div class="invite-link-box" style="margin-bottom:20px">
+      <input class="invite-link finput" id="inviteLinkModal" readonly value="https://elitum.github.io/Elitum"/>
+      <button class="share-btn copy" onclick="copyInviteLink()">📋</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="share-btn twitter" onclick="shareTwitter();closeInvite()">🐦 Twitter</button>
+      <button class="share-btn whatsapp" onclick="shareWhatsApp();closeInvite()">💬 WhatsApp</button>
+      <button class="share-btn" onclick="shareFacebook();closeInvite()">👍 Facebook</button>
+      <button class="share-btn" onclick="shareNative()">📤 More</button>
     </div>
   </div>
 </div>
@@ -253,25 +367,128 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://yswhejkonijnxmdyeyri.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzd2hlamtvbmlqbnhtZHlleXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODgxMjYsImV4cCI6MjA4ODA2NDEyNn0.pcmCusr4426UfLuf9PfURQyc0NHAUXrNnlBozSNuhSA';
-const STRIPE_KEY   = 'pk_test_51T6eSaBxPA5O3Y8aCHD1oCYiyti77Vjh1ix7sLGa0FyMaUwnpH1ymPDKZLvO9NVz42iwmCCzH1V5qYDoqViG9oTl00sshf3JqQ';
+const SUPABASE_URL='https://yswhejkonijnxmdyeyri.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlzd2hlamtvbmlqbnhtZHlleXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODgxMjYsImV4cCI6MjA4ODA2NDEyNn0.pcmCusr4426UfLuf9PfURQyc0NHAUXrNnlBozSNuhSA';
+const STRIPE_KEY='pk_test_51T6eSaBxPA5O3Y8aCHD1oCYiyti77Vjh1ix7sLGa0FyMaUwnpH1ymPDKZLvO9NVz42iwmCCzH1V5qYDoqViG9oTl00sshf3JqQ';
+const SITE_URL='https://elitum.github.io/Elitum';
 
-const TITLES = [
-  {name:'Challenger',   emoji:'⚡', min:1,     max:9.99,    color:'#666'},
-  {name:'Aristocrat',   emoji:'🎩', min:10,    max:49.99,   color:'#888'},
-  {name:'Bourgeois',    emoji:'🏛️', min:50,    max:99.99,   color:'#a0a0a0'},
-  {name:'Magnate',      emoji:'💼', min:100,   max:499.99,  color:'#c9a84c'},
-  {name:'Tycoon',       emoji:'🏆', min:500,   max:999.99,  color:'#e8c97a'},
-  {name:'Oligarch',     emoji:'💎', min:1000,  max:4999.99, color:'#7ec8e3'},
-  {name:'Sultan',       emoji:'👑', min:5000,  max:9999.99, color:'#f0a500'},
-  {name:'Emperor',      emoji:'⚜️', min:10000, max:49999.99,color:'#c9a84c'},
-  {name:'God of Wealth',emoji:'🌟', min:50000, max:Infinity, color:'#fff'},
+// ===== I18N =====
+const STRINGS={
+  en:{
+    'nav-leaderboard':'Rankings','nav-hof':'Hall of Fame','nav-titles':'Titles','nav-invite':'Invite',
+    'hdr-profile':'My Profile','hdr-invite':'Invite Friends','hdr-legal':'Legal',
+    'lbt-global':'🌍 Global','lbt-monthly':'📅 Month','lbt-yearly':'🏆 Year','lbt-daily':'⚡ 24h',
+    'gb-all':'All','gb-male':'♂ Men','gb-female':'♀ Women',
+    'lbl-players':'Players','lbl-total':'Total Paid','lbl-countries':'Countries',
+    'lbl-leaderboard':'Leaderboard','lbl-hof':'Hall of Fame',
+    'hf-all':'All','hf-yearly':'Annual','hf-monthly':'Monthly','hf-male':'♂ Men','hf-female':'♀ Women',
+    'hof-empty-msg':'No champions yet. Be the first.',
+    'lbl-titles':'Titles & Ranks','titles-desc':'Your title is determined by your all-time total. Titles are lost if you drop in the rankings.',
+    'lbl-invite-page':'Invite Friends','invite-title':'Challenge Your Friends',
+    'invite-sub':'Share Elitum with friends and see who\'s really richer. The leaderboard doesn\'t lie.',
+    'invite-copy-btn':'📋 Copy','lbl-share-on':'Share On','lbl-share-rank':'Share Your Rank',
+    'share-rank-desc':'Enter your email to generate a personalized share card with your rank.',
+    'share-card-btn':'Generate','col-rank':'Rank','col-player':'Player','col-title':'Title','col-total':'Total',
+    'cta-main':'✦ Claim Your Rank ✦','cta-profile':'👤 My Profile',
+    'modal-title':'Join Elitum','modal-sub':'Secure your rank · RicherThanYou',
+    'lbl-pseudo':'Pseudo','lbl-gender':'Gender','lbl-country':'Country','lbl-amount':'Amount (€ minimum 1€)','lbl-email':'Email',
+    'opt-male':'Male','opt-female':'Female',
+    'preview-default':'Enter an amount to see your projected rank',
+    'submitBtn':'Pay & Claim Rank',
+    'legal-retract':'I waive my 14-day withdrawal right as the digital content is delivered immediately.',
+    'legal-note':'Purchase is voluntary and non-refundable. No financial return.',
+    'legal-link':'Terms & Conditions',
+    'invite-modal-title':'Invite Friends','invite-modal-sub':'Challenge them to beat your rank',
+    'period-global':'Global All-Time','period-month':'This Month','period-year':'This Year','period-day':'Last 24h',
+    'empty-lb':'No players yet. Be the first!',
+    'share-text':(name,rank,amt)=>`I'm ranked #${rank} on Elitum with ${amt}! Can you beat me? 👑 #RicherThanYou`,
+    'streak-text':(n)=>`🔥 ${n} months at #1`,
+    'hero-share-label':'Share',
+    'toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'no-rank':'Could not find your rank. Make sure you have made a payment first.',
+  },
+  fr:{
+    'nav-leaderboard':'Classements','nav-hof':'Hall of Fame','nav-titles':'Titres','nav-invite':'Inviter',
+    'hdr-profile':'Mon Profil','hdr-invite':'Inviter des Amis','hdr-legal':'Légal',
+    'lbt-global':'🌍 Global','lbt-monthly':'📅 Mois','lbt-yearly':'🏆 Année','lbt-daily':'⚡ 24h',
+    'gb-all':'Tous','gb-male':'♂ Hommes','gb-female':'♀ Femmes',
+    'lbl-players':'Joueurs','lbl-total':'Total Payé','lbl-countries':'Pays',
+    'lbl-leaderboard':'Classement','lbl-hof':'Hall of Fame',
+    'hf-all':'Tous','hf-yearly':'Annuel','hf-monthly':'Mensuel','hf-male':'♂ Hommes','hf-female':'♀ Femmes',
+    'hof-empty-msg':'Aucun champion pour l\'instant. Soyez le premier.',
+    'lbl-titles':'Titres & Rangs','titles-desc':'Votre titre est déterminé par votre total all-time. Les titres se perdent si vous descendez dans le classement.',
+    'lbl-invite-page':'Inviter des Amis','invite-title':'Défier vos Amis',
+    'invite-sub':'Partagez Elitum avec vos amis et voyez qui est vraiment le plus riche. Le classement ne ment pas.',
+    'invite-copy-btn':'📋 Copier','lbl-share-on':'Partager sur','lbl-share-rank':'Partager son Rang',
+    'share-rank-desc':'Entrez votre email pour générer une carte de partage personnalisée avec votre rang.',
+    'share-card-btn':'Générer','col-rank':'Rang','col-player':'Joueur','col-title':'Titre','col-total':'Total',
+    'cta-main':'✦ Réclamez votre Rang ✦','cta-profile':'👤 Mon Profil',
+    'modal-title':'Rejoindre Elitum','modal-sub':'Sécurisez votre rang · RicherThanYou',
+    'lbl-pseudo':'Pseudo','lbl-gender':'Genre','lbl-country':'Pays','lbl-amount':'Montant (€ minimum 1€)','lbl-email':'Email',
+    'opt-male':'Homme','opt-female':'Femme',
+    'preview-default':'Entrez un montant pour voir votre rang projeté',
+    'submitBtn':'Payer & Réclamer le Rang',
+    'legal-retract':'Je renonce à mon droit de rétractation de 14 jours car le contenu numérique est livré immédiatement.',
+    'legal-note':'L\'achat est volontaire et non remboursable. Aucun retour financier.',
+    'legal-link':'Conditions Générales',
+    'invite-modal-title':'Inviter des Amis','invite-modal-sub':'Défiez-les de battre votre rang',
+    'period-global':'Global All-Time','period-month':'Ce Mois','period-year':'Cette Année','period-day':'24 Dernières Heures',
+    'empty-lb':'Aucun joueur pour l\'instant. Soyez le premier !',
+    'share-text':(name,rank,amt)=>`Je suis classé #${rank} sur Elitum avec ${amt} ! Tu peux faire mieux ? 👑 #RicherThanYou`,
+    'streak-text':(n)=>`🔥 ${n} mois au #1`,
+    'hero-share-label':'Partager',
+    'toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'no-rank':'Rang introuvable. Assurez-vous d\'avoir effectué un paiement.',
+  }
+};
+
+let currentLang = (navigator.language||'en').startsWith('fr') ? 'fr' : 'en';
+
+function t(key,...args){
+  const v=STRINGS[currentLang][key]||STRINGS['en'][key]||key;
+  return typeof v==='function'?v(...args):v;
+}
+
+function applyLang(){
+  document.getElementById('lbtn-en').classList.toggle('active',currentLang==='en');
+  document.getElementById('lbtn-fr').classList.toggle('active',currentLang==='fr');
+  // Apply all string keys to matching element ids
+  Object.keys(STRINGS[currentLang]).forEach(key=>{
+    const el=document.getElementById(key);
+    if(el&&typeof STRINGS[currentLang][key]==='string') el.textContent=STRINGS[currentLang][key];
+  });
+  // Nav pages
+  document.getElementById('np-leaderboard').textContent=t('nav-leaderboard');
+  document.getElementById('np-hof').textContent=t('nav-hof');
+  document.getElementById('np-titles').textContent=t('nav-titles');
+  document.getElementById('np-invite').textContent=t('nav-invite');
+}
+
+function setLang(l){
+  currentLang=l;
+  localStorage.setItem('elitum-lang',l);
+  applyLang();
+  renderTitles();
+  if(lbData.length) renderLeaderboard(lbData,{global:'total_paid',monthly:'monthly_paid',yearly:'yearly_paid',daily:'daily_paid'}[lbTab]);
+}
+
+// ===== TITLES =====
+const TITLES=[
+  {en:'Challenger',fr:'Challenger',emoji:'⚡',min:1,max:9.99,color:'#666'},
+  {en:'Aristocrat',fr:'Aristocrate',emoji:'🎩',min:10,max:49.99,color:'#888'},
+  {en:'Bourgeois',fr:'Bourgeois',emoji:'🏛️',min:50,max:99.99,color:'#a0a0a0'},
+  {en:'Magnate',fr:'Magnat',emoji:'💼',min:100,max:499.99,color:'#c9a84c'},
+  {en:'Tycoon',fr:'Tycoon',emoji:'🏆',min:500,max:999.99,color:'#e8c97a'},
+  {en:'Oligarch',fr:'Oligarque',emoji:'💎',min:1000,max:4999.99,color:'#7ec8e3'},
+  {en:'Sultan',fr:'Sultan',emoji:'👑',min:5000,max:9999.99,color:'#f0a500'},
+  {en:'Emperor',fr:'Empereur',emoji:'⚜️',min:10000,max:49999.99,color:'#c9a84c'},
+  {en:'God of Wealth',fr:'Dieu de la Richesse',emoji:'🌟',min:50000,max:Infinity,color:'#fff'},
 ];
 
-function getTitle(amt) { return TITLES.find(t => amt >= t.min && amt <= t.max) || {name:'—',emoji:'',color:'#666'}; }
+function getTitle(amt){return TITLES.find(t=>amt>=t.min&&amt<=t.max)||{en:'—',fr:'—',emoji:'',color:'#666'}}
+function getTitleName(t){return t[currentLang]||t.en}
 
-const COUNTRIES = [
+const COUNTRIES=[
   {code:'AD',name:'Andorra',flag:'🇦🇩'},{code:'AE',name:'UAE',flag:'🇦🇪'},{code:'AR',name:'Argentina',flag:'🇦🇷'},
   {code:'AT',name:'Austria',flag:'🇦🇹'},{code:'AU',name:'Australia',flag:'🇦🇺'},{code:'BE',name:'Belgium',flag:'🇧🇪'},
   {code:'BR',name:'Brazil',flag:'🇧🇷'},{code:'CA',name:'Canada',flag:'🇨🇦'},{code:'CH',name:'Switzerland',flag:'🇨🇭'},
@@ -290,35 +507,36 @@ const COUNTRIES = [
 function getFlag(code){return(COUNTRIES.find(c=>c.code===code)||{flag:'🌍'}).flag}
 
 function getDisplayName(user){
-  if(user.display_mode==='real' && user.is_verified && user.real_name){
-    return user.real_name+' <span style="color:#4caf50;font-size:11px">✅</span>';
+  if(user.display_mode==='real'&&user.is_verified&&user.real_name){
+    return user.real_name+' <span style="color:var(--green);font-size:11px">✅</span>';
   }
   return user.pseudo;
 }
 
-function getDisplayName(user){
-  if(user.display_mode==='real' && user.is_verified && user.real_name){
-    return user.real_name+' <span style="color:#2ecc71">✅</span>';
-  }
-  return user.pseudo;
-}
-
-// Populate country
+// Populate country select
 const cSel=document.getElementById('iCountry');
 COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+' '+c.name;cSel.appendChild(o)});
 
 let db,stripe,lbTab='global',lbGender='all',hofFilter='all',lbData=[];
 
 window.addEventListener('load',()=>{
+  // Load saved lang
+  const saved=localStorage.getItem('elitum-lang');
+  if(saved) currentLang=saved;
+
   const{createClient}=supabase;
   db=createClient(SUPABASE_URL,SUPABASE_KEY);
   stripe=Stripe(STRIPE_KEY);
+
+  applyLang();
   renderTitles();
   loadLeaderboard();
   loadHof();
+
   db.channel('lb').on('postgres_changes',{event:'*',schema:'public',table:'users'},()=>loadLeaderboard()).subscribe();
 });
 
+// ===== PAGES =====
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-page').forEach(b=>b.classList.remove('active'));
@@ -326,6 +544,7 @@ function showPage(id){
   document.getElementById('np-'+id).classList.add('active');
 }
 
+// ===== LB =====
 function switchLbTab(tab){
   lbTab=tab;
   document.querySelectorAll('.lb-tab').forEach(b=>b.classList.remove('active'));
@@ -353,24 +572,35 @@ async function loadLeaderboard(){
 }
 
 function renderLeaderboard(data,col){
-  const periods={total_paid:'Global All-Time',monthly_paid:'This Month',yearly_paid:'This Year',daily_paid:'Last 24h'};
+  const periods={total_paid:t('period-global'),monthly_paid:t('period-month'),yearly_paid:t('period-year'),daily_paid:t('period-day')};
   document.getElementById('heroPeriod').textContent=periods[col]||'';
+
   if(!data.length){
-    document.getElementById('leaderboard').innerHTML='<div class="empty-lb">No players yet. Be the first!</div>';
+    document.getElementById('leaderboard').innerHTML=`<div class="empty-lb">${t('empty-lb')}</div>`;
     document.getElementById('heroName').textContent='—';
     document.getElementById('heroTitleBadge').textContent='—';
     document.getElementById('heroAmount').textContent='€0.00';
     document.getElementById('heroStreak').textContent='';
+    document.getElementById('heroShare').innerHTML='';
     return;
   }
+
   const top=data[0];
   const topTitle=getTitle(Number(top.total_paid));
+  const topAmt=Number(top[col]);
+
   document.getElementById('heroName').innerHTML=getDisplayName(top);
-  document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+topTitle.name;
+  document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
   document.getElementById('heroTitleBadge').style.color=topTitle.color;
   document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
-  document.getElementById('heroAmount').textContent=fmt(Number(top[col]));
-  document.getElementById('heroStreak').textContent=top.current_streak>1?'🔥 '+top.current_streak+' months at #1':'';
+  document.getElementById('heroAmount').textContent=fmt(topAmt);
+  document.getElementById('heroStreak').textContent=top.current_streak>1?t('streak-text',top.current_streak):'';
+
+  // Share buttons for #1
+  document.getElementById('heroShare').innerHTML=`
+    <button class="share-btn twitter" onclick="shareTwitter(1,'${top.pseudo}','${fmt(topAmt)}')">🐦</button>
+    <button class="share-btn whatsapp" onclick="shareWhatsApp(1,'${top.pseudo}','${fmt(topAmt)}')">💬</button>
+    <button class="share-btn copy" onclick="copyInviteLink()">📋</button>`;
 
   document.getElementById('leaderboard').innerHTML=data.map((u,i)=>{
     const r=i+1,rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
@@ -384,7 +614,7 @@ function renderLeaderboard(data,col){
         <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
         <div class="lb-sub">${u.country}${dethroned}</div>
       </div>
-      <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${title.name}</span></div>
+      <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
       <div class="lb-amount">${fmt(Number(u[col]))}</div>
     </div>`;
   }).join('');
@@ -398,6 +628,7 @@ function renderStats(data){
   document.getElementById('statCountries').textContent=countries;
 }
 
+// ===== HOF =====
 async function loadHof(){
   const{data,error}=await db.from('hall_of_fame').select('*').order('created_at',{ascending:false});
   if(error){console.error(error);return}
@@ -417,7 +648,7 @@ function renderHof(data){
   else if(hofFilter==='monthly') d=data.filter(x=>x.period_type==='monthly');
   else if(hofFilter==='male') d=data.filter(x=>x.gender==='male');
   else if(hofFilter==='female') d=data.filter(x=>x.gender==='female');
-  if(!d.length){document.getElementById('hofGrid').innerHTML='<div class="empty-lb">No champions yet. Be the first.</div>';return}
+  if(!d.length){document.getElementById('hofGrid').innerHTML=`<div class="empty-lb">${t('hof-empty-msg')}</div>`;return}
   document.getElementById('hofGrid').innerHTML=d.map((h,i)=>`
     <div class="hof-card" style="animation-delay:${i*.05}s">
       <div class="hof-season-badge" style="color:${h.season_color};border-color:${h.season_color}">${h.season_badge}</div>
@@ -426,37 +657,44 @@ function renderHof(data){
     </div>`).join('');
 }
 
+// ===== TITLES =====
 function renderTitles(){
   document.getElementById('titlesGrid').innerHTML=TITLES.map(tt=>`
     <div class="title-card" data-emoji="${tt.emoji}" style="border-color:${tt.color}33">
-      <div class="title-name" style="color:${tt.color}">${tt.emoji} ${tt.name}</div>
+      <div class="title-name" style="color:${tt.color}">${tt.emoji} ${getTitleName(tt)}</div>
       <div class="title-threshold" style="color:${tt.color}88">${tt.max===Infinity?'€'+fmt2(tt.min)+'+':'€'+fmt2(tt.min)+' – €'+fmt2(tt.max)}</div>
-      <div class="title-desc">All-time total required to hold this title.</div>
+      <div class="title-desc">${t('titles-desc').split('.')[0]}.</div>
     </div>`).join('');
 }
 
+// ===== MODAL =====
 function openModal(){document.getElementById('modalOverlay').classList.add('open')}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
 
+function openInvite(){document.getElementById('inviteOverlay').classList.add('open')}
+function closeInvite(){document.getElementById('inviteOverlay').classList.remove('open')}
+document.getElementById('inviteOverlay').addEventListener('click',function(e){if(e.target===this)closeInvite()});
+
+// ===== AMOUNT =====
 function pickAmt(val,el){
   document.querySelectorAll('.amt-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
   document.getElementById('iAmount').value=val;
   updatePreview();
 }
-
 document.getElementById('iAmount').addEventListener('input',updatePreview);
 
 function updatePreview(){
   const amt=parseFloat(document.getElementById('iAmount').value)||0;
   const prev=document.getElementById('rankPreview');
-  if(!amt||amt<1){prev.innerHTML='<span>Enter an amount to see your projected rank</span>';return}
+  if(!amt||amt<1){prev.innerHTML=`<span>${t('preview-default')}</span>`;return}
   const above=lbData.filter(u=>Number(u.total_paid)>=amt).length;
   const title=getTitle(amt);
-  prev.innerHTML=`With <strong>${fmt(amt)}</strong> → <strong>#${above+1}</strong> &nbsp; ${title.emoji} <span style="color:${title.color}">${title.name}</span>`;
+  prev.innerHTML=`→ <strong>#${above+1}</strong> &nbsp; ${title.emoji} <span style="color:${title.color}">${getTitleName(title)}</span>`;
 }
 
+// ===== SUBMIT =====
 async function handleSubmit(){
   const pseudo=document.getElementById('iPseudo').value.trim();
   const gender=document.getElementById('iGender').value;
@@ -464,48 +702,99 @@ async function handleSubmit(){
   const amount=parseFloat(document.getElementById('iAmount').value);
   const email=document.getElementById('iEmail').value.trim();
   const checked=document.getElementById('chkRetract').checked;
-  if(!pseudo) return toast('⚠ Enter a pseudo');
-  if(!gender) return toast('⚠ Select a gender');
-  if(!country) return toast('⚠ Select a country');
-  if(!amount||amount<1) return toast('⚠ Minimum €1');
-  if(!email||!email.includes('@')) return toast('⚠ Enter a valid email');
-  if(!checked) return toast('⚠ Please accept the terms');
+  if(!pseudo) return toast('⚠ '+t('lbl-pseudo'));
+  if(!gender) return toast('⚠ '+t('lbl-gender'));
+  if(!country) return toast('⚠ '+t('lbl-country'));
+  if(!amount||amount<1) return toast('⚠ Min €1');
+  if(!email||!email.includes('@')) return toast('⚠ '+t('lbl-email'));
+  if(!checked) return toast('⚠ Terms');
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.textContent='...';
   try{
-    let userId,existingTotal=0,existingMonthly=0,existingYearly=0,existingDaily=0;
+    let userId,eT=0,eM=0,eY=0,eD=0;
     const{data:ex}=await db.from('users').select('id,total_paid,monthly_paid,yearly_paid,daily_paid').eq('email',email).maybeSingle();
-    if(ex){userId=ex.id;existingTotal=Number(ex.total_paid);existingMonthly=Number(ex.monthly_paid);existingYearly=Number(ex.yearly_paid);existingDaily=Number(ex.daily_paid)}
+    if(ex){userId=ex.id;eT=Number(ex.total_paid);eM=Number(ex.monthly_paid);eY=Number(ex.yearly_paid);eD=Number(ex.daily_paid)}
     else{
-      const{data:nu,error:ce}=await db.from('users').insert({pseudo,email,gender,country,total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,current_streak:0}).select('id').single();
+      const{data:nu,error:ce}=await db.from('users').insert({pseudo,email,gender,country,total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,current_streak:0,display_mode:'pseudo'}).select('id').single();
       if(ce) throw ce;
       userId=nu.id;
     }
-    const{error:ue}=await db.from('users').update({
-      total_paid:existingTotal+amount,monthly_paid:existingMonthly+amount,
-      yearly_paid:existingYearly+amount,daily_paid:existingDaily+amount,
-      pseudo,gender,country,is_dethroned:false
-    }).eq('id',userId);
+    const{error:ue}=await db.from('users').update({total_paid:eT+amount,monthly_paid:eM+amount,yearly_paid:eY+amount,daily_paid:eD+amount,pseudo,gender,country,is_dethroned:false}).eq('id',userId);
     if(ue) throw ue;
     await db.from('payments').insert({user_id:userId,amount,stripe_payment_id:'test_'+Date.now()});
     closeModal();
-    const title=getTitle(existingTotal+amount);
-    toast('🎉 '+pseudo+' — '+title.emoji+' '+title.name);
+    const title=getTitle(eT+amount);
+    toast(t('toast-welcome',pseudo,title.emoji+' '+getTitleName(title)));
     loadLeaderboard();
   }catch(err){console.error(err);toast('Error: '+err.message)}
-  finally{btn.disabled=false;btn.textContent='Pay & Claim Rank'}
+  finally{btn.disabled=false;btn.textContent=t('submitBtn')}
 }
 
+// ===== SHARE =====
+function getShareText(rank,name,amt){
+  return t('share-text',name,rank,amt);
+}
+
+function shareTwitter(rank,name,amt){
+  const text=encodeURIComponent(getShareText(rank||1,name||'Someone',amt||'€?'));
+  const url=encodeURIComponent(SITE_URL);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+}
+
+function shareWhatsApp(rank,name,amt){
+  const text=encodeURIComponent(getShareText(rank||1,name||'Someone',amt||'€?')+' '+SITE_URL);
+  window.open(`https://wa.me/?text=${text}`,'_blank');
+}
+
+function shareFacebook(){
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}`,'_blank');
+}
+
+async function shareNative(){
+  if(navigator.share){
+    try{await navigator.share({title:'Elitum — RicherThanYou',text:getShareText(1,'',fmt(0)),url:SITE_URL})}
+    catch(e){}
+  } else {
+    copyInviteLink();
+  }
+}
+
+function copyInviteLink(){
+  navigator.clipboard.writeText(SITE_URL).then(()=>toast(t('toast-copied'))).catch(()=>{
+    document.getElementById('inviteLink').select();
+    document.execCommand('copy');
+    toast(t('toast-copied'));
+  });
+}
+
+async function generateShareCard(){
+  const email=document.getElementById('shareEmail').value.trim();
+  if(!email||!email.includes('@')) return toast('⚠ '+t('lbl-email'));
+  const{data}=await db.from('users').select('pseudo,total_paid,monthly_paid,current_streak,country').eq('email',email).maybeSingle();
+  if(!data){toast(t('no-rank'));return}
+  // Find rank
+  const{data:above}=await db.from('users').select('id').gt('total_paid',Number(data.total_paid));
+  const rank=(above?.length||0)+1;
+  const title=getTitle(Number(data.total_paid));
+  document.getElementById('shareCardResult').innerHTML=`
+    <div style="border:1px solid var(--gold);padding:20px;background:linear-gradient(135deg,rgba(201,168,76,.08),transparent);margin-top:8px;text-align:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gold-light)">${getFlag(data.country)} ${data.pseudo}</div>
+      <div style="font-size:11px;color:var(--gold-dim);letter-spacing:.4em;margin:6px 0">${title.emoji} ${getTitleName(title)}</div>
+      <div style="font-size:28px;color:var(--gold);font-weight:600">#${rank}</div>
+      <div style="font-size:12px;color:var(--white-mid);margin-top:4px">${fmt(Number(data.total_paid))} all-time</div>
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="share-btn twitter" onclick="shareTwitter(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">🐦 Twitter</button>
+        <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">💬 WhatsApp</button>
+      </div>
+    </div>`;
+}
+
+// ===== UTILS =====
 function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function fmt2(n){return Number(n).toLocaleString('en',{maximumFractionDigits:0})}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200)}
 </script>
 
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-}
-</script>
-
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
 </body>
 </html>
