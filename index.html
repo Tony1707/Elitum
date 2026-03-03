@@ -271,6 +271,9 @@
       <button class="share-btn twitter" onclick="shareTwitter()">🐦 Twitter / X</button>
       <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
       <button class="share-btn" onclick="shareFacebook()">👍 Facebook</button>
+      <button class="share-btn" onclick="shareTelegram()">✈️ Telegram</button>
+      <button class="share-btn" onclick="shareLinkedIn()">💼 LinkedIn</button>
+      <button class="share-btn" onclick="shareEmail()">📧 Email</button>
       <button class="share-btn" onclick="shareNative()" id="share-more-btn">📤 More</button>
     </div>
 
@@ -359,6 +362,9 @@
       <button class="share-btn twitter" onclick="shareTwitter();closeInvite()">🐦 Twitter</button>
       <button class="share-btn whatsapp" onclick="shareWhatsApp();closeInvite()">💬 WhatsApp</button>
       <button class="share-btn" onclick="shareFacebook();closeInvite()">👍 Facebook</button>
+      <button class="share-btn" onclick="shareTelegram()">✈️ Telegram</button>
+      <button class="share-btn" onclick="shareLinkedIn()">💼 LinkedIn</button>
+      <button class="share-btn" onclick="shareEmail()">📧 Email</button>
       <button class="share-btn" onclick="shareNative()">📤 More</button>
     </div>
   </div>
@@ -744,6 +750,23 @@ function shareTwitter(rank,name,amt){
 function shareWhatsApp(rank,name,amt){
   const text=encodeURIComponent(getShareText(rank||1,name||'Someone',amt||'€?')+' '+SITE_URL);
   window.open(`https://wa.me/?text=${text}`,'_blank');
+}
+
+function shareTelegram(rank,name,amt){
+  const text=encodeURIComponent(getShareText(rank||1,name||'',amt||'')+' '+SITE_URL);
+  window.open('https://t.me/share/url?url='+encodeURIComponent(SITE_URL)+'&text='+encodeURIComponent(getShareText(rank||1,name||'',amt||'')),'_blank');
+}
+
+function shareLinkedIn(){
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(SITE_URL),'_blank');
+}
+
+function shareEmail(rank,name,amt){
+  const subject=encodeURIComponent('Elitum — RicherThanYou');
+  const body=encodeURIComponent(getShareText(rank||1,name||'',amt||'')+'
+
+'+SITE_URL);
+  window.open('mailto:?subject='+subject+'&body='+body);
 }
 
 function shareFacebook(){
