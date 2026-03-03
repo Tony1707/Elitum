@@ -252,7 +252,7 @@
     <button class="nav-page" onclick="showPage('friends')" id="np-friends">Friends</button>
     <button class="nav-page" onclick="showPage('countries')" id="np-countries">Countries</button>
     <button class="nav-page np-notif" onclick="showPage('notifications')" id="np-notifications">🔔<span class="notif-dot" id="notifDot"></span></button>
-    <button class="nav-page" onclick="showPage('admin')" id="np-admin">⚙</button>
+    <button class="nav-page" onclick="showPage('admin')" id="np-admin" style="display:none">⚙ Admin</button>
   </div>
 </nav>
 
@@ -468,12 +468,7 @@
   <!-- ADMIN PAGE -->
   <div class="page" id="page-admin">
     <div class="section-title" id="lbl-admin">Admin Panel</div>
-    <div class="admin-password-gate" id="admin-gate">
-      <p style="font-size:11px;color:var(--white-mid);margin-bottom:16px" id="admin-gate-desc">Enter admin password to access the panel.</p>
-      <input class="finput" type="password" id="adminPassword" placeholder="Admin password" onkeydown="if(event.key==='Enter')checkAdminPass()"/>
-      <button class="btn" style="margin-top:10px" onclick="checkAdminPass()" id="admin-gate-btn">Access Panel</button>
-    </div>
-    <div id="admin-panel" style="display:none">
+    <div id="admin-panel">
       <!-- Stats -->
       <div class="admin-stat-grid" id="adminStatsGrid"></div>
 
@@ -816,7 +811,7 @@ function showPage(id){
   if(id==='countries') loadCountriesData();
   if(id==='notifications') loadNotifications();
   if(id==='titles') renderBadgeLegend();
-  if(id==='admin'){document.getElementById('admin-gate').style.display='block';document.getElementById('admin-panel').style.display='none';}
+  if(id==='admin'){ if(currentProfile && currentProfile.is_admin) loadAdminData(); else showPage('leaderboard'); }
 }
 
 // ===== LB =====
@@ -1587,18 +1582,7 @@ function closePubProfile(){
 document.getElementById('pubProfileOverlay').addEventListener('click', function(e){if(e.target===this) closePubProfile()});
 
 // ===== ADMIN =====
-const ADMIN_PASS = 'elitum2026admin'; // Change this!
-
-function checkAdminPass(){
-  const pw = document.getElementById('adminPassword').value;
-  if(pw === ADMIN_PASS){
-    document.getElementById('admin-gate').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
-    loadAdminData();
-  } else {
-    toast(currentLang === 'fr' ? '❌ Mot de passe incorrect' : '❌ Wrong password');
-  }
-}
+// Admin access controlled by is_admin flag in database
 
 async function loadAdminData(){
   // Load stats
