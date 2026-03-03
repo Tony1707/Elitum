@@ -135,6 +135,17 @@
     /* TOAST */
     .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark2);border:1px solid var(--gold);color:var(--white);padding:12px 24px;font-size:11px;letter-spacing:.1em;opacity:0;transition:all .28s;z-index:400;white-space:nowrap;max-width:90vw;text-align:center}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* BADGES */
+    .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;font-size:9px;border:1px solid;border-radius:2px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap}
+    .badge-whale{color:#7ec8e3;border-color:#7ec8e3;background:rgba(126,200,227,.08)}
+    .badge-flash{color:#f1c40f;border-color:#f1c40f;background:rgba(241,196,15,.08)}
+    .badge-legend{color:#c9a84c;border-color:#c9a84c;background:rgba(201,168,76,.08)}
+    .badge-onfire{color:#e74c3c;border-color:#e74c3c;background:rgba(231,76,60,.08)}
+    .badge-diamond{color:#a8d8f0;border-color:#a8d8f0;background:rgba(168,216,240,.08)}
+    .badge-globetrotter{color:#2ecc71;border-color:#2ecc71;background:rgba(46,204,113,.08)}
+    .badges-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+
     @media(max-width:500px){
       .lb-header,.lb-row{grid-template-columns:44px 1fr 90px}.lb-header span:nth-child(3),.lb-row .lb-title-tag{display:none}
       .modal{padding:28px 18px}.amount-grid{grid-template-columns:repeat(2,1fr)}.frow{grid-template-columns:1fr}.titles-grid{grid-template-columns:1fr}
@@ -218,6 +229,7 @@
       <div class="hero-title-badge" id="heroTitleBadge">—</div>
       <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
       <div class="hero-streak" id="heroStreak"></div>
+      <div id="heroBadges" style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
       <div class="hero-share" id="heroShare"></div>
     </div>
     <div class="stats-bar">
@@ -717,6 +729,9 @@ function renderLeaderboard(data,col){
   document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
   document.getElementById('heroAmount').textContent=fmt(topAmt);
   document.getElementById('heroStreak').textContent=top.current_streak>1?t('streak-text',top.current_streak):'';
+  // Hero badges
+  const heroBadgesEl=document.getElementById('heroBadges');
+  if(heroBadgesEl) heroBadgesEl.innerHTML=renderBadges(top.badges);
 
   // Share buttons for #1
   document.getElementById('heroShare').innerHTML=`
@@ -735,6 +750,7 @@ function renderLeaderboard(data,col){
       <div class="lb-info">
         <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
         <div class="lb-sub">${u.country}${dethroned}</div>
+        ${renderBadges(u.badges)}
       </div>
       <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
       <div class="lb-amount">${fmt(Number(u[col]))}</div>
@@ -1181,6 +1197,28 @@ async function loadFriendsLb(){
       <div class="lb-amount">${fmt(Number(u.total_paid))}</div>
     </div>`;
   }).join('');
+}
+
+
+// ===== BADGES =====
+const BADGE_DEF = {
+  whale:       {emoji:'🐳', en:'Whale',        fr:'Baleine',      cls:'badge-whale'},
+  flash:       {emoji:'⚡', en:'Flash',        fr:'Flash',        cls:'badge-flash'},
+  legend:      {emoji:'👑', en:'Legend',       fr:'Légende',      cls:'badge-legend'},
+  onfire:      {emoji:'🔥', en:'On Fire',      fr:'En Feu',       cls:'badge-onfire'},
+  diamond:     {emoji:'💎', en:'Diamond',      fr:'Diamant',      cls:'badge-diamond'},
+  globetrotter:{emoji:'🌍', en:'Globe Trotter',fr:'Globe Trotter',cls:'badge-globetrotter'},
+};
+
+function renderBadges(badges){
+  if(!badges||!badges.length) return '';
+  return '<div class="badges-row">'+
+    badges.map(b=>{
+      const def=BADGE_DEF[b];
+      if(!def) return '';
+      return `<span class="badge ${def.cls}">${def.emoji} ${def[currentLang]||def.en}</span>`;
+    }).join('')+
+  '</div>';
 }
 
 function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
