@@ -571,9 +571,9 @@ function getDisplayName(user){
 const cSel=document.getElementById('iCountry');
 COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+' '+c.name;cSel.appendChild(o)});
 
-let db,stripe,lbTab='global',lbGender='all',hofFilter='all',lbData=[];
+let db,stripe,currentSession=null,currentProfile=null,lbTab='global',lbGender='all',hofFilter='all',lbData=[];
 
-window.addEventListener('load',()=>{
+window.addEventListener('load',async()=>{
   // Load saved lang
   const saved=localStorage.getItem('elitum-lang');
   if(saved) currentLang=saved;
@@ -581,6 +581,30 @@ window.addEventListener('load',()=>{
   const{createClient}=supabase;
   db=createClient(SUPABASE_URL,SUPABASE_KEY);
   stripe=Stripe(STRIPE_KEY);
+
+  // Check auth session
+  const{data:{session}}=await db.auth.getSession();
+  currentSession=session;
+  if(session){
+    // Load current user profile
+    const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
+    currentProfile=prof;
+    // Update profile button
+    document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+  }
+
+  // Listen for auth changes
+  db.auth.onAuthStateChange(async(event,session)=>{
+    currentSession=session;
+    if(session){
+      const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
+      currentProfile=prof;
+      document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+    } else {
+      currentProfile=null;
+      document.getElementById('cta-profile').textContent='👤 '+t('cta-profile').replace('👤 ','');
+    }
+  });
 
   applyLang();
   renderTitles();
@@ -722,7 +746,20 @@ function renderTitles(){
 }
 
 // ===== MODAL =====
-function openModal(){document.getElementById('modalOverlay').classList.add('open')}
+function openModal(){
+  if(!currentSession){
+    // Not logged in — redirect to profile to create account first
+    window.location.href='profile.html';
+    return;
+  }
+  // Pre-fill email and pseudo from session
+  if(currentSession.user){
+    document.getElementById('iEmail').value=currentSession.user.email||'';
+    document.getElementById('iEmail').disabled=true;
+    if(currentProfile) document.getElementById('iPseudo').value=currentProfile.pseudo||'';
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
 document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
 
