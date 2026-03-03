@@ -194,6 +194,7 @@
     <button class="nav-page" onclick="showPage('hof')" id="np-hof">Hall of Fame</button>
     <button class="nav-page" onclick="showPage('titles')" id="np-titles">Titles</button>
     <button class="nav-page" onclick="showPage('invite')" id="np-invite">Invite</button>
+    <button class="nav-page" onclick="showPage('friends')" id="np-friends">Friends</button>
   </div>
 </nav>
 
@@ -287,6 +288,52 @@
     </div>
     <div id="shareCardResult" style="margin-top:16px"></div>
   </div>
+
+  <!-- FRIENDS PAGE -->
+  <div class="page" id="page-friends">
+    <div class="section-title" id="lbl-friends">Friends Leaderboard</div>
+
+    <!-- Add friend -->
+    <div class="invite-box" style="margin-bottom:28px">
+      <div class="invite-title" id="friends-add-title">Add a Friend</div>
+      <div class="invite-sub" id="friends-add-sub">Enter your email to see your invite code, then share it with friends.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <input class="finput" style="flex:1;min-width:180px" id="friendsEmail" placeholder="your@email.com" type="email"/>
+        <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="loadMyCode()">Load</button>
+      </div>
+      <div id="myCodeBox" style="display:none">
+        <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px">Your Invite Code</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div id="myCode" style="font-family:Cormorant Garamond,serif;font-size:28px;color:var(--gold);letter-spacing:.3em;background:var(--dark2);padding:10px 20px;border:1px solid rgba(201,168,76,.3)">—</div>
+          <button class="share-btn copy" onclick="copyCode()">📋</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enter friend code -->
+    <div class="invite-box" style="margin-bottom:28px">
+      <div class="invite-title" id="friends-join-title">Join a Friend Group</div>
+      <div class="invite-sub" id="friends-join-sub">Got a friend's invite code? Enter it below to join their leaderboard.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="finput" style="flex:1;min-width:180px" id="friendCode" placeholder="XXXXXXXX" maxlength="8" style="text-transform:uppercase"/>
+        <input class="finput" style="flex:1;min-width:180px" id="friendsMyEmail" placeholder="your@email.com" type="email"/>
+        <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="addFriend()">Add</button>
+      </div>
+      <div id="friendMsg" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Friends leaderboard -->
+    <div class="section-title" id="lbl-friends-lb">Your Group</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input class="finput" style="flex:1" id="friendsLbEmail" placeholder="your@email.com" type="email"/>
+      <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="loadFriendsLb()">View</button>
+    </div>
+    <div class="lb-header">
+      <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
+    </div>
+    <div id="friendsLeaderboard"><div class="empty-lb">Enter your email to see your friends leaderboard</div></div>
+  </div>
+
 </main>
 
 <div class="cta-bar">
@@ -410,7 +457,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`I'm ranked #${rank} on Elitum with ${amt}! Can you beat me? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} months at #1`,
     'hero-share-label':'Share',
-    'toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Could not find your rank. Make sure you have made a payment first.',
   },
   fr:{
@@ -443,7 +490,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`Je suis classé #${rank} sur Elitum avec ${amt} ! Tu peux faire mieux ? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} mois au #1`,
     'hero-share-label':'Partager',
-    'toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':'Entrez votre email pour voir votre code d'invitation.','friends-join-title':'Rejoindre un Groupe','friends-join-sub':'Vous avez le code d'un ami ? Entrez-le ci-dessous.','lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Rang introuvable. Assurez-vous d\'avoir effectué un paiement.',
   }
 };
@@ -468,6 +515,7 @@ function applyLang(){
   document.getElementById('np-hof').textContent=t('nav-hof');
   document.getElementById('np-titles').textContent=t('nav-titles');
   document.getElementById('np-invite').textContent=t('nav-invite');
+  document.getElementById('np-friends').textContent=t('nav-friends');
 }
 
 function setLang(l){
@@ -813,6 +861,91 @@ async function generateShareCard(){
 }
 
 // ===== UTILS =====
+
+// ===== FRIENDS =====
+async function loadMyCode(){
+  const email=document.getElementById('friendsEmail').value.trim();
+  if(!email||!email.includes('@')) return toast('⚠ Enter your email');
+  const{data,error}=await db.from('users').select('id,pseudo,invite_code').eq('email',email).maybeSingle();
+  if(error||!data) return toast('⚠ No account found with this email');
+  document.getElementById('myCode').textContent=data.invite_code||'—';
+  document.getElementById('myCodeBox').style.display='block';
+  // Pre-fill the friends lb email too
+  document.getElementById('friendsLbEmail').value=email;
+  loadFriendsLb();
+}
+
+function copyCode(){
+  const code=document.getElementById('myCode').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast(t('toast-copied'))).catch(()=>{});
+}
+
+async function addFriend(){
+  const code=document.getElementById('friendCode').value.trim().toUpperCase();
+  const myEmail=document.getElementById('friendsMyEmail').value.trim();
+  const msg=document.getElementById('friendMsg');
+
+  if(!code||code.length!==8) return toast('⚠ Enter a valid 8-character code');
+  if(!myEmail||!myEmail.includes('@')) return toast('⚠ Enter your email');
+
+  // Find my account
+  const{data:me}=await db.from('users').select('id,pseudo').eq('email',myEmail).maybeSingle();
+  if(!me) return toast('⚠ No account found for your email');
+
+  // Find friend by code
+  const{data:friend}=await db.from('users').select('id,pseudo').eq('invite_code',code).maybeSingle();
+  if(!friend) return toast('⚠ Invalid invite code');
+  if(friend.id===me.id) return toast('⚠ Cannot add yourself!');
+
+  // Add friendship both ways
+  const{error}=await db.from('friendships').upsert([
+    {user_id:me.id,friend_id:friend.id},
+    {user_id:friend.id,friend_id:me.id}
+  ],{onConflict:'user_id,friend_id'});
+
+  if(error) return toast('Error: '+error.message);
+  msg.innerHTML='<div style="color:var(--green);font-size:11px;margin-top:8px">✅ '+friend.pseudo+' added to your group!</div>';
+  document.getElementById('friendsLbEmail').value=myEmail;
+  loadFriendsLb();
+}
+
+async function loadFriendsLb(){
+  const email=document.getElementById('friendsLbEmail').value.trim();
+  if(!email||!email.includes('@')) return;
+
+  const{data:me}=await db.from('users').select('id').eq('email',email).maybeSingle();
+  if(!me){document.getElementById('friendsLeaderboard').innerHTML='<div class="empty-lb">No account found</div>';return}
+
+  // Get friend ids
+  const{data:friendships}=await db.from('friendships').select('friend_id').eq('user_id',me.id);
+  const friendIds=(friendships||[]).map(f=>f.friend_id);
+  const allIds=[me.id,...friendIds];
+
+  // Get all their data
+  const{data:users}=await db.from('users').select('*').in('id',allIds).order('total_paid',{ascending:false});
+
+  if(!users||!users.length){
+    document.getElementById('friendsLeaderboard').innerHTML='<div class="empty-lb">No friends yet. Share your invite code!</div>';
+    return;
+  }
+
+  document.getElementById('friendsLeaderboard').innerHTML=users.map((u,i)=>{
+    const r=i+1,rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
+    const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
+    const title=getTitle(Number(u.total_paid));
+    const isMe=u.id===me.id?'<span style="font-size:9px;color:var(--gold-dim);margin-left:4px">(you)</span>':'';
+    return`<div class="lb-row ${rc}" style="animation-delay:${i*.03}s">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info">
+        <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${isMe}</div>
+        <div class="lb-sub">${u.country}</div>
+      </div>
+      <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
+      <div class="lb-amount">${fmt(Number(u.total_paid))}</div>
+    </div>`;
+  }).join('');
+}
+
 function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function fmt2(n){return Number(n).toLocaleString('en',{maximumFractionDigits:0})}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200)}
