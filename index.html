@@ -583,16 +583,24 @@ window.addEventListener('load',async()=>{
   db=createClient(SUPABASE_URL,SUPABASE_KEY);
   stripe=Stripe(STRIPE_KEY);
 
+  // Show loading state on CTA while checking session
+  const ctaBtn=document.getElementById('cta-main');
+  ctaBtn.textContent='...';
+  ctaBtn.disabled=true;
+
   // Check auth session
   const{data:{session}}=await db.auth.getSession();
   currentSession=session;
   if(session){
-    // Load current user profile
     const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
     currentProfile=prof;
-    // Update profile button
     document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+    // Update CTA button for logged-in users
+    ctaBtn.textContent='✦ '+( currentLang==='fr'?'Réclamer votre Rang':'Claim Your Rank')+' ✦';
+  } else {
+    ctaBtn.textContent=t('cta-main');
   }
+  ctaBtn.disabled=false;
 
   // Listen for auth changes
   db.auth.onAuthStateChange(async(event,session)=>{
@@ -749,15 +757,22 @@ function renderTitles(){
 // ===== MODAL =====
 function openModal(){
   if(!currentSession){
-    // Not logged in — redirect to profile to create account first
     window.location.href='profile.html';
     return;
   }
-  // Pre-fill email and pseudo from session
-  if(currentSession.user){
-    document.getElementById('iEmail').value=currentSession.user.email||'';
+  if(currentProfile){
+    // Pre-fill all fields from profile — user doesn't need to re-enter them
+    document.getElementById('iEmail').value=currentProfile.email||currentSession.user.email||'';
     document.getElementById('iEmail').disabled=true;
-    if(currentProfile) document.getElementById('iPseudo').value=currentProfile.pseudo||'';
+    document.getElementById('iPseudo').value=currentProfile.pseudo||'';
+    document.getElementById('iPseudo').disabled=true;
+    document.getElementById('iGender').value=currentProfile.gender||'';
+    document.getElementById('iGender').disabled=true;
+    document.getElementById('iCountry').value=currentProfile.country||'';
+    document.getElementById('iCountry').disabled=true;
+    // Hide fields that are already filled
+    document.getElementById('iGender').closest('.fgroup').style.opacity='0.5';
+    document.getElementById('iCountry').closest('.fgroup').style.opacity='0.5';
   }
   document.getElementById('modalOverlay').classList.add('open');
 }
