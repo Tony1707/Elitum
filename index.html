@@ -194,6 +194,7 @@
     <button class="nav-page" onclick="showPage('titles')" id="np-titles">Titles</button>
     <button class="nav-page" onclick="showPage('invite')" id="np-invite">Invite</button>
     <button class="nav-page" onclick="showPage('friends')" id="np-friends">Friends</button>
+    <button class="nav-page" onclick="showPage('countries')" id="np-countries">Countries</button>
   </div>
 </nav>
 
@@ -333,6 +334,38 @@
     <div id="friendsLeaderboard"><div class="empty-lb">Enter your email to see your friends leaderboard</div></div>
   </div>
 
+
+  <!-- COUNTRIES PAGE -->
+  <div class="page" id="page-countries">
+    <div class="section-title" id="lbl-countries-page">Country Rankings</div>
+
+    <!-- Gender filter -->
+    <div class="gender-filter" style="margin-bottom:20px">
+      <button class="gender-btn active" onclick="switchCountriesGender('all')" id="cgb-all">All</button>
+      <button class="gender-btn" onclick="switchCountriesGender('male')" id="cgb-male">♂ Men</button>
+      <button class="gender-btn" onclick="switchCountriesGender('female')" id="cgb-female">♀ Women</button>
+    </div>
+
+    <!-- View tabs -->
+    <div class="lb-tabs" style="margin-bottom:24px">
+      <button class="lb-tab active" onclick="switchCountriesView('country')" id="cvt-country">🏳 By Country</button>
+      <button class="lb-tab" onclick="switchCountriesView('region')" id="cvt-region">🌍 By Region</button>
+    </div>
+
+    <!-- By Country -->
+    <div id="countries-country-view">
+      <div class="lb-header" style="grid-template-columns:44px 1fr 90px 90px 120px">
+        <span>Rank</span><span id="col-country">Country</span><span id="col-players">Players</span><span style="text-align:right" id="col-top-player">Top Player</span><span style="text-align:right" id="col-total-paid">Total</span>
+      </div>
+      <div id="countries-lb"><div class="empty-lb">Loading...</div></div>
+    </div>
+
+    <!-- By Region -->
+    <div id="countries-region-view" style="display:none">
+      <div id="regions-lb"><div class="empty-lb">Loading...</div></div>
+    </div>
+  </div>
+
 </main>
 
 <div class="cta-bar">
@@ -458,7 +491,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`I'm ranked #${rank} on Elitum with ${amt}! Can you beat me? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} months at #1`,
     'hero-share-label':'Share',
-    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','nav-countries':'Countries','lbl-countries-page':'Country Rankings','lbl-regions':'By Region','lbl-by-country':'By Country','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Americas','lbl-region-asia':'🌏 Asia','lbl-region-middle-east':'🌍 Middle East','lbl-region-oceania':'🌊 Oceania','lbl-region-africa':'🌍 Africa','col-country':'Country','col-players':'Players','col-total-paid':'Total Paid','col-top-player':'Top Player','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Could not find your rank. Make sure you have made a payment first.',
   },
   fr:{
@@ -491,7 +524,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`Je suis classé #${rank} sur Elitum avec ${amt} ! Tu peux faire mieux ? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} mois au #1`,
     'hero-share-label':'Partager',
-    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','nav-countries':'Pays','lbl-countries-page':'Classement par Pays','lbl-regions':'Par Région','lbl-by-country':'Par Pays','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Amériques','lbl-region-asia':'🌏 Asie','lbl-region-middle-east':'🌍 Moyen-Orient','lbl-region-oceania':'🌊 Océanie','lbl-region-africa':'🌍 Afrique','col-country':'Pays','col-players':'Joueurs','col-total-paid':'Total Payé','col-top-player':'Meilleur Joueur','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Rang introuvable. Assurez-vous d\'avoir effectué un paiement.',
   }
 };
@@ -517,6 +550,7 @@ function applyLang(){
   document.getElementById('np-titles').textContent=t('nav-titles');
   document.getElementById('np-invite').textContent=t('nav-invite');
   document.getElementById('np-friends').textContent=t('nav-friends');
+  document.getElementById('np-countries').textContent=t('nav-countries');
 }
 
 function setLang(l){
@@ -629,6 +663,7 @@ function showPage(id){
   document.querySelectorAll('.nav-page').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('np-'+id).classList.add('active');
+  if(id==='countries') loadCountriesData();
 }
 
 // ===== LB =====
@@ -912,6 +947,157 @@ async function generateShareCard(){
 }
 
 // ===== UTILS =====
+
+
+// ===== COUNTRIES =====
+const REGIONS = {
+  europe: {
+    name:'Europe', nameFr:'Europe', emoji:'🇪🇺',
+    codes:['AD','AT','BE','CH','DE','DK','ES','FR','GB','IT','LU','MC','NL','NO','PT','SE','PL','GR','FI','IE','CZ','HU','RO','HR','SK','SI','EE','LV','LT','BG','RS']
+  },
+  americas: {
+    name:'Americas', nameFr:'Amériques', emoji:'🌎',
+    codes:['US','CA','BR','MX','AR','CL','CO','PE','VE','EC','UY','PY','BO']
+  },
+  asia: {
+    name:'Asia', nameFr:'Asie', emoji:'🌏',
+    codes:['CN','JP','KR','SG','HK','IN','TH','VN','MY','ID','PH','TW','PK','BD']
+  },
+  middleeast: {
+    name:'Middle East', nameFr:'Moyen-Orient', emoji:'🕌',
+    codes:['AE','SA','QA','KW','BH','OM','TR','IL','LB','JO','EG','IQ','IR']
+  },
+  oceania: {
+    name:'Oceania', nameFr:'Océanie', emoji:'🌊',
+    codes:['AU','NZ','FJ','PG']
+  },
+  africa: {
+    name:'Africa', nameFr:'Afrique', emoji:'🌍',
+    codes:['ZA','NG','KE','GH','ET','TZ','UG','CI','SN','MA','TN','DZ']
+  }
+};
+
+let countriesGender='all', countriesView='country', allUsersData=[];
+
+async function loadCountriesData(){
+  let q=db.from('users').select('*').gt('total_paid',0);
+  if(countriesGender!=='all') q=q.eq('gender',countriesGender);
+  const{data}=await q;
+  allUsersData=data||[];
+  renderCountriesView();
+}
+
+function switchCountriesGender(g){
+  countriesGender=g;
+  document.querySelectorAll('[id^="cgb-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cgb-'+g).classList.add('active');
+  loadCountriesData();
+}
+
+function switchCountriesView(v){
+  countriesView=v;
+  document.querySelectorAll('[id^="cvt-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cvt-'+v).classList.add('active');
+  document.getElementById('countries-country-view').style.display=v==='country'?'block':'none';
+  document.getElementById('countries-region-view').style.display=v==='region'?'block':'none';
+  renderCountriesView();
+}
+
+function renderCountriesView(){
+  if(countriesView==='country') renderByCountry();
+  else renderByRegion();
+}
+
+function renderByCountry(){
+  // Group by country
+  const map={};
+  allUsersData.forEach(u=>{
+    const c=u.country||'OTHER';
+    if(!map[c]) map[c]={code:c,total:0,players:0,topPlayer:null,topAmt:0};
+    map[c].total+=Number(u.total_paid);
+    map[c].players++;
+    if(Number(u.total_paid)>map[c].topAmt){
+      map[c].topAmt=Number(u.total_paid);
+      map[c].topPlayer=u;
+    }
+  });
+
+  const sorted=Object.values(map).sort((a,b)=>b.total-a.total);
+  const countryMap=Object.fromEntries(COUNTRIES.map(c=>[c.code,c]));
+
+  if(!sorted.length){
+    document.getElementById('countries-lb').innerHTML='<div class="empty-lb">No data yet.</div>';
+    return;
+  }
+
+  document.getElementById('countries-lb').innerHTML=sorted.map((c,i)=>{
+    const r=i+1;
+    const rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
+    const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
+    const info=countryMap[c.code]||{flag:'🌍',name:c.code};
+    const topTitle=c.topPlayer?getTitle(Number(c.topPlayer.total_paid)):{emoji:'',color:'#666'};
+    return `<div class="lb-row ${rc}" style="grid-template-columns:44px 1fr 90px 90px 120px;animation-delay:${i*.03}s">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info">
+        <div class="lb-pseudo">${info.flag} ${info.name}</div>
+        <div class="lb-sub">${c.players} player${c.players>1?'s':''}</div>
+      </div>
+      <div style="font-size:11px;color:var(--white-mid);text-align:center">${c.players}</div>
+      <div style="font-size:11px;color:var(--white-mid);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        ${c.topPlayer?`<span style="color:${topTitle.color}">${topTitle.emoji}</span> ${getDisplayName(c.topPlayer)}`:'—'}
+      </div>
+      <div class="lb-amount">${fmt(c.total)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderByRegion(){
+  const regionTotals={};
+  Object.keys(REGIONS).forEach(k=>{
+    regionTotals[k]={...REGIONS[k],total:0,players:0,topPlayer:null,topAmt:0,countries:new Set()};
+  });
+
+  allUsersData.forEach(u=>{
+    const code=u.country||'OTHER';
+    for(const [key,region] of Object.entries(REGIONS)){
+      if(region.codes.includes(code)){
+        regionTotals[key].total+=Number(u.total_paid);
+        regionTotals[key].players++;
+        regionTotals[key].countries.add(code);
+        if(Number(u.total_paid)>regionTotals[key].topAmt){
+          regionTotals[key].topAmt=Number(u.total_paid);
+          regionTotals[key].topPlayer=u;
+        }
+        break;
+      }
+    }
+  });
+
+  const sorted=Object.values(regionTotals).sort((a,b)=>b.total-a.total).filter(r=>r.players>0);
+
+  if(!sorted.length){
+    document.getElementById('regions-lb').innerHTML='<div class="empty-lb">No data yet.</div>';
+    return;
+  }
+
+  document.getElementById('regions-lb').innerHTML=sorted.map((r,i)=>{
+    const rank=i+1;
+    const rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
+    const medal=rank===1?'👑':rank===2?'🥈':rank===3?'🥉':rank;
+    const topTitle=r.topPlayer?getTitle(Number(r.topPlayer.total_paid)):{emoji:'',color:'#666'};
+    return `<div class="lb-row ${rc}" style="animation-delay:${i*.05}s">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info">
+        <div class="lb-pseudo" style="font-size:15px">${r.emoji} ${currentLang==='fr'?(r.nameFr||r.name):r.name}</div>
+        <div class="lb-sub">${r.players} players · ${r.countries.size} countries</div>
+      </div>
+      <div>
+        ${r.topPlayer?`<span class="lb-title-tag" style="color:${topTitle.color};border-color:${topTitle.color}">${topTitle.emoji} ${getDisplayName(r.topPlayer)}</span>`:'—'}
+      </div>
+      <div class="lb-amount">${fmt(r.total)}</div>
+    </div>`;
+  }).join('');
+}
 
 // ===== FRIENDS =====
 async function loadMyCode(){
