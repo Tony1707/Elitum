@@ -848,9 +848,7 @@ function shareLinkedIn(){
 
 function shareEmail(rank,name,amt){
   const subject=encodeURIComponent('Elitum — RicherThanYou');
-  const body=encodeURIComponent(getShareText(rank||1,name||'',amt||'')+'
-
-'+SITE_URL);
+  const body=encodeURIComponent(getShareText(rank||1,name||'',amt||'')+'\n\n'+SITE_URL);
   window.open('mailto:?subject='+subject+'&body='+body);
 }
 
