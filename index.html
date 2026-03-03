@@ -773,6 +773,8 @@ window.addEventListener('load',async()=>{
     const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
     currentProfile=prof;
     document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+    // Show admin button if is_admin
+    if(prof && prof.is_admin) document.getElementById('np-admin').style.display='block';
     // Update CTA button for logged-in users
     ctaBtn.textContent='✦ '+( currentLang==='fr'?'Réclamer votre Rang':'Claim Your Rank')+' ✦';
   } else {
@@ -787,6 +789,7 @@ window.addEventListener('load',async()=>{
       const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
       currentProfile=prof;
       document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+      if(prof && prof.is_admin) document.getElementById('np-admin').style.display='block';
     } else {
       currentProfile=null;
       document.getElementById('cta-profile').textContent='👤 '+t('cta-profile').replace('👤 ','');
