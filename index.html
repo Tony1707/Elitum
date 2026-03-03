@@ -301,6 +301,22 @@
       <button class="hof-btn" onclick="switchHofFilter('male')" id="hf-male">♂ Men</button>
       <button class="hof-btn" onclick="switchHofFilter('female')" id="hf-female">♀ Women</button>
     </div>
+    <!-- Country + Region filters -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select class="fselect" id="hof-country-filter" onchange="applyHofFilters()" style="flex:1;min-width:160px;max-width:220px;padding:7px 12px;font-size:11px">
+        <option value="" id="hof-all-countries">🌍 All Countries</option>
+      </select>
+      <select class="fselect" id="hof-region-filter" onchange="applyHofFilters()" style="flex:1;min-width:160px;max-width:220px;padding:7px 12px;font-size:11px">
+        <option value="" id="hof-all-regions">🗺 All Regions</option>
+        <option value="europe">🇪🇺 Europe</option>
+        <option value="americas">🌎 Americas</option>
+        <option value="asia">🌏 Asia</option>
+        <option value="middleeast">🕌 Middle East</option>
+        <option value="oceania">🌊 Oceania</option>
+        <option value="africa">🌍 Africa</option>
+      </select>
+      <button class="hof-btn" onclick="resetHofFilters()" id="hof-reset-btn" style="white-space:nowrap">✕ Reset</button>
+    </div>
     <div class="hof-grid" id="hofGrid"><div class="empty-lb" id="hof-empty-msg">No champions yet. Be the first.</div></div>
   </div>
 
@@ -600,7 +616,7 @@ const STRINGS={
     'lbl-players':'Players','lbl-total':'Total Paid','lbl-countries':'Countries',
     'lbl-leaderboard':'Leaderboard','lbl-hof':'Hall of Fame',
     'hf-all':'All','hf-yearly':'Annual','hf-monthly':'Monthly','hf-male':'♂ Men','hf-female':'♀ Women',
-    'hof-empty-msg':'No champions yet. Be the first.',
+    'hof-empty-msg':'No champions yet. Be the first.','hof-all-countries':'🌍 All Countries','hof-all-regions':'🗺 All Regions','hof-reset-btn':'✕ Reset',
     'lbl-titles':'Titles & Ranks','titles-desc':'Your title is determined by your all-time total. Titles are lost if you drop in the rankings.',
     'lbl-invite-page':'Invite Friends','invite-title':'Challenge Your Friends',
     'invite-sub':'Share Elitum with friends and see who\'s really richer. The leaderboard doesn\'t lie.',
@@ -633,7 +649,7 @@ const STRINGS={
     'lbl-players':'Joueurs','lbl-total':'Total Payé','lbl-countries':'Pays',
     'lbl-leaderboard':'Classement','lbl-hof':'Hall of Fame',
     'hf-all':'Tous','hf-yearly':'Annuel','hf-monthly':'Mensuel','hf-male':'♂ Hommes','hf-female':'♀ Femmes',
-    'hof-empty-msg':'Aucun champion pour l\'instant. Soyez le premier.',
+    'hof-empty-msg':'Aucun champion pour l\'instant. Soyez le premier.','hof-all-countries':'🌍 Tous les Pays','hof-all-regions':'🗺 Toutes les Régions','hof-reset-btn':'✕ Réinitialiser',
     'lbl-titles':'Titres & Rangs','titles-desc':'Votre titre est déterminé par votre total all-time. Les titres se perdent si vous descendez dans le classement.',
     'lbl-invite-page':'Inviter des Amis','invite-title':'Défier vos Amis',
     'invite-sub':'Partagez Elitum avec vos amis et voyez qui est vraiment le plus riche. Le classement ne ment pas.',
@@ -895,28 +911,72 @@ function renderStats(data){
 async function loadHof(){
   const{data,error}=await db.from('hall_of_fame').select('*').order('created_at',{ascending:false});
   if(error){console.error(error);return}
-  renderHof(data||[]);
+  hofAllData=data||[];
+  populateHofCountries(hofAllData);
+  applyHofFilters();
 }
+
+let hofAllData = [];
 
 function switchHofFilter(f){
   hofFilter=f;
   document.querySelectorAll('.hof-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('hf-'+f).classList.add('active');
-  loadHof();
+  applyHofFilters();
+}
+
+function applyHofFilters(){
+  let d = hofAllData;
+  // Period/gender filter
+  if(hofFilter==='yearly') d=d.filter(x=>x.period_type==='yearly');
+  else if(hofFilter==='monthly') d=d.filter(x=>x.period_type==='monthly');
+  else if(hofFilter==='male') d=d.filter(x=>x.gender==='male');
+  else if(hofFilter==='female') d=d.filter(x=>x.gender==='female');
+  // Country filter
+  const country = document.getElementById('hof-country-filter').value;
+  if(country) d=d.filter(x=>x.country===country);
+  // Region filter
+  const region = document.getElementById('hof-region-filter').value;
+  if(region && REGIONS[region]) d=d.filter(x=>REGIONS[region].codes.includes(x.country));
+  renderHof(d);
+}
+
+function resetHofFilters(){
+  hofFilter='all';
+  document.querySelectorAll('.hof-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('hf-all').classList.add('active');
+  document.getElementById('hof-country-filter').value='';
+  document.getElementById('hof-region-filter').value='';
+  renderHof(hofAllData);
+}
+
+function populateHofCountries(data){
+  const sel = document.getElementById('hof-country-filter');
+  const codes = [...new Set(data.map(h=>h.country).filter(Boolean))].sort();
+  // Keep first option
+  while(sel.options.length > 1) sel.remove(1);
+  codes.forEach(code=>{
+    const info = COUNTRIES.find(c=>c.code===code)||{flag:'🌍',name:code};
+    const o = document.createElement('option');
+    o.value=code;
+    o.textContent=info.flag+' '+info.name;
+    sel.appendChild(o);
+  });
 }
 
 function renderHof(data){
-  let d=data;
-  if(hofFilter==='yearly') d=data.filter(x=>x.period_type==='yearly');
-  else if(hofFilter==='monthly') d=data.filter(x=>x.period_type==='monthly');
-  else if(hofFilter==='male') d=data.filter(x=>x.gender==='male');
-  else if(hofFilter==='female') d=data.filter(x=>x.gender==='female');
-  if(!d.length){document.getElementById('hofGrid').innerHTML=`<div class="empty-lb">${t('hof-empty-msg')}</div>`;return}
-  document.getElementById('hofGrid').innerHTML=d.map((h,i)=>`
+  if(!data.length){document.getElementById('hofGrid').innerHTML=`<div class="empty-lb">${t('hof-empty-msg')}</div>`;return}
+  document.getElementById('hofGrid').innerHTML=data.map((h,i)=>`
     <div class="hof-card" style="animation-delay:${i*.05}s">
       <div class="hof-season-badge" style="color:${h.season_color};border-color:${h.season_color}">${h.season_badge}</div>
-      <div><div class="hof-pseudo">${getFlag(h.country)} ${getDisplayName(h)}</div><div class="hof-meta">${h.period_label} · ${h.gender==='male'?'♂':'♀'}</div></div>
-      <div><div class="hof-amount">${fmt(h.amount)}</div><div class="hof-period">${h.period_type==='yearly'?'🏆':'📅'} ${h.period_type}</div></div>
+      <div>
+        <div class="hof-pseudo">${getFlag(h.country)} ${getDisplayName(h)}</div>
+        <div class="hof-meta">${h.period_label} · ${h.gender==='male'?'♂':'♀'} · ${(COUNTRIES.find(c=>c.code===h.country)||{name:h.country}).name}</div>
+      </div>
+      <div>
+        <div class="hof-amount">${fmt(h.amount)}</div>
+        <div class="hof-period">${h.period_type==='yearly'?'🏆':'📅'} ${h.period_type}</div>
+      </div>
     </div>`).join('');
 }
 
