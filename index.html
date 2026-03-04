@@ -374,19 +374,29 @@
   <div class="page" id="page-friends">
     <div class="section-title" id="lbl-friends">Friends Leaderboard</div>
 
-    <!-- Add friend -->
-    <div class="invite-box" style="margin-bottom:28px">
-      <div class="invite-title" id="friends-add-title">Add a Friend</div>
-      <div class="invite-sub" id="friends-add-sub">Enter your email to see your invite code, then share it with friends.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-        <input class="finput" style="flex:1;min-width:180px" id="friendsEmail" placeholder="your@email.com" type="email"/>
-        <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="loadMyCode()">Load</button>
+    <!-- My invite code - visible only when logged in -->
+    <div class="invite-box" style="margin-bottom:28px" id="myCodeSection">
+      <div class="invite-title" id="friends-add-title">My Invite Code</div>
+      <div class="invite-sub" id="friends-add-sub">Share your code with friends so they can join your leaderboard group.</div>
+
+      <!-- Not logged in -->
+      <div id="friends-not-logged" style="text-align:center;padding:16px 0">
+        <a href="profile.html" style="color:var(--gold-dim);font-size:11px;text-decoration:underline;letter-spacing:.2em" id="friends-login-link">Sign in to see your code →</a>
       </div>
-      <div id="myCodeBox" style="display:none">
-        <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px">Your Invite Code</div>
-        <div style="display:flex;gap:8px;align-items:center">
+
+      <!-- Logged in -->
+      <div id="friends-logged" style="display:none">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
           <div id="myCode" style="font-family:Cormorant Garamond,serif;font-size:28px;color:var(--gold);letter-spacing:.3em;background:var(--dark2);padding:10px 20px;border:1px solid rgba(201,168,76,.3)">—</div>
-          <button class="share-btn copy" onclick="copyCode()">📋</button>
+          <button class="share-btn copy" onclick="copyCode()" title="Copy code">📋</button>
+        </div>
+        <!-- Share buttons - only visible to owner -->
+        <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px" id="friends-share-lbl">Share your code via</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="share-btn whatsapp" onclick="shareCodeWhatsApp()" title="WhatsApp">💬</button>
+          <button class="share-btn telegram" onclick="shareCodeTelegram()" title="Telegram">✈️</button>
+          <button class="share-btn copy" onclick="shareCodeSMS()" title="SMS">💬 SMS</button>
+          <button class="share-btn email" onclick="shareCodeEmail()" title="Email">✉️</button>
         </div>
       </div>
     </div>
@@ -394,10 +404,9 @@
     <!-- Enter friend code -->
     <div class="invite-box" style="margin-bottom:28px">
       <div class="invite-title" id="friends-join-title">Join a Friend Group</div>
-      <div class="invite-sub" id="friends-join-sub">Got a friend's invite code? Enter it below to join their leaderboard.</div>
+      <div class="invite-sub" id="friends-join-sub">Got a friend's code? Enter it below.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="finput" style="flex:1;min-width:180px" id="friendCode" placeholder="XXXXXXXX" maxlength="8" style="text-transform:uppercase"/>
-        <input class="finput" style="flex:1;min-width:180px" id="friendsMyEmail" placeholder="your@email.com" type="email"/>
+        <input class="finput" style="flex:1;min-width:180px;text-transform:uppercase;letter-spacing:.3em" id="friendCode" placeholder="XXXXXXXX" maxlength="8"/>
         <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="addFriend()">Add</button>
       </div>
       <div id="friendMsg" style="margin-top:10px"></div>
@@ -824,6 +833,7 @@ function showPage(id){
   document.getElementById('np-'+id).classList.add('active');
   if(id==='countries') loadCountriesData();
   if(id==='notifications') loadNotifications();
+  if(id==='friends') loadMyCode();
   if(id==='titles') renderBadgeLegend();
   if(id==='admin'){ if(currentProfile && currentProfile.is_admin) loadAdminData(); else showPage('leaderboard'); }
 }
@@ -1309,16 +1319,46 @@ function renderByRegion(){
   }).join('');
 }
 
+// ===== SHARE INVITE CODE =====
+function getShareCodeText(){
+  const code = document.getElementById('myCode').textContent;
+  return currentLang === 'fr'
+    ? `Mon code Elitum : ${code}\nRejoins mon groupe sur https://tony1707.github.io/Elitum/ 👑 #RicherThanYou`
+    : `My Elitum code: ${code}\nJoin my group at https://tony1707.github.io/Elitum/ 👑 #RicherThanYou`;
+}
+
+function copyCode(){
+  const code = document.getElementById('myCode').textContent;
+  navigator.clipboard.writeText(code).then(()=>toast(t('toast-copied'))).catch(()=>{});
+}
+
+function shareCodeWhatsApp(){
+  window.open('https://wa.me/?text='+encodeURIComponent(getShareCodeText()),'_blank');
+}
+function shareCodeTelegram(){
+  window.open('https://t.me/share/url?url=https://tony1707.github.io/Elitum/&text='+encodeURIComponent(getShareCodeText()),'_blank');
+}
+function shareCodeEmail(){
+  const code = document.getElementById('myCode').textContent;
+  const subject = encodeURIComponent('Elitum — Join my group');
+  window.location.href = 'mailto:?subject='+subject+'&body='+encodeURIComponent(getShareCodeText());
+}
+function shareCodeSMS(){
+  window.open('sms:?body='+encodeURIComponent(getShareCodeText()),'_blank');
+}
+
 // ===== FRIENDS =====
 async function loadMyCode(){
-  const email=document.getElementById('friendsEmail').value.trim();
-  if(!email||!email.includes('@')) return toast('⚠ Enter your email');
-  const{data,error}=await db.from('users').select('id,pseudo,invite_code').eq('email',email).maybeSingle();
-  if(error||!data) return toast('⚠ No account found with this email');
-  document.getElementById('myCode').textContent=data.invite_code||'—';
-  document.getElementById('myCodeBox').style.display='block';
-  // Pre-fill the friends lb email too
-  document.getElementById('friendsLbEmail').value=email;
+  // Called on page show - auto loads from session
+  if(!currentSession || !currentProfile){
+    document.getElementById('friends-not-logged').style.display='block';
+    document.getElementById('friends-logged').style.display='none';
+    return;
+  }
+  document.getElementById('friends-not-logged').style.display='none';
+  document.getElementById('friends-logged').style.display='block';
+  document.getElementById('myCode').textContent=currentProfile.invite_code||'—';
+  document.getElementById('friendsLbEmail').value=currentProfile.email||'';
   loadFriendsLb();
 }
 
