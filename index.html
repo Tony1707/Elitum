@@ -270,6 +270,20 @@
       <button class="gender-btn" onclick="switchGender('male')" id="gb-male">♂ Men</button>
       <button class="gender-btn" onclick="switchGender('female')" id="gb-female">♀ Women</button>
     </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <select class="fselect" id="lb-country-filter" onchange="loadLeaderboard()" style="flex:1;min-width:140px;max-width:200px;padding:7px 12px;font-size:11px">
+        <option value="">🌍 All Countries</option>
+      </select>
+      <select class="fselect" id="lb-region-filter" onchange="loadLeaderboard()" style="flex:1;min-width:140px;max-width:200px;padding:7px 12px;font-size:11px">
+        <option value="">🗺 All Regions</option>
+        <option value="europe">🇪🇺 Europe</option>
+        <option value="americas">🌎 Americas</option>
+        <option value="asia">🌏 Asia</option>
+        <option value="middleeast">🕌 Middle East</option>
+        <option value="oceania">🌊 Oceania</option>
+        <option value="africa">🌍 Africa</option>
+      </select>
+    </div>
     <div class="top-hero">
       <div class="hero-period" id="heroPeriod">Global All-Time</div>
       <div class="hero-name" id="heroName">—</div>
@@ -839,9 +853,31 @@ async function loadLeaderboard(){
   if(lbGender!=='all') q=q.eq('gender',lbGender);
   const{data,error}=await q;
   if(error){console.error(error);return}
-  lbData=data||[];
+  let filtered=data||[];
+  // Country filter
+  const countryF=document.getElementById('lb-country-filter');
+  const regionF=document.getElementById('lb-region-filter');
+  if(countryF&&countryF.value) filtered=filtered.filter(u=>u.country===countryF.value);
+  if(regionF&&regionF.value&&REGIONS[regionF.value]) filtered=filtered.filter(u=>REGIONS[regionF.value].codes.includes(u.country));
+  lbData=filtered;
   renderLeaderboard(lbData,col);
   renderStats(lbData);
+  populateLbCountries(data||[]);
+}
+
+function populateLbCountries(data){
+  const sel=document.getElementById('lb-country-filter');
+  if(!sel) return;
+  const current=sel.value;
+  while(sel.options.length>1) sel.remove(1);
+  const codes=[...new Set(data.map(u=>u.country).filter(Boolean))].sort();
+  codes.forEach(code=>{
+    const info=COUNTRIES.find(c=>c.code===code)||{flag:'🌍',name:code};
+    const o=document.createElement('option');
+    o.value=code;o.textContent=info.flag+' '+info.name;
+    sel.appendChild(o);
+  });
+  sel.value=current;
 }
 
 function renderLeaderboard(data,col){
@@ -889,7 +925,7 @@ function renderLeaderboard(data,col){
       <div class="lb-info">
         <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
         <div class="lb-sub">${u.country}${dethroned}</div>
-        ${renderBadges(u.badges)}
+        ${renderBadges(u.badges, u.gender)}
       </div>
       <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
       <div class="lb-amount">${fmt(Number(u[col]))}</div>
@@ -1602,9 +1638,10 @@ async function openPubProfile(userId){
       <div class="pub-stat"><span class="pub-stat-val">${fmt(Number(u.total_paid))}</span><span class="pub-stat-lbl">All-Time</span></div>
       <div class="pub-stat"><span class="pub-stat-val">${u.current_streak || 0}🔥</span><span class="pub-stat-lbl">Streak</span></div>
     </div>
-    <div style="display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap">
-      <button class="share-btn twitter" onclick="shareTwitter(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">🐦</button>
-      <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">💬</button>
+    <div style="margin-top:16px;font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px">Challenge them</div>
+    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+      <button class="share-btn twitter" onclick="shareTwitter(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">🐦 Share</button>
+      <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">💬 Challenge</button>
     </div>`;
 }
 
@@ -1769,8 +1806,10 @@ const BADGE_DEF = {
   globetrotter:{emoji:'🌍', en:'Globe Trotter',fr:'Globe Trotter',cls:'badge-globetrotter'},
 };
 
-function renderBadges(badges){
+function renderBadges(badges, gender){
   if(!badges||!badges.length) return '';
+  // When filtered by gender, only show badges if gender matches (or no filter)
+  if(lbGender !== 'all' && gender && gender !== lbGender) return '';
   return '<div class="badges-row">'+
     badges.map(b=>{
       const def=BADGE_DEF[b];
