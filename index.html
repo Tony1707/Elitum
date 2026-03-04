@@ -284,24 +284,27 @@
         <option value="africa">🌍 Africa</option>
       </select>
     </div>
-    <div class="top-hero">
-      <div class="hero-period" id="heroPeriod">Global All-Time</div>
-      <div class="hero-name" id="heroName">—</div>
-      <div class="hero-title-badge" id="heroTitleBadge">—</div>
-      <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
-      <div class="hero-streak" id="heroStreak"></div>
-      <div id="heroBadges" style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+    <!-- PERIOD LABEL -->
+    <div class="hero-period" id="heroPeriod" style="text-align:center;margin-bottom:12px">Global All-Time</div>
+
+    <!-- PODIUM TOP 3 -->
+    <div class="podium" id="podium">
+      <!-- filled by JS -->
     </div>
+
+    <!-- SHARE BAR -->
+    <div id="shareBar" style="display:none">
+      <div class="share-podium-lbl" id="share-ranking-lbl">Share the Top 3</div>
+      <div class="share-podium" id="heroShare"></div>
+    </div>
+
+    <!-- STATS -->
     <div class="stats-bar">
       <div class="stat-item"><span class="stat-val" id="statMembers">—</span><span class="stat-lbl" id="lbl-members">Members</span></div>
       <div class="stat-item"><span class="stat-val" id="statTotal">—</span><span class="stat-lbl" id="lbl-total">Total Paid</span></div>
       <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl" id="lbl-countries">Countries</span></div>
     </div>
     <div class="section-title" id="lbl-leaderboard">Leaderboard</div>
-    <div id="heroShareBar" style="display:none;text-align:center;padding:12px 0 4px;border-top:1px solid rgba(201,168,76,.08);margin-top:4px">
-      <div style="font-size:8px;letter-spacing:.45em;color:var(--white-dim);text-transform:uppercase;margin-bottom:8px" id="share-ranking-lbl">Share the ranking</div>
-      <div id="heroShare" style="display:flex;justify-content:center;gap:8px"></div>
-    </div>
     <div class="lb-header">
       <span id="col-rank">Rank</span><span id="col-member">Member</span><span id="col-title">Title</span><span style="text-align:right" id="col-total">Total</span>
     </div>
@@ -888,36 +891,46 @@ function renderLeaderboard(data,col){
   document.getElementById('heroPeriod').textContent=periods[col]||'';
 
   if(!data.length){
-    document.getElementById('leaderboard').innerHTML=`<div class="empty-lb">${t('empty-lb')}</div>`;
-    document.getElementById('heroName').textContent='—';
-    document.getElementById('heroTitleBadge').textContent='—';
-    document.getElementById('heroAmount').textContent='€0.00';
-    document.getElementById('heroStreak').textContent='';
-    document.getElementById('heroShare').innerHTML='';
-    document.getElementById('heroBadges').innerHTML='';
-    document.getElementById('heroShareBar').style.display='none';
+    document.getElementById('podium').innerHTML='<div class="empty-lb" style="width:100%">'+t('empty-lb')+'</div>';
+    document.getElementById('shareBar').style.display='none';
+    document.getElementById('leaderboard').innerHTML='';
     return;
   }
 
+  // Render podium top 3
+  const top3=[data[0],data[1],data[2]].filter(Boolean);
+  const medalColors=['var(--gold)','#a8a8b0','#cd7f32'];
+  const medalEmoji=['👑','🥈','🥉'];
+  const blockHeights=[64,44,32];
+  const orders=[2,1,3]; // gold center, silver left, bronze right
+
+  document.getElementById('podium').innerHTML=top3.map((u,i)=>{
+    const title=getTitle(Number(u.total_paid));
+    const amt=fmt(Number(u[col]));
+    const initials=(u.pseudo||'?').substring(0,2).toUpperCase();
+    return `<div class="podium-place podium-${i===0?1:i===1?2:3}" onclick="openPubProfile('${u.id}')">
+      <div class="podium-medal">${medalEmoji[i]}</div>
+      <div class="podium-avatar" style="background:${medalColors[i]}22;border-color:${medalColors[i]}">
+        <span style="color:${medalColors[i]};font-weight:700;font-family:Montserrat,sans-serif;font-size:${i===0?'18px':'15px'}">${initials}</span>
+      </div>
+      <div class="podium-name" style="color:${medalColors[i]}">${getDisplayName(u)}</div>
+      <div class="podium-amount">${amt}</div>
+      ${u.current_streak>1?`<div style="font-size:9px;color:var(--gold-dim)">🔥${u.current_streak}</div>`:''}
+      <div class="podium-block" style="height:${blockHeights[i]}px">#${i+1}</div>
+    </div>`;
+  }).join('');
+
+  // Share buttons for top 3
   const top=data[0];
-  const topTitle=getTitle(Number(top.total_paid));
   const topAmt=Number(top[col]);
-
-  document.getElementById('heroName').innerHTML=getDisplayName(top);
-  document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
-  document.getElementById('heroTitleBadge').style.color=topTitle.color;
-  document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
-  document.getElementById('heroAmount').textContent=fmt(topAmt);
-  document.getElementById('heroStreak').textContent=top.current_streak>1?t('streak-text',top.current_streak):'';
-  // Hero badges
-  const heroBadgesEl=document.getElementById('heroBadges');
-  if(heroBadgesEl) heroBadgesEl.innerHTML=renderBadges(top.badges);
-
-  // Share buttons for #1
   document.getElementById('heroShare').innerHTML=`
-    <button class="share-btn twitter" onclick="shareTwitter(1,'${top.pseudo}','${fmt(topAmt)}')">🐦</button>
-    <button class="share-btn whatsapp" onclick="shareWhatsApp(1,'${top.pseudo}','${fmt(topAmt)}')">💬</button>`;
+    <button class="share-btn twitter" onclick="shareTwitter(1,'${top.pseudo}','${fmt(topAmt)}')">🐦 X</button>
+    <button class="share-btn whatsapp" onclick="shareWhatsApp(1,'${top.pseudo}','${fmt(topAmt)}')">💬 WhatsApp</button>
+    <button class="share-btn telegram" onclick="shareTelegram(1,'${top.pseudo}','${fmt(topAmt)}')">✈️ Telegram</button>
+    <button class="share-btn email" onclick="shareEmail(1,'${top.pseudo}','${fmt(topAmt)}')">✉️ Email</button>`;
+  document.getElementById('shareBar').style.display='block';
 
+  // Leaderboard rows (start from #4 since top 3 are in podium)
   document.getElementById('leaderboard').innerHTML=data.map((u,i)=>{
     const r=i+1,rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
     const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
@@ -929,13 +942,14 @@ function renderLeaderboard(data,col){
       <div class="lb-info">
         <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
         <div class="lb-sub">${u.country}${dethroned}</div>
-        ${renderBadges(u.badges, u.gender)}
+        ${renderBadges(u.badges,u.gender)}
       </div>
       <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
       <div class="lb-amount">${fmt(Number(u[col]))}</div>
     </div>`;
   }).join('');
 }
+
 
 function renderStats(data){
   const total=data.reduce((s,u)=>s+Number(u.total_paid),0);
