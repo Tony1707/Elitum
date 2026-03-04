@@ -906,8 +906,8 @@ function renderLeaderboard(data,col){
     const amt=fmt(Number(u[pCol]));
     return '<div onclick="openPubProfile(\''+u.id+'\') " style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:16px 20px;border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'22,transparent);min-width:120px;transition:transform .2s">'
       +'<div style="font-size:'+(i===0?'28px':'22px')+';margin-bottom:6px">'+pMedals[i]+'</div>'
-      +'<div style="font-family:Montserrat,sans-serif;font-size:'+(i===0?'14px':'12px')+';font-weight:600;color:'+pColors[i]+';text-align:center;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+getDisplayName(u)+'</div>'
-      +'<div style="font-size:11px;color:var(--gold-dim);margin-top:4px">'+amt+'</div>'
+      +'<div style="font-family:Cormorant Garamond,serif;font-size:'+(i===0?'32px':'18px')+';font-weight:700;color:'+pColors[i]+';text-align:center;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.05em">'+getDisplayName(u)+'</div>'
+      +'<div style="font-size:'+(i===0?'16px':'11px')+';color:var(--gold-dim);margin-top:4px">'+amt+'</div>'
       +(u.current_streak>1?'<div style="font-size:9px;color:var(--gold-dim);margin-top:2px">🔥'+u.current_streak+'</div>':'')
       +'</div>';
   }
