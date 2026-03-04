@@ -25,7 +25,7 @@
     body::after{content:'';position:fixed;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:1000}
     /* HEADER */
     header{position:relative;z-index:10;text-align:center;padding:40px 20px 0}
-    .logo-svg{width:clamp(160px,40vw,320px);height:auto;margin-bottom:6px}
+    .logo-svg{width:clamp(200px,50vw,400px);height:auto;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
     .logo-text{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,9vw,100px);font-weight:300;letter-spacing:.35em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold-light) 40%,var(--gold) 60%,var(--gold-dim) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:logoShimmer 6s ease-in-out infinite;line-height:1}
     @keyframes logoShimmer{0%,100%{background-position:0% center}50%{background-position:100% center}}
     .tagline{font-size:10px;letter-spacing:.55em;color:var(--gold-dim);text-transform:uppercase;margin-top:8px;font-weight:300}
@@ -207,7 +207,7 @@
 
 <header>
   <!-- SVG Logo -->
-  <svg class="logo-svg" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+  <svg class="logo-svg" viewBox="0 0 480 90" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" style="stop-color:#7a5f28"/>
@@ -222,17 +222,17 @@
       </linearGradient>
     </defs>
     <!-- Decorative lines -->
-    <line x1="0" y1="40" x2="60" y2="40" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
-    <line x1="340" y1="40" x2="400" y2="40" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
-    <!-- Diamond ornament left -->
-    <polygon points="52,40 58,34 64,40 58,46" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
-    <polygon points="336,40 342,34 348,40 342,46" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <line x1="0" y1="44" x2="80" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <line x1="400" y1="44" x2="480" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <!-- Diamond ornaments - well clear of text -->
+    <polygon points="72,44 79,37 86,44 79,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <polygon points="394,44 401,37 408,44 401,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
     <!-- Main text -->
-    <text x="200" y="52" font-family="Cormorant Garamond, serif" font-size="52" font-weight="300"
+    <text x="240" y="56" font-family="Cormorant Garamond, serif" font-size="52" font-weight="300"
           letter-spacing="18" text-anchor="middle" fill="url(#goldGrad)">ELITUM</text>
     <!-- Subtitle -->
-    <text x="200" y="68" font-family="Montserrat, sans-serif" font-size="7" font-weight="300"
-          letter-spacing="8" text-anchor="middle" fill="#a08040">RICHER THAN YOU</text>
+    <text x="240" y="76" font-family="Montserrat, sans-serif" font-size="9" font-weight="400"
+          letter-spacing="6" text-anchor="middle" fill="#c9a84c" opacity="0.6">RICHER THAN YOU</text>
   </svg>
 
   <div style="text-align:center"><div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div></div>
@@ -722,6 +722,8 @@ function setLang(l){
   applySeason(currentSeason);
   applyLang();
   renderTitles();
+  // Re-check admin after short delay (session might load late)
+  setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
   if(lbData.length) renderLeaderboard(lbData,{global:'total_paid',monthly:'monthly_paid',yearly:'yearly_paid',daily:'daily_paid'}[lbTab]);
 }
 
@@ -819,6 +821,8 @@ window.addEventListener('load',async()=>{
   applySeason(currentSeason);
   applyLang();
   renderTitles();
+  // Re-check admin after short delay (session might load late)
+  setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
   loadLeaderboard();
   loadHof();
 
