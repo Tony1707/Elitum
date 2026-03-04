@@ -714,7 +714,7 @@ async function signOut(){
   await db.auth.signOut();
   currentUser=null;currentProfile=null;
   toast(t('signed-out'));
-  setTimeout(()=>showScreen('register'),800);
+  setTimeout(()=>showScreen('login'),800);
 }
 
 // ===== UTILS =====
