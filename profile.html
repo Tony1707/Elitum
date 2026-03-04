@@ -54,6 +54,12 @@
     .switch-mode{text-align:center;margin-top:20px;font-size:11px;color:var(--white-dim)}
     .switch-link{color:var(--gold-dim);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Montserrat',sans-serif;font-size:11px}
     .switch-link:hover{color:var(--gold)}
+    .pw-rules{margin-top:8px;font-size:9px;letter-spacing:.15em;color:var(--white-dim);line-height:1.9}
+    .pw-rules div{transition:color .2s}
+    .pw-rules .ok{color:#4caf50}
+    .pw-rules .fail{color:#e57373}
+    .btn-google{width:100%;padding:11px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s;margin-top:4px}
+    .btn-google:hover{border-color:rgba(255,255,255,.35)}
     .msg{padding:12px 14px;margin-bottom:16px;font-size:11px;border:1px solid;line-height:1.6;display:none}
     .msg.show{display:block}
     .msg-success{border-color:var(--green);color:var(--green);background:rgba(46,204,113,.05)}
@@ -150,10 +156,27 @@
         </div>
         <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
         <div class="strength-text" id="strengthText"></div>
+        <div class="pw-rules" id="pwRules">
+          <div id="rule-len">✗ 8 characters minimum</div>
+          <div id="rule-upper">✗ One uppercase letter</div>
+          <div id="rule-lower">✗ One lowercase letter</div>
+          <div id="rule-num">✗ One number</div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" id="reg-lbl-confirm">Confirm Password</label>
+        <div class="password-wrap">
+          <input class="finput" type="password" id="regConfirm" placeholder="Repeat your password" oninput="checkConfirm()"/>
+          <button class="show-pw" onclick="togglePw('regConfirm',this)" type="button">👁</button>
+        </div>
+        <div id="confirm-feedback" style="font-size:9px;margin-top:5px;letter-spacing:.2em"></div>
       </div>
       <button class="btn" onclick="register()" id="reg-btn">Create Account</button>
       <div class="divider"><span id="or-text">or</span></div>
-      <button class="btn-ghost" onclick="sendMagicLink('register')" id="reg-magic-btn">✉ Sign up with Magic Link</button>
+      <button class="btn-google" onclick="" id="reg-google-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
       <div class="switch-mode">
         <span id="reg-switch">Already have an account?</span>
         <button class="switch-link" onclick="showScreen('login')" id="reg-switch-link">Sign in</button>
@@ -187,7 +210,10 @@
       </div>
       <button class="btn" onclick="login()" id="login-btn">Sign In</button>
       <div class="divider"><span id="or-text2">or</span></div>
-      <button class="btn-ghost" onclick="sendMagicLink('login')" id="login-magic-btn">✉ Sign in with Magic Link</button>
+      <button class="btn-google" onclick="" id="login-google-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
       <div class="switch-mode">
         <span id="login-switch">No account yet?</span>
         <button class="switch-link" onclick="showScreen('register')" id="login-switch-link">Create one</button>
@@ -488,22 +514,48 @@ function togglePw(id,btn){
 
 function checkStrength(){
   const pw=document.getElementById('regPassword').value;
+  const rules={
+    len: pw.length>=8,
+    upper: /[A-Z]/.test(pw),
+    lower: /[a-z]/.test(pw),
+    num: /[0-9]/.test(pw)
+  };
+  // Update rules display
+  document.getElementById('rule-len').className=rules.len?'ok':'fail';
+  document.getElementById('rule-len').textContent=(rules.len?'✓':'✗')+' 8 characters minimum';
+  document.getElementById('rule-upper').className=rules.upper?'ok':'fail';
+  document.getElementById('rule-upper').textContent=(rules.upper?'✓':'✗')+' One uppercase letter';
+  document.getElementById('rule-lower').className=rules.lower?'ok':'fail';
+  document.getElementById('rule-lower').textContent=(rules.lower?'✓':'✗')+' One lowercase letter';
+  document.getElementById('rule-num').className=rules.num?'ok':'fail';
+  document.getElementById('rule-num').textContent=(rules.num?'✓':'✗')+' One number';
+  // Strength bar
+  const score=Object.values(rules).filter(Boolean).length;
   const fill=document.getElementById('strengthFill');
   const text=document.getElementById('strengthText');
-  let score=0;
-  if(pw.length>=8) score++;
-  if(pw.length>=12) score++;
-  if(/[A-Z]/.test(pw)&&/[a-z]/.test(pw)) score++;
-  if(/[0-9]/.test(pw)) score++;
-  if(/[^A-Za-z0-9]/.test(pw)) score++;
-  const colors=['','#c0392b','#e67e22','#f1c40f','#2ecc71'];
-  const labels=['',t('pw-weak'),t('pw-fair'),t('pw-good'),t('pw-strong')];
-  const pct=[0,25,50,75,100];
-  fill.style.width=pct[Math.min(score,4)]+'%';
-  fill.style.background=colors[Math.min(score,4)];
-  text.textContent=score>0?labels[Math.min(score,4)]:'';
-  text.style.color=colors[Math.min(score,4)];
+  const levels=[
+    {w:'0%',c:'transparent',t:''},
+    {w:'25%',c:'#e57373',t:'Weak'},
+    {w:'50%',c:'#ff9800',t:'Fair'},
+    {w:'75%',c:'#ffc107',t:'Good'},
+    {w:'100%',c:'#4caf50',t:'Strong'}
+  ];
+  fill.style.width=levels[score].w;
+  fill.style.background=levels[score].c;
+  text.textContent=levels[score].t;
+  text.style.color=levels[score].c;
+  checkConfirm();
 }
+
+function checkConfirm(){
+  const pw=document.getElementById('regPassword').value;
+  const c=document.getElementById('regConfirm').value;
+  const fb=document.getElementById('confirm-feedback');
+  if(!c) return fb.textContent='';
+  if(pw===c){fb.textContent='✓ Passwords match';fb.style.color='#4caf50';}
+  else{fb.textContent='✗ Passwords do not match';fb.style.color='#e57373';}
+}
+
 
 // ===== PSEUDO CHECK =====
 async function checkPseudo(){
@@ -535,7 +587,10 @@ async function register(){
 
   if(!pseudo||!gender||!country||!email||!password) return showMsg('reg-msg',t('err-fill'),'error');
   if(!email.includes('@')) return showMsg('reg-msg',t('err-email'),'error');
-  if(password.length<8) return showMsg('reg-msg',t('err-pw-short'),'error');
+  if(password.length<8||!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password))
+    return showMsg('reg-msg','Password must be 8+ chars with uppercase, lowercase and a number.','error');
+  const confirm=document.getElementById('regConfirm').value;
+  if(password!==confirm) return showMsg('reg-msg','Passwords do not match.','error');
 
   const btn=document.getElementById('reg-btn');
   btn.disabled=true;
