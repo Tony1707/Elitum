@@ -291,7 +291,6 @@
       <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
       <div class="hero-streak" id="heroStreak"></div>
       <div id="heroBadges" style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
-      <div class="hero-share" id="heroShare"></div>
     </div>
     <div class="stats-bar">
       <div class="stat-item"><span class="stat-val" id="statMembers">—</span><span class="stat-lbl" id="lbl-members">Members</span></div>
@@ -299,6 +298,10 @@
       <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl" id="lbl-countries">Countries</span></div>
     </div>
     <div class="section-title" id="lbl-leaderboard">Leaderboard</div>
+    <div id="heroShareBar" style="display:none;text-align:center;padding:12px 0 4px;border-top:1px solid rgba(201,168,76,.08);margin-top:4px">
+      <div style="font-size:8px;letter-spacing:.45em;color:var(--white-dim);text-transform:uppercase;margin-bottom:8px" id="share-ranking-lbl">Share the ranking</div>
+      <div id="heroShare" style="display:flex;justify-content:center;gap:8px"></div>
+    </div>
     <div class="lb-header">
       <span id="col-rank">Rank</span><span id="col-member">Member</span><span id="col-title">Title</span><span style="text-align:right" id="col-total">Total</span>
     </div>
@@ -646,7 +649,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`I'm ranked #${rank} on Elitum with ${amt}! Can you beat me? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} months at #1`,
     'hero-share-label':'Share',
-    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','nav-countries':'Countries','lbl-notifications':'Notifications','btn-mark-read':'Mark all read','notif-login-msg':'SIGN IN TO SEE NOTIFICATIONS','notif-empty':'No notifications yet.','push-title':'Push Notifications','push-desc':'Get notified when someone overtakes you.','push-btn':'🔔 Enable Notifications','lbl-admin':'Admin Panel','admin-gate-desc':'Enter admin password to access the panel.','admin-gate-btn':'Access Panel','admin-lbl-season':'Season Theme','admin-lbl-season-name':'Season Name','admin-save-season':'Save','admin-lbl-fake-pay':'Test Payment','admin-lbl-verify':'Verification Requests','admin-lbl-users':'All Users','lbl-badges-legend':'Badges','badges-desc':'Badges are awarded automatically based on your actions.','lbl-countries-page':'Country Rankings','lbl-regions':'By Region','lbl-by-country':'By Country','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Americas','lbl-region-asia':'🌏 Asia','lbl-region-middle-east':'🌍 Middle East','lbl-region-oceania':'🌊 Oceania','lbl-region-africa':'🌍 Africa','col-country':'Country','col-members':'Members','col-total-paid':'Total Paid','col-top-member':'Top Member','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','nav-countries':'Countries','share-ranking-lbl':'Share the ranking','lbl-notifications':'Notifications','btn-mark-read':'Mark all read','notif-login-msg':'SIGN IN TO SEE NOTIFICATIONS','notif-empty':'No notifications yet.','push-title':'Push Notifications','push-desc':'Get notified when someone overtakes you.','push-btn':'🔔 Enable Notifications','lbl-admin':'Admin Panel','admin-gate-desc':'Enter admin password to access the panel.','admin-gate-btn':'Access Panel','admin-lbl-season':'Season Theme','admin-lbl-season-name':'Season Name','admin-save-season':'Save','admin-lbl-fake-pay':'Test Payment','admin-lbl-verify':'Verification Requests','admin-lbl-users':'All Users','lbl-badges-legend':'Badges','badges-desc':'Badges are awarded automatically based on your actions.','lbl-countries-page':'Country Rankings','lbl-regions':'By Region','lbl-by-country':'By Country','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Americas','lbl-region-asia':'🌏 Asia','lbl-region-middle-east':'🌍 Middle East','lbl-region-oceania':'🌊 Oceania','lbl-region-africa':'🌍 Africa','col-country':'Country','col-members':'Members','col-total-paid':'Total Paid','col-top-member':'Top Member','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Could not find your rank. Make sure you have made a payment first.',
   },
   fr:{
@@ -679,7 +682,7 @@ const STRINGS={
     'share-text':(name,rank,amt)=>`Je suis classé #${rank} sur Elitum avec ${amt} ! Tu peux faire mieux ? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} mois au #1`,
     'hero-share-label':'Partager',
-    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','nav-countries':'Pays','lbl-notifications':'Notifications','btn-mark-read':'Tout marquer lu','notif-login-msg':'CONNECTEZ-VOUS POUR VOIR VOS NOTIFICATIONS','notif-empty':'Aucune notification.','push-title':'Notifications Push','push-desc':'Soyez notifié quand quelqu\'un vous dépasse.','push-btn':'🔔 Activer les Notifications','lbl-admin':'Panneau Admin','admin-gate-desc':'Entrez le mot de passe admin pour accéder au panneau.','admin-gate-btn':'Accéder','admin-lbl-season':'Thème de Saison','admin-lbl-season-name':'Nom de la Saison','admin-save-season':'Sauvegarder','admin-lbl-fake-pay':'Paiement de Test','admin-lbl-verify':'Demandes de Vérification','admin-lbl-users':'Tous les Utilisateurs','lbl-badges-legend':'Badges','badges-desc':'Les badges sont attribués automatiquement selon vos actions.','lbl-countries-page':'Classement par Pays','lbl-regions':'Par Région','lbl-by-country':'Par Pays','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Amériques','lbl-region-asia':'🌏 Asie','lbl-region-middle-east':'🌍 Moyen-Orient','lbl-region-oceania':'🌊 Océanie','lbl-region-africa':'🌍 Afrique','col-country':'Pays','col-members':'Membres','col-total-paid':'Total Payé','col-top-member':'Meilleur Membre','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','nav-countries':'Pays','share-ranking-lbl':'Partager le classement','lbl-notifications':'Notifications','btn-mark-read':'Tout marquer lu','notif-login-msg':'CONNECTEZ-VOUS POUR VOIR VOS NOTIFICATIONS','notif-empty':'Aucune notification.','push-title':'Notifications Push','push-desc':'Soyez notifié quand quelqu\'un vous dépasse.','push-btn':'🔔 Activer les Notifications','lbl-admin':'Panneau Admin','admin-gate-desc':'Entrez le mot de passe admin pour accéder au panneau.','admin-gate-btn':'Accéder','admin-lbl-season':'Thème de Saison','admin-lbl-season-name':'Nom de la Saison','admin-save-season':'Sauvegarder','admin-lbl-fake-pay':'Paiement de Test','admin-lbl-verify':'Demandes de Vérification','admin-lbl-users':'Tous les Utilisateurs','lbl-badges-legend':'Badges','badges-desc':'Les badges sont attribués automatiquement selon vos actions.','lbl-countries-page':'Classement par Pays','lbl-regions':'Par Région','lbl-by-country':'Par Pays','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Amériques','lbl-region-asia':'🌏 Asie','lbl-region-middle-east':'🌍 Moyen-Orient','lbl-region-oceania':'🌊 Océanie','lbl-region-africa':'🌍 Afrique','col-country':'Pays','col-members':'Membres','col-total-paid':'Total Payé','col-top-member':'Meilleur Membre','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Rang introuvable. Assurez-vous d\'avoir effectué un paiement.',
   }
 };
@@ -892,6 +895,7 @@ function renderLeaderboard(data,col){
     document.getElementById('heroStreak').textContent='';
     document.getElementById('heroShare').innerHTML='';
     document.getElementById('heroBadges').innerHTML='';
+    document.getElementById('heroShareBar').style.display='none';
     return;
   }
 
