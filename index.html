@@ -232,10 +232,10 @@
           letter-spacing="18" text-anchor="middle" fill="url(#goldGrad)">ELITUM</text>
     <!-- Subtitle -->
     <text x="200" y="68" font-family="Montserrat, sans-serif" font-size="7" font-weight="300"
-          letter-spacing="8" text-anchor="middle" fill="#7a5f28">RICHER THAN YOU</text>
+          letter-spacing="8" text-anchor="middle" fill="#a08040">RICHER THAN YOU</text>
   </svg>
 
-  <div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div>
+  <div style="text-align:center"><div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div></div>
   <div class="header-actions">
     <a href="profile.html" class="header-btn">👤 <span id="hdr-profile">My Profile</span></a>
     <button class="header-btn" onclick="openInvite()">✉ <span id="hdr-invite">Invite Friends</span></button>
@@ -531,9 +531,8 @@
 
 </main>
 
-<div class="cta-bar">
+<div class="cta-bar" style="justify-content:center">
   <button class="cta-btn" onclick="openModal()" id="cta-main">✦ Claim Your Rank ✦</button>
-  <a href="profile.html" class="cta-secondary" id="cta-profile">👤 My Profile</a>
 </div>
 
 <!-- Pay Modal -->
@@ -793,7 +792,7 @@ window.addEventListener('load',async()=>{
   if(session){
     const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
     currentProfile=prof;
-    document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+    // cta-profile removed from cta-bar
     // Show admin button if is_admin
     if(prof && prof.is_admin) document.getElementById('np-admin').style.display='block';
     // Update CTA button for logged-in users
@@ -809,7 +808,7 @@ window.addEventListener('load',async()=>{
     if(session){
       const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
       currentProfile=prof;
-      document.getElementById('cta-profile').textContent='👤 '+(prof?prof.pseudo:'Profile');
+      // cta-profile removed from cta-bar
       if(prof && prof.is_admin) document.getElementById('np-admin').style.display='block';
     } else {
       currentProfile=null;
