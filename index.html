@@ -904,14 +904,16 @@ function renderLeaderboard(data,col){
   const heights=[64,44,32];
 
   document.getElementById('podium').innerHTML=top3.map((u,i)=>{
-    const title=getTitle(Number(u.total_paid));
     const amt=fmt(Number(u[col]));
-    return `<div class="podium-place podium-${i===0?1:i===1?2:3}" onclick="openPubProfile('${u.id}')">
-      <div class="podium-medal">${medals[i]}</div>
-      <div class="podium-name" style="color:${colors[i]}">${getDisplayName(u)}</div>
-      <div class="podium-amount">${amt}</div>
-      ${u.current_streak>1?`<div style="font-size:9px;color:var(--gold-dim)">🔥${u.current_streak}</div>`:''}
-      <div class="podium-block" style="height:${heights[i]}px">#${i+1}</div>
+    const pos=i===0?1:i===1?2:3;
+    return `<div class="podium-place podium-${pos}" onclick="openPubProfile('${u.id}')">
+      <div class="podium-info">
+        <div class="podium-medal">${medals[i]}</div>
+        <div class="podium-name">${getDisplayName(u)}</div>
+        <div class="podium-amount">${amt}</div>
+        ${u.current_streak>1?`<div style="font-size:9px;color:var(--gold-dim);margin-top:2px">🔥${u.current_streak}</div>`:''}
+      </div>
+      <div class="podium-block">${pos===1?'★':''}</div>
     </div>`;
   }).join('');
 
