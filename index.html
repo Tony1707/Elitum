@@ -904,11 +904,14 @@ function renderLeaderboard(data,col){
 
   function mkCard(u,i){
     const amt=fmt(Number(u[pCol]));
-    return '<div onclick="openPubProfile(\''+u.id+'\') " style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:16px 20px;border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'22,transparent);min-width:120px;transition:transform .2s">'
-      +'<div style="font-size:'+(i===0?'28px':'22px')+';margin-bottom:6px">'+pMedals[i]+'</div>'
-      +'<div style="font-family:Cormorant Garamond,serif;font-size:'+(i===0?'32px':'18px')+';font-weight:700;color:'+pColors[i]+';text-align:center;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.05em">'+getDisplayName(u)+'</div>'
-      +'<div style="font-size:'+(i===0?'16px':'11px')+';color:var(--gold-dim);margin-top:4px">'+amt+'</div>'
-      +(u.current_streak>1?'<div style="font-size:9px;color:var(--gold-dim);margin-top:2px">🔥'+u.current_streak+'</div>':'')
+    const title=getTitle(Number(u.total_paid));
+    const sizes={name:['42px','24px','20px'],amt:['18px','13px','12px'],medal:['32px','24px','22px'],pad:['28px 32px','18px 24px','16px 20px']};
+    return '<div onclick="openPubProfile(\''+u.id+'\') " style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:'+sizes.pad[i]+';border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'18,transparent);min-width:'+(i===0?'180px':'140px')+';transition:transform .2s;text-align:center" onmouseover="this.style.transform=\'translateY(-4px)\'" onmouseout="this.style.transform=\'none\'">'
+      +'<div style="font-size:'+sizes.medal[i]+';margin-bottom:8px">'+pMedals[i]+'</div>'
+      +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:'+sizes.name[i]+';font-weight:700;color:'+pColors[i]+';letter-spacing:.04em;max-width:'+(i===0?'220px':'160px')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1">'+getDisplayName(u)+'</div>'
+      +'<div style="font-size:9px;letter-spacing:.35em;color:'+title.color+';text-transform:uppercase;margin:4px 0 2px">'+title.emoji+' '+getTitleName(title)+'</div>'
+      +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:'+sizes.amt[i]+';color:var(--gold-dim);margin-top:2px">'+amt+'</div>'
+      +(u.current_streak>1?'<div style="font-size:9px;color:var(--gold-dim);margin-top:4px">🔥'+u.current_streak+'</div>':'')
       +'</div>';
   }
   const pCol=col;
