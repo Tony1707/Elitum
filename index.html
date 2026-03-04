@@ -374,54 +374,33 @@
   <div class="page" id="page-friends">
     <div class="section-title" id="lbl-friends">Friends Leaderboard</div>
 
-    <!-- My invite code - visible only when logged in -->
-    <div class="invite-box" style="margin-bottom:28px" id="myCodeSection">
-      <div class="invite-title" id="friends-add-title">My Invite Code</div>
-      <div class="invite-sub" id="friends-add-sub">Share your code with friends so they can join your leaderboard group.</div>
+    <!-- Not logged in -->
+    <div id="friends-not-logged" style="text-align:center;padding:32px 0;display:none">
+      <p style="font-size:11px;color:var(--white-mid);margin-bottom:14px" id="friends-login-msg">Sign in to manage your friends and see your group leaderboard.</p>
+      <a href="profile.html" class="submit-btn" style="display:inline-block;padding:11px 24px;text-decoration:none" id="friends-login-link">Sign In →</a>
+    </div>
 
-      <!-- Not logged in -->
-      <div id="friends-not-logged" style="text-align:center;padding:16px 0">
-        <a href="profile.html" style="color:var(--gold-dim);font-size:11px;text-decoration:underline;letter-spacing:.2em" id="friends-login-link">Sign in to see your code →</a>
-      </div>
+    <!-- Logged in -->
+    <div id="friends-logged" style="display:none">
 
-      <!-- Logged in -->
-      <div id="friends-logged" style="display:none">
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
-          <div id="myCode" style="font-family:Cormorant Garamond,serif;font-size:28px;color:var(--gold);letter-spacing:.3em;background:var(--dark2);padding:10px 20px;border:1px solid rgba(201,168,76,.3)">—</div>
-          <button class="share-btn copy" onclick="copyCode()" title="Copy code">📋</button>
-        </div>
-        <!-- Share buttons - only visible to owner -->
-        <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px" id="friends-share-lbl">Share your code via</div>
+      <!-- Enter friend code -->
+      <div class="invite-box" style="margin-bottom:28px">
+        <div class="invite-title" id="friends-join-title">Add a Friend</div>
+        <div class="invite-sub" id="friends-join-sub">Enter the code your friend shared with you.</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="share-btn whatsapp" onclick="shareCodeWhatsApp()" title="WhatsApp">💬</button>
-          <button class="share-btn telegram" onclick="shareCodeTelegram()" title="Telegram">✈️</button>
-          <button class="share-btn copy" onclick="shareCodeSMS()" title="SMS">💬 SMS</button>
-          <button class="share-btn email" onclick="shareCodeEmail()" title="Email">✉️</button>
+          <input class="finput" style="flex:1;min-width:180px;text-transform:uppercase;letter-spacing:.3em" id="friendCode" placeholder="XXXXXXXX" maxlength="8"/>
+          <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="addFriend()" id="friends-add-btn">Add</button>
         </div>
+        <div id="friendMsg" style="margin-top:10px"></div>
       </div>
-    </div>
 
-    <!-- Enter friend code -->
-    <div class="invite-box" style="margin-bottom:28px">
-      <div class="invite-title" id="friends-join-title">Join a Friend Group</div>
-      <div class="invite-sub" id="friends-join-sub">Got a friend's code? Enter it below.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="finput" style="flex:1;min-width:180px;text-transform:uppercase;letter-spacing:.3em" id="friendCode" placeholder="XXXXXXXX" maxlength="8"/>
-        <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="addFriend()">Add</button>
+      <!-- Friends leaderboard -->
+      <div class="section-title" id="lbl-friends-lb">Your Group</div>
+      <div class="lb-header">
+        <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
       </div>
-      <div id="friendMsg" style="margin-top:10px"></div>
+      <div id="friendsLeaderboard"><div class="empty-lb" id="friends-empty-msg">Add friends to see your group leaderboard.</div></div>
     </div>
-
-    <!-- Friends leaderboard -->
-    <div class="section-title" id="lbl-friends-lb">Your Group</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input class="finput" style="flex:1" id="friendsLbEmail" placeholder="your@email.com" type="email"/>
-      <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="loadFriendsLb()">View</button>
-    </div>
-    <div class="lb-header">
-      <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
-    </div>
-    <div id="friendsLeaderboard"><div class="empty-lb">Enter your email to see your friends leaderboard</div></div>
   </div>
 
 
@@ -1349,7 +1328,6 @@ function shareCodeSMS(){
 
 // ===== FRIENDS =====
 async function loadMyCode(){
-  // Called on page show - auto loads from session
   if(!currentSession || !currentProfile){
     document.getElementById('friends-not-logged').style.display='block';
     document.getElementById('friends-logged').style.display='none';
@@ -1357,8 +1335,8 @@ async function loadMyCode(){
   }
   document.getElementById('friends-not-logged').style.display='none';
   document.getElementById('friends-logged').style.display='block';
-  document.getElementById('myCode').textContent=currentProfile.invite_code||'—';
-  document.getElementById('friendsLbEmail').value=currentProfile.email||'';
+  // Auto load friends leaderboard
+  loadFriendsLb();
   loadFriendsLb();
 }
 
