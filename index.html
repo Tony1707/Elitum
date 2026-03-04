@@ -899,23 +899,31 @@ function renderLeaderboard(data,col){
 
   // Podium top 3
   const top3=[data[0],data[1],data[2]].filter(Boolean);
-  const colors=['var(--gold)','#a8a8b0','#cd7f32'];
-  const medals=['👑','🥈','🥉'];
-  const heights=[64,44,32];
+  const pColors=['var(--gold)','#a8a8b0','#cd7f32'];
+  const pMedals=['👑','🥈','🥉'];
 
-  document.getElementById('podium').innerHTML=top3.map((u,i)=>{
-    const amt=fmt(Number(u[col]));
-    const pos=i===0?1:i===1?2:3;
-    return `<div class="podium-place podium-${pos}" onclick="openPubProfile('${u.id}')">
-      <div class="podium-info">
-        <div class="podium-medal">${medals[i]}</div>
-        <div class="podium-name">${getDisplayName(u)}</div>
-        <div class="podium-amount">${amt}</div>
-        ${u.current_streak>1?`<div style="font-size:9px;color:var(--gold-dim);margin-top:2px">🔥${u.current_streak}</div>`:''}
-      </div>
-      <div class="podium-block">${pos===1?'★':''}</div>
-    </div>`;
-  }).join('');
+  function mkCard(u,i){
+    const amt=fmt(Number(u[pCol]));
+    return '<div onclick="openPubProfile(\''+u.id+'\') " style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:16px 20px;border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'22,transparent);min-width:120px;transition:transform .2s">'
+      +'<div style="font-size:'+(i===0?'28px':'22px')+';margin-bottom:6px">'+pMedals[i]+'</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:'+(i===0?'14px':'12px')+';font-weight:600;color:'+pColors[i]+';text-align:center;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+getDisplayName(u)+'</div>'
+      +'<div style="font-size:11px;color:var(--gold-dim);margin-top:4px">'+amt+'</div>'
+      +(u.current_streak>1?'<div style="font-size:9px;color:var(--gold-dim);margin-top:2px">🔥'+u.current_streak+'</div>':'')
+      +'</div>';
+  }
+  const pCol=col;
+  let podiumHTML='';
+  if(top3.length===1){
+    podiumHTML='<div style="display:flex;justify-content:center;width:100%">'+mkCard(top3[0],0)+'</div>';
+  } else if(top3.length===2){
+    podiumHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%">'+mkCard(top3[0],0)+mkCard(top3[1],1)+'</div>';
+  } else {
+    podiumHTML='<div style="display:flex;flex-direction:column;align-items:center;width:100%;gap:10px">'
+      +'<div style="display:flex;justify-content:center">'+mkCard(top3[0],0)+'</div>'
+      +'<div style="display:flex;justify-content:center;gap:12px">'+mkCard(top3[1],1)+mkCard(top3[2],2)+'</div>'
+      +'</div>';
+  }
+  document.getElementById('podium').innerHTML=podiumHTML;
 
   // Share buttons
   const top=data[0];
