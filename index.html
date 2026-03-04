@@ -1611,7 +1611,6 @@ async function injectFakePayment(){
   const{error: payErr} = await db.from('payments').insert({
     user_id: currentProfile.id,
     amount: amount,
-    status: 'test',
     created_at: new Date().toISOString()
   });
   if(payErr){ btn.disabled=false; btn.textContent='💰 Inject Payment'; return toast('Error: '+payErr.message); }
