@@ -905,14 +905,25 @@ function renderLeaderboard(data,col){
   function mkCard(u,i){
     const amt=fmt(Number(u[pCol]));
     const title=getTitle(Number(u.total_paid));
-    const sizes={name:['42px','24px','20px'],amt:['18px','13px','12px'],medal:['32px','24px','22px'],pad:['28px 32px','18px 24px','16px 20px']};
-    return '<div onclick="openPubProfile(\''+u.id+'\') " style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:'+sizes.pad[i]+';border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'18,transparent);min-width:'+(i===0?'180px':'140px')+';transition:transform .2s;text-align:center" onmouseover="this.style.transform=\'translateY(-4px)\'" onmouseout="this.style.transform=\'none\'">'
-      +'<div style="font-size:'+sizes.medal[i]+';margin-bottom:8px">'+pMedals[i]+'</div>'
-      +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:'+sizes.name[i]+';font-weight:700;color:'+pColors[i]+';letter-spacing:.04em;max-width:'+(i===0?'220px':'160px')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1">'+getDisplayName(u)+'</div>'
-      +'<div style="font-size:9px;letter-spacing:.35em;color:'+title.color+';text-transform:uppercase;margin:4px 0 2px">'+title.emoji+' '+getTitleName(title)+'</div>'
-      +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:'+sizes.amt[i]+';color:var(--gold-dim);margin-top:2px">'+amt+'</div>'
-      +(u.current_streak>1?'<div style="font-size:9px;color:var(--gold-dim);margin-top:4px">🔥'+u.current_streak+'</div>':'')
-      +'</div>';
+    if(i===0){
+      // #1 - exact same style as the old hero
+      return '<div onclick="openPubProfile(\''+u.id+'\') " style="text-align:center;cursor:pointer;padding:24px 32px;border-top:2px solid var(--gold);background:linear-gradient(180deg,rgba(201,168,76,.12),transparent);width:100%;transition:transform .2s" onmouseover="this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.transform=\'none\'">'
+        +'<div style="font-size:28px;margin-bottom:8px">'+pMedals[0]+'</div>'
+        +'<div class="hero-name">'+getDisplayName(u)+'</div>'
+        +'<div class="hero-title-badge" style="color:'+title.color+';border-color:'+title.color+'">'+title.emoji+' '+getTitleName(title)+'</div>'
+        +'<div class="hero-amount"><span>'+amt+'</span></div>'
+        +(u.current_streak>1?'<div class="hero-streak">🔥 '+u.current_streak+' month streak</div>':'')
+        +'</div>';
+    } else {
+      // #2 and #3 - smaller but same spirit
+      return '<div onclick="openPubProfile(\''+u.id+'\') " style="text-align:center;cursor:pointer;padding:16px 20px;border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'12,transparent);min-width:130px;transition:transform .2s" onmouseover="this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.transform=\'none\'">'
+        +'<div style="font-size:22px;margin-bottom:6px">'+pMedals[i]+'</div>'
+        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(18px,3vw,26px);font-weight:600;color:'+pColors[i]+';max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+getDisplayName(u)+'</div>'
+        +'<div style="display:inline-block;padding:2px 10px;border:1px solid '+title.color+';font-size:8px;letter-spacing:.35em;color:'+title.color+';text-transform:uppercase;margin:4px 0">'+title.emoji+' '+getTitleName(title)+'</div>'
+        +'<div style="font-size:14px;color:var(--gold);font-weight:600;margin-top:2px">'+amt+'</div>'
+        +(u.current_streak>1?'<div style="font-size:9px;color:var(--white-mid);margin-top:3px">🔥'+u.current_streak+'</div>':'')
+        +'</div>';
+    }
   }
   const pCol=col;
   let podiumHTML='';
