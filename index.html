@@ -294,13 +294,13 @@
       <div class="hero-share" id="heroShare"></div>
     </div>
     <div class="stats-bar">
-      <div class="stat-item"><span class="stat-val" id="statPlayers">—</span><span class="stat-lbl" id="lbl-players">Players</span></div>
+      <div class="stat-item"><span class="stat-val" id="statMembers">—</span><span class="stat-lbl" id="lbl-members">Members</span></div>
       <div class="stat-item"><span class="stat-val" id="statTotal">—</span><span class="stat-lbl" id="lbl-total">Total Paid</span></div>
       <div class="stat-item"><span class="stat-val" id="statCountries">—</span><span class="stat-lbl" id="lbl-countries">Countries</span></div>
     </div>
     <div class="section-title" id="lbl-leaderboard">Leaderboard</div>
     <div class="lb-header">
-      <span id="col-rank">Rank</span><span id="col-player">Player</span><span id="col-title">Title</span><span style="text-align:right" id="col-total">Total</span>
+      <span id="col-rank">Rank</span><span id="col-member">Member</span><span id="col-title">Title</span><span style="text-align:right" id="col-total">Total</span>
     </div>
     <div id="leaderboard"><div class="empty-lb">Loading...</div></div>
   </div>
@@ -411,7 +411,7 @@
       <!-- Friends leaderboard -->
       <div class="section-title" id="lbl-friends-lb">Your Group</div>
       <div class="lb-header">
-        <span>Rank</span><span>Player</span><span>Title</span><span style="text-align:right">Total</span>
+        <span>Rank</span><span>Member</span><span>Title</span><span style="text-align:right">Total</span>
       </div>
       <div id="friendsLeaderboard"><div class="empty-lb" id="friends-empty-msg">Add friends to see your group leaderboard.</div></div>
     </div>
@@ -438,7 +438,7 @@
     <!-- By Country -->
     <div id="countries-country-view">
       <div class="lb-header" style="grid-template-columns:44px 1fr 90px 90px 120px">
-        <span>Rank</span><span id="col-country">Country</span><span id="col-players">Players</span><span style="text-align:right" id="col-top-player">Top Player</span><span style="text-align:right" id="col-total-paid">Total</span>
+        <span>Rank</span><span id="col-country">Country</span><span id="col-members">Members</span><span style="text-align:right" id="col-top-member">Top Member</span><span style="text-align:right" id="col-total-paid">Total</span>
       </div>
       <div id="countries-lb"><div class="empty-lb">Loading...</div></div>
     </div>
@@ -621,7 +621,7 @@ const STRINGS={
     'hdr-profile':'My Profile','hdr-invite':'Invite Friends','hdr-legal':'Legal',
     'lbt-global':'🌍 Global','lbt-monthly':'📅 Month','lbt-yearly':'🏆 Year','lbt-daily':'⚡ 24h',
     'gb-all':'All','gb-male':'♂ Men','gb-female':'♀ Women',
-    'lbl-players':'Players','lbl-total':'Total Paid','lbl-countries':'Countries',
+    'lbl-members':'Members','lbl-total':'Total Paid','lbl-countries':'Countries',
     'lbl-leaderboard':'Leaderboard','lbl-hof':'Hall of Fame',
     'hf-all':'All','hf-yearly':'Annual','hf-monthly':'Monthly','hf-male':'♂ Men','hf-female':'♀ Women',
     'hof-empty-msg':'No champions yet. Be the first.','hof-all-countries':'🌍 All Countries','hof-all-regions':'🗺 All Regions','hof-reset-btn':'✕ Reset',
@@ -630,7 +630,7 @@ const STRINGS={
     'invite-sub':'Share Elitum with friends and see who\'s really richer. The leaderboard doesn\'t lie.',
     'invite-copy-btn':'📋 Copy','lbl-share-on':'Share On','lbl-share-rank':'Share Your Rank',
     'share-rank-desc':'Enter your email to generate a personalized share card with your rank.',
-    'share-card-btn':'Generate','col-rank':'Rank','col-player':'Player','col-title':'Title','col-total':'Total',
+    'share-card-btn':'Generate','col-rank':'Rank','col-member':'Member','col-title':'Title','col-total':'Total',
     'cta-main':'✦ Claim Your Rank ✦','cta-profile':'👤 My Profile',
     'modal-title':'Join Elitum','modal-sub':'Secure your rank · RicherThanYou',
     'lbl-pseudo':'Pseudo','lbl-gender':'Gender','lbl-country':'Country','lbl-amount':'Amount (€ minimum 1€)','lbl-email':'Email',
@@ -642,11 +642,11 @@ const STRINGS={
     'legal-link':'Terms & Conditions',
     'invite-modal-title':'Invite Friends','invite-modal-sub':'Challenge them to beat your rank',
     'period-global':'Global All-Time','period-month':'This Month','period-year':'This Year','period-day':'Last 24h',
-    'empty-lb':'No players yet. Be the first!',
+    'empty-lb':'No members yet. Be the first!',
     'share-text':(name,rank,amt)=>`I'm ranked #${rank} on Elitum with ${amt}! Can you beat me? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} months at #1`,
     'hero-share-label':'Share',
-    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','nav-countries':'Countries','lbl-notifications':'Notifications','btn-mark-read':'Mark all read','notif-login-msg':'SIGN IN TO SEE NOTIFICATIONS','notif-empty':'No notifications yet.','push-title':'Push Notifications','push-desc':'Get notified when someone overtakes you.','push-btn':'🔔 Enable Notifications','lbl-admin':'Admin Panel','admin-gate-desc':'Enter admin password to access the panel.','admin-gate-btn':'Access Panel','admin-lbl-season':'Season Theme','admin-lbl-season-name':'Season Name','admin-save-season':'Save','admin-lbl-fake-pay':'Test Payment','admin-lbl-verify':'Verification Requests','admin-lbl-users':'All Users','lbl-badges-legend':'Badges','badges-desc':'Badges are awarded automatically based on your actions.','lbl-countries-page':'Country Rankings','lbl-regions':'By Region','lbl-by-country':'By Country','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Americas','lbl-region-asia':'🌏 Asia','lbl-region-middle-east':'🌍 Middle East','lbl-region-oceania':'🌊 Oceania','lbl-region-africa':'🌍 Africa','col-country':'Country','col-players':'Players','col-total-paid':'Total Paid','col-top-player':'Top Player','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Friends Leaderboard','friends-add-title':'Add a Friend','friends-add-sub':'Enter your email to see your invite code, then share it with friends.','friends-join-title':'Join a Friend Group','friends-join-sub':"Got a friend invite code? Enter it below.",'lbl-friends-lb':'Your Group','nav-friends':'Friends','nav-countries':'Countries','lbl-notifications':'Notifications','btn-mark-read':'Mark all read','notif-login-msg':'SIGN IN TO SEE NOTIFICATIONS','notif-empty':'No notifications yet.','push-title':'Push Notifications','push-desc':'Get notified when someone overtakes you.','push-btn':'🔔 Enable Notifications','lbl-admin':'Admin Panel','admin-gate-desc':'Enter admin password to access the panel.','admin-gate-btn':'Access Panel','admin-lbl-season':'Season Theme','admin-lbl-season-name':'Season Name','admin-save-season':'Save','admin-lbl-fake-pay':'Test Payment','admin-lbl-verify':'Verification Requests','admin-lbl-users':'All Users','lbl-badges-legend':'Badges','badges-desc':'Badges are awarded automatically based on your actions.','lbl-countries-page':'Country Rankings','lbl-regions':'By Region','lbl-by-country':'By Country','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Americas','lbl-region-asia':'🌏 Asia','lbl-region-middle-east':'🌍 Middle East','lbl-region-oceania':'🌊 Oceania','lbl-region-africa':'🌍 Africa','col-country':'Country','col-members':'Members','col-total-paid':'Total Paid','col-top-member':'Top Member','toast-copied':'Link copied!','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Could not find your rank. Make sure you have made a payment first.',
   },
   fr:{
@@ -654,7 +654,7 @@ const STRINGS={
     'hdr-profile':'Mon Profil','hdr-invite':'Inviter des Amis','hdr-legal':'Légal',
     'lbt-global':'🌍 Global','lbt-monthly':'📅 Mois','lbt-yearly':'🏆 Année','lbt-daily':'⚡ 24h',
     'gb-all':'Tous','gb-male':'♂ Hommes','gb-female':'♀ Femmes',
-    'lbl-players':'Joueurs','lbl-total':'Total Payé','lbl-countries':'Pays',
+    'lbl-members':'Membres','lbl-total':'Total Payé','lbl-countries':'Pays',
     'lbl-leaderboard':'Classement','lbl-hof':'Hall of Fame',
     'hf-all':'Tous','hf-yearly':'Annuel','hf-monthly':'Mensuel','hf-male':'♂ Hommes','hf-female':'♀ Femmes',
     'hof-empty-msg':'Aucun champion pour l\'instant. Soyez le premier.','hof-all-countries':'🌍 Tous les Pays','hof-all-regions':'🗺 Toutes les Régions','hof-reset-btn':'✕ Réinitialiser',
@@ -663,7 +663,7 @@ const STRINGS={
     'invite-sub':'Partagez Elitum avec vos amis et voyez qui est vraiment le plus riche. Le classement ne ment pas.',
     'invite-copy-btn':'📋 Copier','lbl-share-on':'Partager sur','lbl-share-rank':'Partager son Rang',
     'share-rank-desc':'Entrez votre email pour générer une carte de partage personnalisée avec votre rang.',
-    'share-card-btn':'Générer','col-rank':'Rang','col-player':'Joueur','col-title':'Titre','col-total':'Total',
+    'share-card-btn':'Générer','col-rank':'Rang','col-member':'Membre','col-title':'Titre','col-total':'Total',
     'cta-main':'✦ Réclamez votre Rang ✦','cta-profile':'👤 Mon Profil',
     'modal-title':'Rejoindre Elitum','modal-sub':'Sécurisez votre rang · RicherThanYou',
     'lbl-pseudo':'Pseudo','lbl-gender':'Genre','lbl-country':'Pays','lbl-amount':'Montant (€ minimum 1€)','lbl-email':'Email',
@@ -675,11 +675,11 @@ const STRINGS={
     'legal-link':'Conditions Générales',
     'invite-modal-title':'Inviter des Amis','invite-modal-sub':'Défiez-les de battre votre rang',
     'period-global':'Global All-Time','period-month':'Ce Mois','period-year':'Cette Année','period-day':'24 Dernières Heures',
-    'empty-lb':'Aucun joueur pour l\'instant. Soyez le premier !',
+    'empty-lb':'Aucun membre pour l\'instant. Soyez le premier !',
     'share-text':(name,rank,amt)=>`Je suis classé #${rank} sur Elitum avec ${amt} ! Tu peux faire mieux ? 👑 #RicherThanYou`,
     'streak-text':(n)=>`🔥 ${n} mois au #1`,
     'hero-share-label':'Partager',
-    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','nav-countries':'Pays','lbl-notifications':'Notifications','btn-mark-read':'Tout marquer lu','notif-login-msg':'CONNECTEZ-VOUS POUR VOIR VOS NOTIFICATIONS','notif-empty':'Aucune notification.','push-title':'Notifications Push','push-desc':'Soyez notifié quand quelqu\'un vous dépasse.','push-btn':'🔔 Activer les Notifications','lbl-admin':'Panneau Admin','admin-gate-desc':'Entrez le mot de passe admin pour accéder au panneau.','admin-gate-btn':'Accéder','admin-lbl-season':'Thème de Saison','admin-lbl-season-name':'Nom de la Saison','admin-save-season':'Sauvegarder','admin-lbl-fake-pay':'Paiement de Test','admin-lbl-verify':'Demandes de Vérification','admin-lbl-users':'Tous les Utilisateurs','lbl-badges-legend':'Badges','badges-desc':'Les badges sont attribués automatiquement selon vos actions.','lbl-countries-page':'Classement par Pays','lbl-regions':'Par Région','lbl-by-country':'Par Pays','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Amériques','lbl-region-asia':'🌏 Asie','lbl-region-middle-east':'🌍 Moyen-Orient','lbl-region-oceania':'🌊 Océanie','lbl-region-africa':'🌍 Afrique','col-country':'Pays','col-players':'Joueurs','col-total-paid':'Total Payé','col-top-player':'Meilleur Joueur','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
+    'lbl-friends':'Classement Amis','friends-add-title':'Ajouter un Ami','friends-add-sub':"Entrez votre email pour voir votre code d'invitation.",'friends-join-title':'Rejoindre un Groupe','friends-join-sub':"Vous avez le code d'un ami ? Entrez-le ci-dessous.",'lbl-friends-lb':'Votre Groupe','nav-friends':'Amis','nav-countries':'Pays','lbl-notifications':'Notifications','btn-mark-read':'Tout marquer lu','notif-login-msg':'CONNECTEZ-VOUS POUR VOIR VOS NOTIFICATIONS','notif-empty':'Aucune notification.','push-title':'Notifications Push','push-desc':'Soyez notifié quand quelqu\'un vous dépasse.','push-btn':'🔔 Activer les Notifications','lbl-admin':'Panneau Admin','admin-gate-desc':'Entrez le mot de passe admin pour accéder au panneau.','admin-gate-btn':'Accéder','admin-lbl-season':'Thème de Saison','admin-lbl-season-name':'Nom de la Saison','admin-save-season':'Sauvegarder','admin-lbl-fake-pay':'Paiement de Test','admin-lbl-verify':'Demandes de Vérification','admin-lbl-users':'Tous les Utilisateurs','lbl-badges-legend':'Badges','badges-desc':'Les badges sont attribués automatiquement selon vos actions.','lbl-countries-page':'Classement par Pays','lbl-regions':'Par Région','lbl-by-country':'Par Pays','lbl-region-europe':'🇪🇺 Europe','lbl-region-americas':'🌎 Amériques','lbl-region-asia':'🌏 Asie','lbl-region-middle-east':'🌍 Moyen-Orient','lbl-region-oceania':'🌊 Océanie','lbl-region-africa':'🌍 Afrique','col-country':'Pays','col-members':'Membres','col-total-paid':'Total Payé','col-top-member':'Meilleur Membre','toast-copied':'Lien copié !','toast-welcome':(p,t)=>`🎉 ${p} — ${t}`,
     'no-rank':'Rang introuvable. Assurez-vous d\'avoir effectué un paiement.',
   }
 };
@@ -936,7 +936,7 @@ function renderLeaderboard(data,col){
 function renderStats(data){
   const total=data.reduce((s,u)=>s+Number(u.total_paid),0);
   const countries=new Set(data.map(u=>u.country)).size;
-  document.getElementById('statPlayers').textContent=data.length;
+  document.getElementById('statMembers').textContent=data.length;
   document.getElementById('statTotal').textContent='€'+total.toLocaleString('en',{maximumFractionDigits:0});
   document.getElementById('statCountries').textContent=countries;
 }
@@ -1248,12 +1248,12 @@ function renderByCountry(){
   const map={};
   allUsersData.forEach(u=>{
     const c=u.country||'OTHER';
-    if(!map[c]) map[c]={code:c,total:0,players:0,topPlayer:null,topAmt:0};
+    if(!map[c]) map[c]={code:c,total:0,members:0,topMember:null,topAmt:0};
     map[c].total+=Number(u.total_paid);
-    map[c].players++;
+    map[c].members++;
     if(Number(u.total_paid)>map[c].topAmt){
       map[c].topAmt=Number(u.total_paid);
-      map[c].topPlayer=u;
+      map[c].topMember=u;
     }
   });
 
@@ -1270,16 +1270,16 @@ function renderByCountry(){
     const rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
     const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
     const info=countryMap[c.code]||{flag:'🌍',name:c.code};
-    const topTitle=c.topPlayer?getTitle(Number(c.topPlayer.total_paid)):{emoji:'',color:'#666'};
+    const topTitle=c.topMember?getTitle(Number(c.topMember.total_paid)):{emoji:'',color:'#666'};
     return `<div class="lb-row ${rc}" style="grid-template-columns:44px 1fr 90px 90px 120px;animation-delay:${i*.03}s">
       <div class="lb-rank">${medal}</div>
       <div class="lb-info">
         <div class="lb-pseudo">${info.flag} ${info.name}</div>
-        <div class="lb-sub">${c.players} player${c.players>1?'s':''}</div>
+        <div class="lb-sub">${c.members} member${c.members>1?'s':''}</div>
       </div>
-      <div style="font-size:11px;color:var(--white-mid);text-align:center">${c.players}</div>
+      <div style="font-size:11px;color:var(--white-mid);text-align:center">${c.members}</div>
       <div style="font-size:11px;color:var(--white-mid);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-        ${c.topPlayer?`<span style="color:${topTitle.color}">${topTitle.emoji}</span> ${getDisplayName(c.topPlayer)}`:'—'}
+        ${c.topMember?`<span style="color:${topTitle.color}">${topTitle.emoji}</span> ${getDisplayName(c.topMember)}`:'—'}
       </div>
       <div class="lb-amount">${fmt(c.total)}</div>
     </div>`;
@@ -1289,7 +1289,7 @@ function renderByCountry(){
 function renderByRegion(){
   const regionTotals={};
   Object.keys(REGIONS).forEach(k=>{
-    regionTotals[k]={...REGIONS[k],total:0,players:0,topPlayer:null,topAmt:0,countries:new Set()};
+    regionTotals[k]={...REGIONS[k],total:0,members:0,topMember:null,topAmt:0,countries:new Set()};
   });
 
   allUsersData.forEach(u=>{
@@ -1297,18 +1297,18 @@ function renderByRegion(){
     for(const [key,region] of Object.entries(REGIONS)){
       if(region.codes.includes(code)){
         regionTotals[key].total+=Number(u.total_paid);
-        regionTotals[key].players++;
+        regionTotals[key].members++;
         regionTotals[key].countries.add(code);
         if(Number(u.total_paid)>regionTotals[key].topAmt){
           regionTotals[key].topAmt=Number(u.total_paid);
-          regionTotals[key].topPlayer=u;
+          regionTotals[key].topMember=u;
         }
         break;
       }
     }
   });
 
-  const sorted=Object.values(regionTotals).sort((a,b)=>b.total-a.total).filter(r=>r.players>0);
+  const sorted=Object.values(regionTotals).sort((a,b)=>b.total-a.total).filter(r=>r.members>0);
 
   if(!sorted.length){
     document.getElementById('regions-lb').innerHTML='<div class="empty-lb">No data yet.</div>';
@@ -1319,15 +1319,15 @@ function renderByRegion(){
     const rank=i+1;
     const rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
     const medal=rank===1?'👑':rank===2?'🥈':rank===3?'🥉':rank;
-    const topTitle=r.topPlayer?getTitle(Number(r.topPlayer.total_paid)):{emoji:'',color:'#666'};
+    const topTitle=r.topMember?getTitle(Number(r.topMember.total_paid)):{emoji:'',color:'#666'};
     return `<div class="lb-row ${rc}" style="animation-delay:${i*.05}s">
       <div class="lb-rank">${medal}</div>
       <div class="lb-info">
         <div class="lb-pseudo" style="font-size:15px">${r.emoji} ${currentLang==='fr'?(r.nameFr||r.name):r.name}</div>
-        <div class="lb-sub">${r.players} players · ${r.countries.size} countries</div>
+        <div class="lb-sub">${r.members} members · ${r.countries.size} countries</div>
       </div>
       <div>
-        ${r.topPlayer?`<span class="lb-title-tag" style="color:${topTitle.color};border-color:${topTitle.color}">${topTitle.emoji} ${getDisplayName(r.topPlayer)}</span>`:'—'}
+        ${r.topMember?`<span class="lb-title-tag" style="color:${topTitle.color};border-color:${topTitle.color}">${topTitle.emoji} ${getDisplayName(r.topMember)}</span>`:'—'}
       </div>
       <div class="lb-amount">${fmt(r.total)}</div>
     </div>`;
@@ -1777,7 +1777,7 @@ function renderBadgeLegend(){
     {key:'legend',   desc:{en:'Has been ranked #1 at least once',              fr:'A été classé #1 au moins une fois'}},
     {key:'onfire',   desc:{en:'3+ consecutive months at #1',                   fr:'3 mois consécutifs ou plus au #1'}},
     {key:'diamond',  desc:{en:'All-time total of €10,000 or more',             fr:'Total all-time de 10 000 € ou plus'}},
-    {key:'globetrotter',desc:{en:'Only player from your country in the top 10', fr:'Seul joueur de votre pays dans le top 10'}},
+    {key:'globetrotter',desc:{en:'Only member from your country in the top 10', fr:'Seul membre de votre pays dans le top 10'}},
   ];
 
   document.getElementById('badgesGrid').innerHTML = badges.map(b => {
