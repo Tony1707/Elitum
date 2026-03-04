@@ -284,18 +284,20 @@
         <option value="africa">🌍 Africa</option>
       </select>
     </div>
-    <!-- PERIOD LABEL -->
-    <div class="hero-period" id="heroPeriod" style="text-align:center;margin-bottom:12px">Global All-Time</div>
-
-    <!-- PODIUM TOP 3 -->
-    <div class="podium" id="podium">
-      <!-- filled by JS -->
+    <div class="top-hero" id="heroBox">
+      <div class="hero-period" id="heroPeriod">Global All-Time</div>
+      <div class="hero-name" id="heroName">—</div>
+      <div class="hero-title-badge" id="heroTitleBadge">—</div>
+      <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
+      <div class="hero-streak" id="heroStreak"></div>
+      <div id="heroBadges" style="display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
     </div>
-
+    <!-- #2 and #3 appear here when they exist -->
+    <div id="podium23" style="display:none;flex-direction:row;justify-content:center;gap:12px;margin-top:12px"></div>
     <!-- SHARE BAR -->
-    <div id="shareBar" style="display:none">
-      <div class="share-podium-lbl" id="share-ranking-lbl">Share the Top 3</div>
-      <div class="share-podium" id="heroShare"></div>
+    <div id="shareBar" style="display:none;text-align:center;margin:12px 0">
+      <div style="font-size:8px;letter-spacing:.45em;color:var(--white-dim);text-transform:uppercase;margin-bottom:8px" id="share-ranking-lbl">Partager le classement</div>
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap" id="heroShare"></div>
     </div>
 
     <!-- STATS -->
@@ -891,81 +893,80 @@ function renderLeaderboard(data,col){
   document.getElementById('heroPeriod').textContent=periods[col]||'';
 
   if(!data.length){
-    document.getElementById('podium').innerHTML='<div class="empty-lb" style="width:100%">'+t('empty-lb')+'</div>';
+    document.getElementById('heroName').textContent='—';
+    document.getElementById('heroTitleBadge').textContent='—';
+    document.getElementById('heroAmount').textContent='€0.00';
+    document.getElementById('heroStreak').textContent='';
+    document.getElementById('heroBadges').innerHTML='';
+    document.getElementById('heroTitleBadge').style.color='';
+    document.getElementById('heroTitleBadge').style.borderColor='';
+    document.getElementById('podium23').style.display='none';
     document.getElementById('shareBar').style.display='none';
-    document.getElementById('leaderboard').innerHTML='';
+    document.getElementById('leaderboard').innerHTML='<div class="empty-lb">'+t('empty-lb')+'</div>';
     return;
   }
 
-  // Podium top 3
-  const top3=[data[0],data[1],data[2]].filter(Boolean);
-  const pColors=['var(--gold)','#a8a8b0','#cd7f32'];
-  const pMedals=['👑','🥈','🥉'];
-
-  function mkCard(u,i){
-    const amt=fmt(Number(u[pCol]));
-    const title=getTitle(Number(u.total_paid));
-    if(i===0){
-      // #1 - exact same style as the old hero
-      return '<div onclick="openPubProfile(\''+u.id+'\') " style="text-align:center;cursor:pointer;padding:24px 32px;border-top:2px solid var(--gold);background:linear-gradient(180deg,rgba(201,168,76,.12),transparent);width:100%;transition:transform .2s" onmouseover="this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.transform=\'none\'">'
-        +'<div style="font-size:28px;margin-bottom:8px">'+pMedals[0]+'</div>'
-        +'<div class="hero-name">'+getDisplayName(u)+'</div>'
-        +'<div class="hero-title-badge" style="color:'+title.color+';border-color:'+title.color+'">'+title.emoji+' '+getTitleName(title)+'</div>'
-        +'<div class="hero-amount"><span>'+amt+'</span></div>'
-        +(u.current_streak>1?'<div class="hero-streak">🔥 '+u.current_streak+' month streak</div>':'')
-        +'</div>';
-    } else {
-      // #2 and #3 - smaller but same spirit
-      return '<div onclick="openPubProfile(\''+u.id+'\') " style="text-align:center;cursor:pointer;padding:16px 20px;border-top:2px solid '+pColors[i]+';background:linear-gradient(180deg,'+pColors[i]+'12,transparent);min-width:130px;transition:transform .2s" onmouseover="this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.transform=\'none\'">'
-        +'<div style="font-size:22px;margin-bottom:6px">'+pMedals[i]+'</div>'
-        +'<div style="font-family:\'Cormorant Garamond\',serif;font-size:clamp(18px,3vw,26px);font-weight:600;color:'+pColors[i]+';max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+getDisplayName(u)+'</div>'
-        +'<div style="display:inline-block;padding:2px 10px;border:1px solid '+title.color+';font-size:8px;letter-spacing:.35em;color:'+title.color+';text-transform:uppercase;margin:4px 0">'+title.emoji+' '+getTitleName(title)+'</div>'
-        +'<div style="font-size:14px;color:var(--gold);font-weight:600;margin-top:2px">'+amt+'</div>'
-        +(u.current_streak>1?'<div style="font-size:9px;color:var(--white-mid);margin-top:3px">🔥'+u.current_streak+'</div>':'')
-        +'</div>';
-    }
-  }
-  const pCol=col;
-  let podiumHTML='';
-  if(top3.length===1){
-    podiumHTML='<div style="display:flex;justify-content:center;width:100%">'+mkCard(top3[0],0)+'</div>';
-  } else if(top3.length===2){
-    podiumHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%">'+mkCard(top3[0],0)+mkCard(top3[1],1)+'</div>';
-  } else {
-    podiumHTML='<div style="display:flex;flex-direction:column;align-items:center;width:100%;gap:10px">'
-      +'<div style="display:flex;justify-content:center">'+mkCard(top3[0],0)+'</div>'
-      +'<div style="display:flex;justify-content:center;gap:12px">'+mkCard(top3[1],1)+mkCard(top3[2],2)+'</div>'
-      +'</div>';
-  }
-  document.getElementById('podium').innerHTML=podiumHTML;
-
-  // Share buttons
+  // #1 in original hero box
   const top=data[0];
+  const topTitle=getTitle(Number(top.total_paid));
   const topAmt=Number(top[col]);
-  document.getElementById('heroShare').innerHTML=`
-    <button class="share-btn twitter" onclick="shareTwitter(1,'${top.pseudo}','${fmt(topAmt)}')">🐦 X</button>
-    <button class="share-btn whatsapp" onclick="shareWhatsApp(1,'${top.pseudo}','${fmt(topAmt)}')">💬 WhatsApp</button>
-    <button class="share-btn telegram" onclick="shareTelegram(1,'${top.pseudo}','${fmt(topAmt)}')">✈️ Telegram</button>
-    <button class="share-btn email" onclick="shareEmail(1,'${top.pseudo}','${fmt(topAmt)}')">✉️ Email</button>`;
+  document.getElementById('heroName').textContent=getDisplayName(top);
+  document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
+  document.getElementById('heroTitleBadge').style.color=topTitle.color;
+  document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
+  document.getElementById('heroAmount').textContent=fmt(topAmt);
+  document.getElementById('heroStreak').textContent=top.current_streak>1?t('streak-text',top.current_streak):'';
+  document.getElementById('heroBadges').innerHTML=renderBadges(top.badges,top.gender);
+
+  // #2 and #3
+  const colors=['var(--gold)','#a8a8b0','#cd7f32'];
+  const medals=['👑','🥈','🥉'];
+  const p23=document.getElementById('podium23');
+  if(data.length>=2){
+    p23.style.display='flex';
+    p23.innerHTML=[data[1],data[2]].filter(Boolean).map(function(u,i){
+      var idx=i+1;
+      var t2=getTitle(Number(u.total_paid));
+      var uid=u.id;
+      var html='<div onclick="openPubProfile(\x27'+uid+'\x27)" style="text-align:center;cursor:pointer;padding:14px 20px;border-top:2px solid '+colors[idx]+';background:linear-gradient(180deg,'+colors[idx]+'12,transparent);min-width:120px;flex:1;max-width:200px;transition:transform .2s">';
+      html+='<div style="font-size:20px;margin-bottom:6px">'+medals[idx]+'</div>';
+      html+='<div style="font-family:Cormorant Garamond,serif;font-size:clamp(16px,3vw,24px);font-weight:600;color:'+colors[idx]+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">'+getDisplayName(u)+'</div>';
+      html+='<div style="display:inline-block;padding:2px 8px;border:1px solid '+t2.color+';font-size:8px;letter-spacing:.3em;color:'+t2.color+';text-transform:uppercase;margin:4px 0">'+t2.emoji+' '+getTitleName(t2)+'</div>';
+      html+='<div style="font-size:14px;color:var(--gold);font-weight:600">'+fmt(Number(u[col]))+'</div>';
+      if(u.current_streak>1) html+='<div style="font-size:9px;color:var(--white-mid);margin-top:3px">🔥'+u.current_streak+'</div>';
+      html+='</div>';
+      return html;
+    }).join('');
+  } else {
+    p23.style.display='none';
+  }
+
+  // Share bar
+  var sp=top.pseudo, sa=fmt(topAmt);
+  document.getElementById('heroShare').innerHTML=
+    '<button class="share-btn twitter" onclick="shareTwitter(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">🐦 X</button>'
+    +'<button class="share-btn whatsapp" onclick="shareWhatsApp(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">💬 WhatsApp</button>'
+    +'<button class="share-btn telegram" onclick="shareTelegram(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✈️ Telegram</button>'
+    +'<button class="share-btn email" onclick="shareEmail(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✉️ Email</button>';
   document.getElementById('shareBar').style.display='block';
 
-  // Full leaderboard
+  // Full leaderboard list
   document.getElementById('leaderboard').innerHTML=data.map((u,i)=>{
     const r=i+1,rc=r===1?'r1':r===2?'r2':r===3?'r3':'';
     const medal=r===1?'👑':r===2?'🥈':r===3?'🥉':r;
     const title=getTitle(Number(u.total_paid));
-    const streak=u.current_streak>1?` <span style="font-size:10px">🔥${u.current_streak}</span>`:'';
+    const streak=u.current_streak>1?' <span style="font-size:10px">🔥'+u.current_streak+'</span>':'';
     const dethroned=u.is_dethroned?'<span class="dethroned-badge">⚠ Dethroned</span>':'';
-    return`<div class="lb-row ${rc}" style="animation-delay:${i*.03}s" onclick="openPubProfile('${u.id}')" title="View profile">
-      <div class="lb-rank">${medal}</div>
-      <div class="lb-info">
-        <div class="lb-pseudo">${getFlag(u.country)} ${getDisplayName(u)}${streak}</div>
-        <div class="lb-sub">${u.country}${dethroned}</div>
-        ${renderBadges(u.badges,u.gender)}
-      </div>
-      <div><span class="lb-title-tag" style="color:${title.color};border-color:${title.color}">${title.emoji} ${getTitleName(title)}</span></div>
-      <div class="lb-amount">${fmt(Number(u[col]))}</div>
-    </div>`;
+    return '<div class="lb-row '+rc+'" style="animation-delay:'+(i*.03)+'s" onclick="openPubProfile(\x27'+u.id+'\x27)" title="View profile">'
+      +'<div class="lb-rank">'+medal+'</div>'
+      +'<div class="lb-info">'
+      +'<div class="lb-pseudo">'+getFlag(u.country)+' '+getDisplayName(u)+streak+'</div>'
+      +'<div class="lb-sub">'+u.country+dethroned+'</div>'
+      +renderBadges(u.badges,u.gender)
+      +'</div>'
+      +'<div><span class="lb-title-tag" style="color:'+title.color+';border-color:'+title.color+'">'+title.emoji+' '+getTitleName(title)+'</span></div>'
+      +'<div class="lb-amount">'+fmt(Number(u[col]))+'</div>'
+      +'</div>';
   }).join('');
 }
 
