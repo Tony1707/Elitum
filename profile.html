@@ -236,6 +236,39 @@
     </div>
   </div>
 
+  <!-- SCREEN: RESET PASSWORD -->
+  <div class="screen" id="screen-reset">
+    <div class="auth-box">
+      <div class="auth-title">New Password</div>
+      <div class="auth-sub">Choose a strong password for your account.</div>
+      <div class="msg" id="reset-msg"></div>
+      <div class="fgroup">
+        <label class="flabel">New Password</label>
+        <div class="password-wrap">
+          <input class="finput" type="password" id="resetPassword" placeholder="Min. 8 characters" oninput="checkResetStrength()"/>
+          <button class="show-pw" onclick="togglePw('resetPassword',this)" type="button">👁</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="resetStrengthFill"></div></div>
+        <div class="strength-text" id="resetStrengthText"></div>
+        <div class="pw-rules" id="resetPwRules">
+          <div id="reset-rule-len">✗ 8 characters minimum</div>
+          <div id="reset-rule-upper">✗ One uppercase letter</div>
+          <div id="reset-rule-lower">✗ One lowercase letter</div>
+          <div id="reset-rule-num">✗ One number</div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Confirm Password</label>
+        <div class="password-wrap">
+          <input class="finput" type="password" id="resetConfirm" placeholder="Repeat your password"/>
+          <button class="show-pw" onclick="togglePw('resetConfirm',this)" type="button">👁</button>
+        </div>
+        <div id="reset-confirm-feedback" style="font-size:9px;margin-top:5px;letter-spacing:.2em"></div>
+      </div>
+      <button class="btn" onclick="doResetPassword()">Save New Password</button>
+    </div>
+  </div>
+
   <!-- SCREEN: EMAIL SENT -->
   <div class="screen" id="screen-email-sent">
     <div class="email-sent-box">
@@ -481,8 +514,7 @@ window.addEventListener('load',async()=>{
     // Check URL for magic link / password reset tokens
     const hash=window.location.hash;
     if(hash.includes('type=recovery')){
-      showScreen('login');
-      showMsg('login-msg',t('success-reset'),'info');
+      showScreen('reset');
     } else {
       showScreen('login');
     }
@@ -490,6 +522,10 @@ window.addEventListener('load',async()=>{
 
   // Auth state changes (magic link click)
   db.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='PASSWORD_RECOVERY'){
+      showScreen('reset');
+      return;
+    }
     if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED')&&session){
       currentUser=session.user;
       await loadProfile();
@@ -763,6 +799,38 @@ async function changePassword(){
 function copyInviteCode(){
   const code=document.getElementById('p-invite-code').textContent;
   navigator.clipboard.writeText(code).then(()=>toast(t('copied'))).catch(()=>{});
+}
+
+async function checkResetStrength(){
+  const pw=document.getElementById('resetPassword').value;
+  const rules={len:pw.length>=8,upper:/[A-Z]/.test(pw),lower:/[a-z]/.test(pw),num:/[0-9]/.test(pw)};
+  ['len','upper','lower','num'].forEach(r=>{
+    const labels={len:'8 characters minimum',upper:'One uppercase letter',lower:'One lowercase letter',num:'One number'};
+    const el=document.getElementById('reset-rule-'+r);
+    el.className=rules[r]?'ok':'fail';
+    el.textContent=(rules[r]?'✓':'✗')+' '+labels[r];
+  });
+  const score=Object.values(rules).filter(Boolean).length;
+  const levels=[{w:'0%',c:'transparent',t:''},{w:'25%',c:'#e57373',t:'Weak'},{w:'50%',c:'#ff9800',t:'Fair'},{w:'75%',c:'#ffc107',t:'Good'},{w:'100%',c:'#4caf50',t:'Strong'}];
+  document.getElementById('resetStrengthFill').style.cssText='width:'+levels[score].w+';background:'+levels[score].c;
+  document.getElementById('resetStrengthText').textContent=levels[score].t;
+  document.getElementById('resetStrengthText').style.color=levels[score].c;
+}
+
+async function doResetPassword(){
+  const pw=document.getElementById('resetPassword').value;
+  const confirm=document.getElementById('resetConfirm').value;
+  if(!pw||!confirm) return showMsg('reset-msg','Please fill both fields.','error');
+  if(pw!==confirm) return showMsg('reset-msg','Passwords do not match.','error');
+  if(pw.length<8||!/[A-Z]/.test(pw)||!/[a-z]/.test(pw)||!/[0-9]/.test(pw))
+    return showMsg('reset-msg','Password must be 8+ chars with uppercase, lowercase and a number.','error');
+  const btn=event.target;
+  btn.disabled=true;
+  const{error}=await db.auth.updateUser({password:pw});
+  btn.disabled=false;
+  if(error) return showMsg('reset-msg',error.message,'error');
+  showMsg('reset-msg','Password saved! Signing you in...','success');
+  setTimeout(async()=>{ await loadProfile(); },1500);
 }
 
 async function signOut(){
