@@ -154,8 +154,8 @@
       <button class="btn" onclick="register()" id="reg-btn">Create Account</button>
       <div class="divider"><span id="or-text">or</span></div>
       <button class="btn-ghost" onclick="sendMagicLink('register')" id="reg-magic-btn">✉ Sign up with Magic Link</button>
-      <div class="switch-mode" id="reg-switch">
-        Already have an account?
+      <div class="switch-mode">
+        <span id="reg-switch">Already have an account?</span>
         <button class="switch-link" onclick="showScreen('login')" id="reg-switch-link">Sign in</button>
       </div>
     </div>
@@ -188,8 +188,8 @@
       <button class="btn" onclick="login()" id="login-btn">Sign In</button>
       <div class="divider"><span id="or-text2">or</span></div>
       <button class="btn-ghost" onclick="sendMagicLink('login')" id="login-magic-btn">✉ Sign in with Magic Link</button>
-      <div class="switch-mode" id="login-switch">
-        No account yet?
+      <div class="switch-mode">
+        <span id="login-switch">No account yet?</span>
         <button class="switch-link" onclick="showScreen('register')" id="login-switch-link">Create one</button>
       </div>
     </div>
@@ -310,7 +310,7 @@ const S={
     'reg-lbl-email':'Email','reg-lbl-password':'Password',
     'reg-btn':'Create Account','reg-magic-btn':'✉ Sign up with Magic Link',
     'reg-switch':'Already have an account?','reg-switch-link':'Sign in',
-    'login-title':'Welcome back','login-sub':'Sign in to your Elitum account.',
+    'login-title':'Sign In','login-sub':'Enter your email to sign in or use magic link.',
     'login-lbl-email':'Email','login-lbl-password':'Password',
     'remember-text':'Remember me','forgot-link':'Forgot password?',
     'login-btn':'Sign In','login-magic-btn':'✉ Sign in with Magic Link',
@@ -352,7 +352,7 @@ const S={
     'reg-lbl-email':'Email','reg-lbl-password':'Mot de passe',
     'reg-btn':'Créer mon compte','reg-magic-btn':'✉ Inscription par Magic Link',
     'reg-switch':'Déjà un compte ?','reg-switch-link':'Se connecter',
-    'login-title':'Bon retour','login-sub':'Connectez-vous à votre compte Elitum.',
+    'login-title':'Connexion','login-sub':'Entrez votre email pour vous connecter.',
     'login-lbl-email':'Email','login-lbl-password':'Mot de passe',
     'remember-text':'Se souvenir de moi','forgot-link':'Mot de passe oublié ?',
     'login-btn':'Se Connecter','login-magic-btn':'✉ Connexion par Magic Link',
