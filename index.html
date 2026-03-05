@@ -107,6 +107,10 @@
     .cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:14px 20px;background:linear-gradient(0deg,rgba(8,8,8,.98) 70%,transparent);text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
     .cta-btn{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-light),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;background-size:200% auto;animation:btnShimmer 3s linear infinite;transition:transform .2s,box-shadow .2s}
     @keyframes btnShimmer{0%{background-position:0% center}100%{background-position:200% center}}
+    @keyframes nameShimmer{0%{background-position:0% center}100%{background-position:200% center}}
+    .podium-name-gold{background:linear-gradient(90deg,#7a5f28,#e8c97a,#c9a84c,#fff8e1,#c9a84c,#7a5f28);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 3s linear infinite}
+    .podium-name-silver{background:linear-gradient(90deg,#666,#d0d0d8,#a8a8b0,#ffffff,#a8a8b0,#666);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 4s linear infinite}
+    .podium-name-bronze{background:linear-gradient(90deg,#7a4020,#e8904a,#cd7f32,#f5c090,#cd7f32,#7a4020);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 5s linear infinite}
     .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35)}.cta-btn:active{transform:translateY(0)}
     .cta-secondary{display:inline-block;padding:15px 24px;background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold-dim);font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:.35em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none}
     .cta-secondary:hover{border-color:var(--gold);color:var(--gold)}
@@ -227,9 +231,17 @@
     <!-- Diamond ornaments - well clear of text -->
     <polygon points="50,44 57,37 64,44 57,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
     <polygon points="416,44 423,37 430,44 423,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <!-- Animated gradient for ELITUM -->
+    <defs>
+      <linearGradient id="goldGradAnim" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#7a5f28"><animate attributeName="stop-color" values="#7a5f28;#e8c97a;#fff8e1;#c9a84c;#7a5f28" dur="4s" repeatCount="indefinite"/></stop>
+        <stop offset="50%" stop-color="#e8c97a"><animate attributeName="stop-color" values="#e8c97a;#fff8e1;#7a5f28;#e8c97a;#fff8e1" dur="4s" repeatCount="indefinite"/></stop>
+        <stop offset="100%" stop-color="#7a5f28"><animate attributeName="stop-color" values="#c9a84c;#7a5f28;#e8c97a;#fff8e1;#c9a84c" dur="4s" repeatCount="indefinite"/></stop>
+      </linearGradient>
+    </defs>
     <!-- Main text -->
     <text x="240" y="56" font-family="Cormorant Garamond, serif" font-size="52" font-weight="300"
-          letter-spacing="18" text-anchor="middle" fill="url(#goldGrad)">ELITUM</text>
+          letter-spacing="18" text-anchor="middle" fill="url(#goldGradAnim)">ELITUM</text>
     <!-- Subtitle -->
     <text x="240" y="76" font-family="Montserrat, sans-serif" font-size="13" font-weight="400"
           letter-spacing="5" text-anchor="middle" fill="#c9a84c" opacity="0.7">RICHER THAN YOU</text>
@@ -286,6 +298,7 @@
     </div>
     <div class="top-hero" id="heroBox">
       <div class="hero-period" id="heroPeriod">Global All-Time</div>
+      <div id="heroCrown" style="font-size:28px;margin-bottom:4px"></div>
       <div class="hero-name" id="heroName">—</div>
       <div class="hero-title-badge" id="heroTitleBadge">—</div>
       <div class="hero-amount"><span id="heroAmount">€0.00</span></div>
@@ -895,6 +908,7 @@ function renderLeaderboard(data,col){
   document.getElementById('heroPeriod').textContent=periods[col]||'';
 
   if(!data.length){
+    document.getElementById('heroCrown').textContent='';
     document.getElementById('heroName').innerHTML='—';
     document.getElementById('heroTitleBadge').textContent='—';
     document.getElementById('heroAmount').textContent='€0.00';
@@ -912,7 +926,8 @@ function renderLeaderboard(data,col){
   const top=data[0];
   const topTitle=getTitle(Number(top.total_paid));
   const topAmt=Number(top[col]);
-  document.getElementById('heroName').innerHTML=getDisplayName(top);
+  document.getElementById('heroCrown').textContent='👑';
+  document.getElementById('heroName').innerHTML='<span class="podium-name-gold">'+getDisplayName(top)+'</span>';
   document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
   document.getElementById('heroTitleBadge').style.color=topTitle.color;
   document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
@@ -932,7 +947,8 @@ function renderLeaderboard(data,col){
       var uid=u.id;
       var html='<div onclick="openPubProfile(\x27'+uid+'\x27)" style="text-align:center;cursor:pointer;padding:14px 20px;border-top:2px solid '+colors[idx]+';background:linear-gradient(180deg,'+colors[idx]+'12,transparent);min-width:120px;flex:1;max-width:200px;transition:transform .2s">';
       html+='<div style="font-size:20px;margin-bottom:6px">'+medals[idx]+'</div>';
-      html+='<div style="font-family:Cormorant Garamond,serif;font-size:clamp(16px,3vw,24px);font-weight:600;color:'+colors[idx]+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">'+getDisplayName(u)+'</div>';
+      var shimmerClass=idx===1?'podium-name-silver':'podium-name-bronze';
+      html+='<div class="'+shimmerClass+'" style="font-family:Cormorant Garamond,serif;font-size:clamp(16px,3vw,24px);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">'+getDisplayName(u)+'</div>';
       html+='<div style="display:inline-block;padding:2px 8px;border:1px solid '+t2.color+';font-size:8px;letter-spacing:.3em;color:'+t2.color+';text-transform:uppercase;margin:4px 0">'+t2.emoji+' '+getTitleName(t2)+'</div>';
       html+='<div style="font-size:14px;color:var(--gold);font-weight:600">'+fmt(Number(u[col]))+'</div>';
       if(u.current_streak>1) html+='<div style="font-size:9px;color:var(--white-mid);margin-top:3px">🔥'+u.current_streak+'</div>';
