@@ -458,18 +458,17 @@ function applyLang(){
 function setLang(l){lang=l;localStorage.setItem('elitum-lang',l);applyLang()}
 
 // ===== TITLES =====
-const TITLES=[
-  {en:'Challenger',fr:'Challenger',emoji:'⚡',min:1,max:9.99,color:'#666'},
-  {en:'Aristocrat',fr:'Aristocrate',emoji:'🎩',min:10,max:49.99,color:'#888'},
-  {en:'Bourgeois',fr:'Bourgeois',emoji:'🏛️',min:50,max:99.99,color:'#a0a0a0'},
-  {en:'Magnate',fr:'Magnat',emoji:'💼',min:100,max:499.99,color:'#c9a84c'},
-  {en:'Tycoon',fr:'Tycoon',emoji:'🏆',min:500,max:999.99,color:'#e8c97a'},
-  {en:'Oligarch',fr:'Oligarque',emoji:'💎',min:1000,max:4999.99,color:'#7ec8e3'},
-  {en:'Sultan',fr:'Sultan',emoji:'👑',min:5000,max:9999.99,color:'#f0a500'},
-  {en:'Emperor',fr:'Empereur',emoji:'⚜️',min:10000,max:49999.99,color:'#c9a84c'},
-  {en:'God of Wealth',fr:'Dieu de la Richesse',emoji:'🌟',min:50000,max:Infinity,color:'#fff'},
-];
-const getTitle=amt=>TITLES.find(t=>amt>=t.min&&amt<=t.max)||{en:'—',fr:'—',emoji:'',color:'#666'};
+let TITLES=[];
+async function loadTitles(){
+  const{data}=await db.from('titles').select('*').order('sort_order',{ascending:true});
+  if(!data||!data.length) return;
+  TITLES=data.map((t,i)=>({
+    en:t.name_en, fr:t.name_fr, emoji:t.emoji,
+    min:Number(t.min_amount),
+    max:i<data.length-1?Number(data[i+1].min_amount)-0.01:Infinity,
+    color:t.color
+  }));
+}const getTitle=amt=>TITLES.find(t=>amt>=t.min&&amt<=t.max)||{en:'—',fr:'—',emoji:'',color:'#666'};
 
 // ===== COUNTRIES =====
 const COUNTRIES=[
@@ -498,6 +497,7 @@ window.addEventListener('load',async()=>{
   const{createClient}=supabase;
   db=createClient(SUPABASE_URL,SUPABASE_KEY);
   applyLang();
+  await loadTitles();
 
   // Check existing session
   const{data:{session}}=await db.auth.getSession();
