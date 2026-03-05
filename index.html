@@ -843,6 +843,7 @@ window.addEventListener('load',async()=>{
   applyLang();
   await Promise.all([loadTitles(), loadBadges()]);
   renderTitles();
+  renderBadgeLegend();
   // Re-check admin after short delay (session might load late)
   setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
   loadLeaderboard();
@@ -860,7 +861,7 @@ function showPage(id){
   if(id==='countries') loadCountriesData();
   if(id==='notifications') loadNotifications();
   if(id==='friends') loadMyCode();
-  if(id==='titles') renderBadgeLegend();
+  if(id==='titles'){ if(!Object.keys(BADGE_DEF).length){ loadBadges().then(renderBadgeLegend); } else { renderBadgeLegend(); } }
   if(id==='admin'){ if(currentProfile && currentProfile.is_admin) loadAdminData(); else showPage('leaderboard'); }
 }
 
