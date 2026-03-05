@@ -841,7 +841,7 @@ window.addEventListener('load',async()=>{
 
   applySeason(currentSeason);
   applyLang();
-  await loadTitles();
+  await Promise.all([loadTitles(), loadBadges()]);
   renderTitles();
   // Re-check admin after short delay (session might load late)
   setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
@@ -1994,24 +1994,21 @@ async function deleteUser(uid, pseudo){
 
 // ===== BADGE LEGEND =====
 function renderBadgeLegend(){
-  const badges = [
-    {key:'whale',    desc:{en:'Single payment of €1,000 or more',             fr:'Paiement unique de 1 000 € ou plus'}},
-    {key:'flash',    desc:{en:'3 payments within 24 hours',                    fr:'3 paiements en moins de 24 heures'}},
-    {key:'legend',   desc:{en:'Has been ranked #1 at least once',              fr:'A été classé #1 au moins une fois'}},
-    {key:'onfire',   desc:{en:'3+ consecutive months at #1',                   fr:'3 mois consécutifs ou plus au #1'}},
-    {key:'diamond',  desc:{en:'All-time total of €10,000 or more',             fr:'Total all-time de 10 000 € ou plus'}},
-    {key:'globetrotter',desc:{en:'Only member from your country in the top 10', fr:'Seul membre de votre pays dans le top 10'}},
-  ];
-
-  document.getElementById('badgesGrid').innerHTML = badges.map(b => {
-    const def = BADGE_DEF[b.key];
-    if(!def) return '';
-    return `<div class="title-card" data-emoji="${def.emoji}" style="border-color:${getBadgeColor(b.key)}33">
-      <div class="title-name" style="color:${getBadgeColor(b.key)}">${def.emoji} ${def[currentLang]||def.en}</div>
-      <div class="title-threshold" style="color:${getBadgeColor(b.key)}88;font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:8px">Badge</div>
-      <div class="title-desc">${b.desc[currentLang]||b.desc.en}</div>
-    </div>`;
-  }).join('');
+  const container=document.getElementById('titlesPage');
+  if(!container) return;
+  const badgeKeys=Object.keys(BADGE_DEF);
+  if(!badgeKeys.length){container.innerHTML='<div class="empty-lb">Chargement...</div>';return;}
+  const lang=currentLang;
+  container.innerHTML='<div style="display:flex;flex-direction:column;gap:12px">'
+    +badgeKeys.map(key=>{
+      const b=BADGE_DEF[key];
+      const desc=lang==='fr'?b.desc_fr:b.desc_en;
+      return'<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid rgba(201,168,76,.1);background:rgba(201,168,76,.03)">'
+        +'<span class="badge '+b.cls+'" style="flex-shrink:0">'+b.emoji+' '+(lang==='fr'?b.fr:b.en)+'</span>'
+        +'<span style="font-size:10px;color:var(--white-mid);letter-spacing:.05em">'+desc+'</span>'
+        +'</div>';
+    }).join('')
+    +'</div>';
 }
 
 function getBadgeColor(key){
@@ -2020,14 +2017,36 @@ function getBadgeColor(key){
 }
 
 // ===== BADGES =====
-const BADGE_DEF = {
-  whale:       {emoji:'🐳', en:'Whale',        fr:'Baleine',      cls:'badge-whale'},
-  flash:       {emoji:'⚡', en:'Flash',        fr:'Flash',        cls:'badge-flash'},
-  legend:      {emoji:'👑', en:'Legend',       fr:'Légende',      cls:'badge-legend'},
-  onfire:      {emoji:'🔥', en:'On Fire',      fr:'En Feu',       cls:'badge-onfire'},
-  diamond:     {emoji:'💎', en:'Diamond',      fr:'Diamant',      cls:'badge-diamond'},
-  globetrotter:{emoji:'🌍', en:'Globe Trotter',fr:'Globe Trotter',cls:'badge-globetrotter'},
-};
+let BADGE_DEF = {};
+
+function generateBadgeDesc(code, threshold, lang){
+  const fmt = n => '€'+Number(n).toLocaleString('fr');
+  const map = {
+    whale:        {en:'Total payment over '+fmt(threshold),       fr:'Paiement total supérieur à '+fmt(threshold)},
+    diamond:      {en:'Total payment over '+fmt(threshold),       fr:'Paiement total supérieur à '+fmt(threshold)},
+    on_fire:      {en:threshold+'+ consecutive months',           fr:threshold+'+ mois consécutifs'},
+    flash:        {en:threshold+'+ payments in 24h',              fr:threshold+'+ paiements en 24h'},
+    globe_trotter:{en:'Only member from your country in top 10',  fr:'Seul membre de votre pays dans le top 10'},
+    legend:       {en:'Has reached #1 rank',                      fr:'A atteint le rang #1'},
+  };
+  return (map[code]||{})[lang]||'';
+}
+
+async function loadBadges(){
+  const{data}=await db.from('badges').select('*');
+  if(!data||!data.length) return;
+  BADGE_DEF={};
+  data.forEach(b=>{
+    BADGE_DEF[b.code]={
+      emoji: b.emoji,
+      en: b.name_en,
+      fr: b.name_fr,
+      cls: 'badge-'+b.code.replace('_','-'),
+      desc_en: generateBadgeDesc(b.code, b.threshold, 'en'),
+      desc_fr: generateBadgeDesc(b.code, b.threshold, 'fr'),
+    };
+  });
+}
 
 function renderBadges(badges, gender){
   if(!badges||!badges.length) return '';
