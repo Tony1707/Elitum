@@ -107,6 +107,7 @@
     /* CTA */
     .cta-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:14px 20px;background:linear-gradient(0deg,rgba(8,8,8,.98) 70%,transparent);text-align:center;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
     .cta-btn{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,var(--gold-dim),var(--gold),var(--gold-light),var(--gold));color:var(--black);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;border:none;cursor:pointer;background-size:200% auto;animation:btnShimmer 3s linear infinite;transition:transform .2s,box-shadow .2s}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     @keyframes btnShimmer{0%{background-position:0% center}100%{background-position:200% center}}
     @keyframes nameShimmer{0%{background-position:0% center}100%{background-position:200% center}}
     .podium-name-gold{background:linear-gradient(90deg,#7a5f28,#e8c97a,#c9a84c,#fff8e1,#c9a84c,#7a5f28);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 3s linear infinite}
@@ -210,6 +211,45 @@
   <button class="lang-btn" onclick="setLang('fr')" id="lbtn-fr">FR</button>
 </div>
 
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#0a0a0a,#111);border-top:1px solid rgba(201,168,76,.3);padding:14px 20px;z-index:9999;animation:slideUp .3s ease">
+  <div style="display:flex;align-items:center;gap:14px;max-width:480px;margin:0 auto">
+    <img src="icon-192.png" style="width:44px;height:44px;border:1px solid rgba(201,168,76,.3)"/>
+    <div style="flex:1;min-width:0">
+      <div style="font-family:Cormorant Garamond,serif;font-size:16px;color:#e8c97a">Elitum</div>
+      <div style="font-size:10px;color:var(--white-dim);letter-spacing:.05em" id="pwa-banner-msg">Installez l'app sur votre écran d'accueil</div>
+    </div>
+    <button id="pwa-install-btn" style="background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#000;border:none;padding:9px 16px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:.2em;cursor:pointer;white-space:nowrap">INSTALLER</button>
+    <button onclick="document.getElementById('pwa-banner').style.display='none';localStorage.setItem('pwa-dismissed', Date.now())" style="background:none;border:none;color:var(--white-dim);font-size:18px;cursor:pointer;padding:4px">✕</button>
+  </div>
+</div>
+
+<!-- iOS Install Instructions -->
+<div id="ios-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#0a0a0a,#111);border-top:1px solid rgba(201,168,76,.3);padding:16px 20px;z-index:9999;animation:slideUp .3s ease">
+  <div style="max-width:480px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-family:Cormorant Garamond,serif;font-size:16px;color:#e8c97a">Installer Elitum</div>
+      <button onclick="document.getElementById('ios-banner').style.display='none';localStorage.setItem('pwa-dismissed', Date.now())" style="background:none;border:none;color:var(--white-dim);font-size:18px;cursor:pointer">✕</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;font-size:11px;color:var(--white-mid)">
+      <div style="text-align:center;flex:1">
+        <div style="font-size:24px;margin-bottom:4px">⬆️</div>
+        <div>Appuyez sur<br><strong style="color:#e8c97a">Partager</strong></div>
+      </div>
+      <div style="color:var(--gold-dim);font-size:18px">›</div>
+      <div style="text-align:center;flex:1">
+        <div style="font-size:24px;margin-bottom:4px">➕</div>
+        <div>Puis<br><strong style="color:#e8c97a">Sur l'écran d'accueil</strong></div>
+      </div>
+      <div style="color:var(--gold-dim);font-size:18px">›</div>
+      <div style="text-align:center;flex:1">
+        <div style="font-size:24px;margin-bottom:4px">📱</div>
+        <div>Profitez de<br><strong style="color:#e8c97a">l'app Elitum</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header>
   <!-- SVG Logo -->
   <svg class="logo-svg" viewBox="0 0 480 90" xmlns="http://www.w3.org/2000/svg">
@@ -253,6 +293,7 @@
     <a href="profile.html" class="header-btn">👤 <span id="hdr-profile">My Profile</span></a>
     <button class="header-btn" onclick="openInvite()">✉ <span id="hdr-invite">Invite Friends</span></button>
     <a href="legal.html" class="header-btn">📜 <span id="hdr-legal">Legal</span></a>
+    <button class="header-btn" id="pwa-header-btn" style="display:none;color:var(--gold);border-color:rgba(201,168,76,.4)" onclick="triggerInstall()">⬇ <span id="hdr-install">Installer</span></button>
   </div>
 </header>
 
@@ -2053,6 +2094,72 @@ function renderBadges(badges, gender){
 function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function fmt2(n){return Number(n).toLocaleString('en',{maximumFractionDigits:0})}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200)}
+// ===== PWA INSTALL =====
+function triggerInstall(){
+  if(deferredPrompt){
+    // Android - native prompt
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(({outcome})=>{
+      deferredPrompt=null;
+      if(outcome==='accepted'){
+        document.getElementById('pwa-header-btn').style.display='none';
+        document.getElementById('pwa-banner').style.display='none';
+        localStorage.setItem('pwa-dismissed', Date.now());
+        toast('✅ App installée !');
+      }
+    });
+  } else if(isIOS){
+    // iOS - show instructions banner
+    document.getElementById('ios-banner').style.display='block';
+  }
+}
+
+function showInstallBtn(){
+  const isMobile = /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+  const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if(isMobile && !isStandaloneMode){
+    document.getElementById('pwa-header-btn').style.display='inline-flex';
+  }
+}
+
+// ===== PWA INSTALL =====
+let deferredPrompt = null;
+
+window.addEventListener('load', showInstallBtn);
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const pwaDismissed = localStorage.getItem('pwa-dismissed');
+  const pwaDismissedAge = pwaDismissed ? (Date.now() - parseInt(pwaDismissed)) / 86400000 : 999;
+  if(pwaDismissedAge > 7 && !window.matchMedia('(display-mode: standalone)').matches){
+    setTimeout(()=>{ document.getElementById('pwa-banner').style.display='block'; }, 3000);
+  }
+});
+
+document.getElementById('pwa-install-btn').addEventListener('click', async()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  document.getElementById('pwa-banner').style.display='none';
+  if(outcome==='accepted') localStorage.setItem('pwa-dismissed', Date.now());
+});
+
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('pwa-banner').style.display='none';
+  localStorage.setItem('pwa-dismissed', Date.now());
+  toast('✅ App installée !');
+});
+
+// iOS detection
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if(isIOS && !isStandalone && pwaDismissedAge > 7){
+  setTimeout(()=>{ document.getElementById('ios-banner').style.display='block'; }, 3000);
+}
+
+
 </script>
 
 <script>// Unregister all service workers
