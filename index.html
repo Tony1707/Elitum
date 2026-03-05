@@ -1994,7 +1994,7 @@ async function deleteUser(uid, pseudo){
 
 // ===== BADGE LEGEND =====
 function renderBadgeLegend(){
-  const container=document.getElementById('titlesPage');
+  const container=document.getElementById('badgesGrid');
   if(!container) return;
   const badgeKeys=Object.keys(BADGE_DEF);
   if(!badgeKeys.length){container.innerHTML='<div class="empty-lb">Chargement...</div>';return;}
