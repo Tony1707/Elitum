@@ -532,8 +532,8 @@ window.addEventListener('load',async()=>{
     return;
   }
 
-  // Default: show login
-  showScreen('login');
+  // No session — redirect to index with auth modal trigger
+  window.location.href='index.html?auth=1';
 });
 
 // ===== SCREENS =====

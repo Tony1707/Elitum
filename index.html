@@ -290,7 +290,7 @@
 
   <div style="text-align:center"><div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div></div>
   <div class="header-actions">
-    <a href="profile.html" class="header-btn">👤 <span id="hdr-profile">My Profile</span></a>
+    <button class="header-btn" onclick="currentSession?window.location.href='profile.html':openAuthModal('login')" id="hdr-profile-btn">👤 <span id="hdr-profile">My Profile</span></button>
     <button class="header-btn" onclick="openInvite()">✉ <span id="hdr-invite">Invite Friends</span></button>
     <a href="legal.html" class="header-btn">📜 <span id="hdr-legal">Legal</span></a>
     <button class="header-btn" id="pwa-header-btn" style="display:none;color:var(--gold);border-color:rgba(201,168,76,.4)" onclick="triggerInstall()">⬇ <span id="hdr-install">Installer</span></button>
@@ -1027,6 +1027,12 @@ window.addEventListener('load',async()=>{
   renderTitles();
   renderBadgeLegend();
   initAuthStateListener();
+
+  // Open auth modal if redirected from profile.html
+  if(window.location.search.includes('auth=1') && !currentSession){
+    openAuthModal('login');
+    window.history.replaceState({},document.title,window.location.pathname);
+  }
   // Re-check admin after short delay (session might load late)
   setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
   loadLeaderboard();
