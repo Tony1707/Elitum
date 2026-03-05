@@ -2000,16 +2000,14 @@ function renderBadgeLegend(){
   const badgeKeys=Object.keys(BADGE_DEF);
   if(!badgeKeys.length){container.innerHTML='<div class="empty-lb">Chargement...</div>';return;}
   const lang=currentLang;
-  container.innerHTML='<div style="display:flex;flex-direction:column;gap:12px">'
-    +badgeKeys.map(key=>{
-      const b=BADGE_DEF[key];
-      const desc=lang==='fr'?b.desc_fr:b.desc_en;
-      return'<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid rgba(201,168,76,.1);background:rgba(201,168,76,.03)">'
-        +'<span class="badge '+b.cls+'" style="flex-shrink:0">'+b.emoji+' '+(lang==='fr'?b.fr:b.en)+'</span>'
-        +'<span style="font-size:10px;color:var(--white-mid);letter-spacing:.05em">'+desc+'</span>'
-        +'</div>';
-    }).join('')
-    +'</div>';
+  container.innerHTML=badgeKeys.map(key=>{
+    const b=BADGE_DEF[key];
+    const desc=lang==='fr'?b.desc_fr:b.desc_en;
+    return'<div class="title-card" data-emoji="'+b.emoji+'" style="border-color:rgba(201,168,76,.2)">'
+      +'<div class="title-name" style="color:var(--gold)">'+b.emoji+' '+(lang==='fr'?b.fr:b.en)+'</div>'
+      +'<div class="title-desc" style="margin-top:6px">'+desc+'</div>'
+      +'</div>';
+  }).join('');
 }
 
 function getBadgeColor(key){
@@ -2034,7 +2032,7 @@ function generateBadgeDesc(code, threshold, lang){
 }
 
 async function loadBadges(){
-  const{data}=await db.from('badges').select('*');
+  const{data}=await db.from('badges').select('*').order('sort_order',{ascending:true});
   if(!data||!data.length) return;
   BADGE_DEF={};
   data.forEach(b=>{
