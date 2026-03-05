@@ -10,6 +10,7 @@
   <meta property="og:image" content="https://via.placeholder.com/1200x630/080808/c9a84c?text=ELITUM"/>
   <meta property="og:url" content="https://elitum.github.io/Elitum"/>
   <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="x:card" content="summary_large_image"/>
   <title>Elitum — RicherThanYou</title>
   <link rel="manifest" href="manifest.json"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -94,7 +95,7 @@
     /* SHARE BUTTONS */
     .share-btn{padding:7px 14px;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--white-dim);font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
     .share-btn:hover{border-color:var(--gold);color:var(--gold)}
-    .share-btn.twitter:hover{border-color:#1DA1F2;color:#1DA1F2}
+    .share-btn.x-social:hover{border-color:#000;color:#fff;background:#000}
     .share-btn.whatsapp:hover{border-color:#25D366;color:#25D366}
     .share-btn.copy:hover{border-color:var(--gold);color:var(--gold)}
     /* INVITE SECTION */
@@ -615,7 +616,7 @@
       <button class="share-btn copy" onclick="copyInviteLink()">📋</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="share-btn twitter" onclick="shareTwitter();closeInvite()">🐦 Twitter</button>
+      <button class="share-btn x-social" onclick="shareTwitter();closeInvite()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
       <button class="share-btn whatsapp" onclick="shareWhatsApp();closeInvite()">💬 WhatsApp</button>
       <button class="share-btn" onclick="shareFacebook();closeInvite()">👍 Facebook</button>
       <button class="share-btn" onclick="shareTelegram()">✈️ Telegram</button>
@@ -973,7 +974,7 @@ function renderLeaderboard(data,col){
   // Share bar
   var sp=top.pseudo, sa=fmt(topAmt);
   document.getElementById('heroShare').innerHTML=
-    '<button class="share-btn twitter" onclick="shareTwitter(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">🐦 X</button>'
+    '<button class="share-btn x-social" onclick="shareTwitter(1,\x27'+sp+'\x27,\x27'+sa+'\x27)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>'
     +'<button class="share-btn whatsapp" onclick="shareWhatsApp(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">💬 WhatsApp</button>'
     +'<button class="share-btn telegram" onclick="shareTelegram(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✈️ Telegram</button>'
     +'<button class="share-btn email" onclick="shareEmail(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✉️ Email</button>';
@@ -1189,7 +1190,7 @@ function nativeShare(rank, pseudo, amt){
     menu.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;border:1px solid rgba(201,168,76,.3);padding:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;min-width:220px';
     menu.innerHTML=`
       <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px">Share via</div>
-      <button class="share-btn" onclick="shareTwitter(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✕ X / Twitter</button>
+      <button class="share-btn x-social" onclick="shareTwitter(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
       <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">💬 WhatsApp</button>
       <button class="share-btn telegram" onclick="shareTelegram(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✈️ Telegram</button>
       <button class="share-btn email" onclick="shareEmail(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✉️ Email</button>
@@ -1202,7 +1203,7 @@ function nativeShare(rank, pseudo, amt){
 function shareTwitter(rank,name,amt){
   const text=encodeURIComponent(getShareText(rank||1,name||'Someone',amt||'€?'));
   const url=encodeURIComponent(SITE_URL);
-  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+  window.open(`https://x.com/intent/post?text=${text}&url=${url}`,'_blank');
 }
 
 function shareWhatsApp(rank,name,amt){
@@ -1262,7 +1263,7 @@ async function generateShareCard(){
       <div style="font-size:28px;color:var(--gold);font-weight:600">#${rank}</div>
       <div style="font-size:12px;color:var(--white-mid);margin-top:4px">${fmt(Number(data.total_paid))} all-time</div>
       <div style="display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap">
-        <button class="share-btn twitter" onclick="shareTwitter(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">🐦 Twitter</button>
+        <button class="share-btn x-social" onclick="shareTwitter(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
         <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">💬 WhatsApp</button>
       </div>
     </div>`;
