@@ -1622,7 +1622,7 @@ async function loadFriendRequests(){
         +'<div class="lb-pseudo">'+getFlag(u.country)+' '+u.pseudo+'</div>'
         +'<div class="lb-sub" style="color:var(--gold-dim)">⏳ En attente...</div>'
         +'</div>'
-        +'<button class="share-btn" style="padding:6px 14px;font-size:9px;opacity:.6" onclick="cancelRequest(\x27'+r.id+'\x27)">Annuler</button>'
+        +'<button style="background:none;border:none;color:#e57373;font-size:18px;cursor:pointer;padding:4px 8px" onclick="cancelRequest(\x27'+r.id+'\x27)">✕</button>'
         +'</div>';
     }).join('');
   }
