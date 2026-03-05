@@ -895,7 +895,7 @@ function renderLeaderboard(data,col){
   document.getElementById('heroPeriod').textContent=periods[col]||'';
 
   if(!data.length){
-    document.getElementById('heroName').textContent='—';
+    document.getElementById('heroName').innerHTML='—';
     document.getElementById('heroTitleBadge').textContent='—';
     document.getElementById('heroAmount').textContent='€0.00';
     document.getElementById('heroStreak').textContent='';
@@ -912,7 +912,7 @@ function renderLeaderboard(data,col){
   const top=data[0];
   const topTitle=getTitle(Number(top.total_paid));
   const topAmt=Number(top[col]);
-  document.getElementById('heroName').textContent=getDisplayName(top);
+  document.getElementById('heroName').innerHTML=getDisplayName(top);
   document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
   document.getElementById('heroTitleBadge').style.color=topTitle.color;
   document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
