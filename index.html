@@ -2025,6 +2025,7 @@ function generateBadgeDesc(code, threshold, lang){
     on_fire:      {en:threshold+'+ consecutive months',           fr:threshold+'+ mois consécutifs'},
     flash:        {en:threshold+'+ payments in 24h',              fr:threshold+'+ paiements en 24h'},
     globe_trotter:{en:'Only member from your country in top 10',  fr:'Seul membre de votre pays dans le top 10'},
+    kraken:       {en:'Total payment over '+fmt(threshold),       fr:'Paiement total supérieur à '+fmt(threshold)},
     legend:       {en:'Has reached #1 rank',                      fr:'A atteint le rang #1'},
   };
   return (map[code]||{})[lang]||'';
