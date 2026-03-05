@@ -798,11 +798,13 @@ const COUNTRIES=[
 
 function getFlag(code){return(COUNTRIES.find(c=>c.code===code)||{flag:'🌍'}).flag}
 
-function getDisplayName(user){
+function getDisplayName(user, shimmerClass=''){
   if(user.display_mode==='real'&&user.is_verified&&user.real_name){
-    return user.real_name+' <span style="color:var(--green);font-size:11px">✅</span>';
+    const name=shimmerClass?'<span class="'+shimmerClass+'">'+user.real_name+'</span>':user.real_name;
+    return name+' <span style="color:var(--green);font-size:11px;-webkit-text-fill-color:initial">✅</span>';
   }
-  return user.pseudo;
+  const name=shimmerClass?'<span class="'+shimmerClass+'">'+user.pseudo+'</span>':user.pseudo;
+  return name;
 }
 
 // Populate country select
@@ -952,7 +954,7 @@ function renderLeaderboard(data,col){
   const topTitle=getTitle(Number(top.total_paid));
   const topAmt=Number(top[col]);
   document.getElementById('heroCrown').textContent='👑';
-  document.getElementById('heroName').innerHTML='<span class="podium-name-gold">'+getDisplayName(top)+'</span>';
+  document.getElementById('heroName').innerHTML=getDisplayName(top,'podium-name-gold');
   document.getElementById('heroTitleBadge').textContent=topTitle.emoji+' '+getTitleName(topTitle);
   document.getElementById('heroTitleBadge').style.color=topTitle.color;
   document.getElementById('heroTitleBadge').style.borderColor=topTitle.color;
@@ -973,7 +975,7 @@ function renderLeaderboard(data,col){
       var html='<div onclick="openPubProfile(\x27'+uid+'\x27)" style="text-align:center;cursor:pointer;padding:14px 20px;border-top:2px solid '+colors[idx]+';background:linear-gradient(180deg,'+colors[idx]+'12,transparent);flex:1;min-width:0;box-sizing:border-box;transition:transform .2s">';
       html+='<div style="font-size:20px;margin-bottom:6px">'+medals[idx]+'</div>';
       var shimmerClass=idx===1?'podium-name-silver':'podium-name-bronze';
-      html+='<div class="'+shimmerClass+'" style="font-family:Cormorant Garamond,serif;font-size:clamp(16px,3vw,24px);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">'+getDisplayName(u)+'</div>';
+      html+='<div style="font-family:Cormorant Garamond,serif;font-size:clamp(16px,3vw,24px);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">'+getDisplayName(u,shimmerClass)+'</div>';
       html+='<div style="display:inline-block;padding:2px 8px;border:1px solid '+t2.color+';font-size:8px;letter-spacing:.3em;color:'+t2.color+';text-transform:uppercase;margin:4px 0">'+t2.emoji+' '+getTitleName(t2)+'</div>';
       html+='<div style="font-size:14px;color:var(--gold);font-weight:600">'+fmt(Number(u[col]))+'</div>';
       if(u.current_streak>1) html+='<div style="font-size:9px;color:var(--white-mid);margin-top:3px">🔥'+u.current_streak+'</div>';
