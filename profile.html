@@ -730,43 +730,27 @@ async function loadProfile(){
   if(!currentUser) return;
 
   const{data}=await db.from('users').select('*').eq('email',currentUser.email).maybeSingle();
+
   if(!data){
-    // Auth user exists but no profile — send to register to fill details
-    showScreen('register');
+    // New user — show complete profile form
+    const isGoogle=currentUser.app_metadata?.provider==='google'||currentUser.identities?.[0]?.provider==='google';
+    // Pre-fill and lock email
     const re=document.getElementById('regEmail');
-    if(re){re.value=currentUser.email;re.disabled=true;}
+    if(re){re.value=currentUser.email||'';re.disabled=true;}
+    // Hide password fields for Google users
+    if(isGoogle){
+      document.getElementById('regPassword').closest('.fgroup').style.display='none';
+      document.getElementById('regConfirm').closest('.fgroup').style.display='none';
+      const strengthBar=document.querySelector('.strength-bar');
+      if(strengthBar) strengthBar.style.display='none';
+      document.getElementById('strengthText').style.display='none';
+      document.getElementById('pwRules').style.display='none';
+    }
+    showScreen('register');
     return;
   }
 
-  currentProfile=data;
-
-  const{data:above}=await db.from('users').select('id').gt('total_paid',Number(data.total_paid));
-  const rank=(above?.length||0)+1;
-  const title=getTitle(Number(data.total_paid));
-
-  document.getElementById('p-rank-emoji').textContent=rank===1?'👑':rank===2?'🥈':rank===3?'🥉':'';
-  document.getElementById('p-name').textContent=data.pseudo;
-  document.getElementById('p-title-tag').textContent=title.emoji+' '+(title[lang]||title.en);
-  document.getElementById('p-title-tag').style.color=title.color;
-  document.getElementById('p-title-tag').style.borderColor=title.color;
-  document.getElementById('p-rank').textContent='#'+rank;
-  document.getElementById('p-total').textContent=fmt(Number(data.total_paid));
-  document.getElementById('p-streak').textContent=data.current_streak||0;
-  document.getElementById('p-invite-code').textContent=data.invite_code||'—';
-  document.getElementById('toggleDisplay').checked=data.display_mode==='real';
-  if(data.real_name) document.getElementById('realName').value=data.real_name;
-
-  // Verified
-  const vb=document.getElementById('p-verified');
-  if(data.is_verified){
-    vb.innerHTML='<div class="verified-pill">✅ Verified</div>';
-    document.getElementById('p-verify-section').innerHTML=`<div class="msg msg-success show">✅ ${lang==='fr'?'Identité vérifiée.':'Identity verified.'}</div>`;
-  } else if(data.real_name){
-    vb.innerHTML='<div class="verified-pill pending-pill">⏳ '+(lang==='fr'?'En attente':'Pending')+'</div>';
-  }
-
-  loadPayments(data.id);
-  // Redirect to main site after login
+  // Profile exists — redirect to main site
   window.location.href='index.html';
 }
 
