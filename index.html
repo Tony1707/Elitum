@@ -593,6 +593,148 @@
 </div>
 
 <!-- Pay Modal -->
+<!-- Auth Modal -->
+<div class="overlay" id="authOverlay" style="display:none">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-x" onclick="closeAuthModal()">×</button>
+
+    <!-- LOGIN PANEL -->
+    <div id="auth-panel-login">
+      <div class="modal-title">Connexion</div>
+      <div class="modal-sub" style="margin-bottom:20px">Accédez à votre compte Elitum</div>
+      <div class="msg" id="auth-login-msg" style="display:none;padding:10px 12px;margin-bottom:14px;font-size:11px;border:1px solid"></div>
+      <div class="fgroup">
+        <label class="flabel">Email</label>
+        <input class="finput" type="email" id="authEmail" placeholder="vous@exemple.com" onkeydown="if(event.key==='Enter')authLogin()"/>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Mot de passe</label>
+        <div style="position:relative">
+          <input class="finput" type="password" id="authPassword" placeholder="Votre mot de passe" style="padding-right:44px" onkeydown="if(event.key==='Enter')authLogin()"/>
+          <button onclick="toggleAuthPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white-dim);cursor:pointer;font-size:16px" type="button">👁</button>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="authLogin()" id="auth-login-btn" style="margin-bottom:10px">Se Connecter</button>
+      <div style="display:flex;align-items:center;gap:12px;margin:14px 0">
+        <div style="flex:1;height:1px;background:rgba(201,168,76,.1)"></div>
+        <span style="font-size:9px;letter-spacing:.3em;color:var(--white-dim)">OU</span>
+        <div style="flex:1;height:1px;background:rgba(201,168,76,.1)"></div>
+      </div>
+      <button onclick="authGoogle()" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)'">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuer avec Google
+      </button>
+      <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--white-dim)">
+        Pas encore de compte ? <button onclick="showAuthPanel('register')" style="background:none;border:none;color:var(--gold-dim);cursor:pointer;font-size:11px;text-decoration:underline">Créer un compte</button>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <button onclick="showAuthPanel('forgot')" style="background:none;border:none;color:var(--white-dim);cursor:pointer;font-size:10px;letter-spacing:.1em">Mot de passe oublié ?</button>
+      </div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div id="auth-panel-register" style="display:none">
+      <div class="modal-title">Créer un compte</div>
+      <div class="modal-sub" style="margin-bottom:20px">Rejoignez Elitum et réclamez votre rang</div>
+      <div class="msg" id="auth-reg-msg" style="display:none;padding:10px 12px;margin-bottom:14px;font-size:11px;border:1px solid"></div>
+      <div class="fgroup">
+        <label class="flabel">Pseudo</label>
+        <input class="finput" id="authPseudo" maxlength="30" placeholder="VotreNom" oninput="authCheckPseudo()"/>
+        <div id="auth-pseudo-fb" style="font-size:9px;margin-top:5px;letter-spacing:.2em"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fgroup">
+          <label class="flabel">Genre</label>
+          <select class="fselect" id="authGender">
+            <option value="">—</option>
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Pays</label>
+          <select class="fselect" id="authCountry"><option value="">—</option></select>
+        </div>
+      </div>
+      <div class="fgroup" id="auth-email-group">
+        <label class="flabel">Email</label>
+        <input class="finput" type="email" id="authRegEmail" placeholder="vous@exemple.com"/>
+      </div>
+      <div id="auth-pw-group">
+        <div class="fgroup">
+          <label class="flabel">Mot de passe</label>
+          <div style="position:relative">
+            <input class="finput" type="password" id="authRegPassword" placeholder="Min. 8 caractères" style="padding-right:44px" oninput="authCheckStrength()"/>
+            <button onclick="toggleAuthRegPw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white-dim);cursor:pointer;font-size:16px" type="button">👁</button>
+          </div>
+          <div style="height:3px;background:var(--dark3);margin-top:6px"><div id="auth-strength-fill" style="height:100%;width:0%;transition:width .3s,background .3s"></div></div>
+          <div id="auth-strength-text" style="font-size:9px;color:var(--white-dim);margin-top:4px;letter-spacing:.2em"></div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Confirmer le mot de passe</label>
+          <input class="finput" type="password" id="authRegConfirm" placeholder="Répétez votre mot de passe"/>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="authRegister()" id="auth-reg-btn" style="margin-bottom:10px">Créer mon compte</button>
+      <div style="display:flex;align-items:center;gap:12px;margin:14px 0">
+        <div style="flex:1;height:1px;background:rgba(201,168,76,.1)"></div>
+        <span style="font-size:9px;letter-spacing:.3em;color:var(--white-dim)">OU</span>
+        <div style="flex:1;height:1px;background:rgba(201,168,76,.1)"></div>
+      </div>
+      <button onclick="authGoogle()" style="width:100%;padding:11px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;letter-spacing:.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'/></svg>
+        Continuer avec Google
+      </button>
+      <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--white-dim)">
+        Déjà un compte ? <button onclick="showAuthPanel('login')" style="background:none;border:none;color:var(--gold-dim);cursor:pointer;font-size:11px;text-decoration:underline">Se connecter</button>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD PANEL -->
+    <div id="auth-panel-forgot" style="display:none">
+      <div class="modal-title">Mot de passe oublié</div>
+      <div class="modal-sub" style="margin-bottom:20px">Nous vous enverrons un lien de réinitialisation</div>
+      <div class="msg" id="auth-forgot-msg" style="display:none;padding:10px 12px;margin-bottom:14px;font-size:11px;border:1px solid"></div>
+      <div class="fgroup">
+        <label class="flabel">Email</label>
+        <input class="finput" type="email" id="authForgotEmail" placeholder="vous@exemple.com"/>
+      </div>
+      <button class="submit-btn" onclick="authForgotPassword()" style="margin-bottom:10px">Envoyer le lien</button>
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="showAuthPanel('login')" style="background:none;border:none;color:var(--white-dim);cursor:pointer;font-size:10px;letter-spacing:.1em">← Retour à la connexion</button>
+      </div>
+    </div>
+
+    <!-- COMPLETE PROFILE PANEL (Google new user) -->
+    <div id="auth-panel-complete" style="display:none">
+      <div class="modal-title">Complétez votre profil</div>
+      <div class="modal-sub" style="margin-bottom:20px">Juste quelques infos pour démarrer</div>
+      <div class="msg" id="auth-complete-msg" style="display:none;padding:10px 12px;margin-bottom:14px;font-size:11px;border:1px solid"></div>
+      <div class="fgroup">
+        <label class="flabel">Pseudo</label>
+        <input class="finput" id="authCompletePseudo" maxlength="30" placeholder="VotreNom" oninput="authCheckCompletePseudo()"/>
+        <div id="auth-complete-pseudo-fb" style="font-size:9px;margin-top:5px;letter-spacing:.2em"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fgroup">
+          <label class="flabel">Genre</label>
+          <select class="fselect" id="authCompleteGender">
+            <option value="">—</option>
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Pays</label>
+          <select class="fselect" id="authCompleteCountry"><option value="">—</option></select>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="authCompleteProfile()" id="auth-complete-btn">Rejoindre Elitum</button>
+    </div>
+
+  </div>
+</div>
+
 <div class="overlay" id="modalOverlay">
   <div class="modal">
     <button class="modal-x" onclick="closeModal()">×</button>
@@ -827,7 +969,11 @@ function getDisplayName(user, shimmerClass=''){
 
 // Populate country select
 const cSel=document.getElementById('iCountry');
-COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+' '+c.name;cSel.appendChild(o)});
+COUNTRIES.forEach(c=>{
+  const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+' '+c.name;cSel.appendChild(o);
+  const o2=document.createElement('option');o2.value=c.code;o2.textContent=c.flag+' '+c.name;document.getElementById('authCountry').appendChild(o2);
+  const o3=document.createElement('option');o3.value=c.code;o3.textContent=c.flag+' '+c.name;document.getElementById('authCompleteCountry').appendChild(o3);
+});
 
 let db,stripe,currentSession=null,currentProfile=null,lbTab='global',lbGender='all',hofFilter='all',lbData=[];
 
@@ -880,6 +1026,7 @@ window.addEventListener('load',async()=>{
   await Promise.all([loadTitles(), loadBadges()]);
   renderTitles();
   renderBadgeLegend();
+  initAuthStateListener();
   // Re-check admin after short delay (session might load late)
   setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
   loadLeaderboard();
@@ -1125,7 +1272,7 @@ function renderTitles(){
 // ===== MODAL =====
 function openModal(){
   if(!currentSession){
-    window.location.href='profile.html';
+    openAuthModal('login','payment');
     return;
   }
   if(currentProfile){
@@ -2094,6 +2241,190 @@ function renderBadges(badges, gender){
 function fmt(n){return'€'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function fmt2(n){return Number(n).toLocaleString('en',{maximumFractionDigits:0})}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200)}
+// ===== AUTH MODAL =====
+let authPendingAction = null; // what to do after login (e.g. 'payment')
+let pseudoCheckAuthTimer = null;
+let pseudoCheckCompleteTimer = null;
+
+function openAuthModal(panel='login', afterAction=null){
+  authPendingAction = afterAction;
+  showAuthPanel(panel);
+  document.getElementById('authOverlay').style.display='flex';
+}
+
+function closeAuthModal(){
+  document.getElementById('authOverlay').style.display='none';
+  // Clear messages
+  ['auth-login-msg','auth-reg-msg','auth-forgot-msg','auth-complete-msg'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.style.display='none';el.textContent='';}
+  });
+}
+
+function showAuthPanel(panel){
+  ['login','register','forgot','complete'].forEach(p=>{
+    document.getElementById('auth-panel-'+p).style.display='none';
+  });
+  document.getElementById('auth-panel-'+panel).style.display='block';
+}
+
+function showAuthMsg(id, msg, type){
+  const el=document.getElementById(id);
+  el.textContent=msg;
+  el.style.display='block';
+  el.style.borderColor=type==='error'?'#e57373':type==='success'?'#4caf50':'rgba(201,168,76,.4)';
+  el.style.color=type==='error'?'#e57373':type==='success'?'#4caf50':'var(--gold-dim)';
+  el.style.background=type==='error'?'rgba(229,115,115,.05)':type==='success'?'rgba(76,175,80,.05)':'rgba(201,168,76,.05)';
+}
+
+function toggleAuthPw(){
+  const el=document.getElementById('authPassword');
+  el.type=el.type==='password'?'text':'password';
+}
+function toggleAuthRegPw(){
+  const el=document.getElementById('authRegPassword');
+  el.type=el.type==='password'?'text':'password';
+}
+
+function authCheckStrength(){
+  const pw=document.getElementById('authRegPassword').value;
+  const score=[pw.length>=8,/[A-Z]/.test(pw),/[a-z]/.test(pw),/[0-9]/.test(pw)].filter(Boolean).length;
+  const levels=[{w:'0%',c:'transparent',t:''},{w:'25%',c:'#e57373',t:'Faible'},{w:'50%',c:'#ff9800',t:'Moyen'},{w:'75%',c:'#ffc107',t:'Bien'},{w:'100%',c:'#4caf50',t:'Fort'}];
+  document.getElementById('auth-strength-fill').style.cssText='width:'+levels[score].w+';background:'+levels[score].c;
+  document.getElementById('auth-strength-text').textContent=levels[score].t;
+  document.getElementById('auth-strength-text').style.color=levels[score].c;
+}
+
+async function authCheckPseudo(){
+  const pseudo=document.getElementById('authPseudo').value.trim();
+  const fb=document.getElementById('auth-pseudo-fb');
+  if(!pseudo||pseudo.length<2){fb.textContent='';return;}
+  fb.textContent='...';fb.style.color='var(--white-dim)';
+  clearTimeout(pseudoCheckAuthTimer);
+  pseudoCheckAuthTimer=setTimeout(async()=>{
+    const{data}=await db.from('users').select('id').eq('pseudo',pseudo).maybeSingle();
+    fb.textContent=data?'✗ Déjà pris':'✓ Disponible';
+    fb.style.color=data?'#e57373':'#4caf50';
+  },500);
+}
+
+async function authCheckCompletePseudo(){
+  const pseudo=document.getElementById('authCompletePseudo').value.trim();
+  const fb=document.getElementById('auth-complete-pseudo-fb');
+  if(!pseudo||pseudo.length<2){fb.textContent='';return;}
+  fb.textContent='...';fb.style.color='var(--white-dim)';
+  clearTimeout(pseudoCheckCompleteTimer);
+  pseudoCheckCompleteTimer=setTimeout(async()=>{
+    const{data}=await db.from('users').select('id').eq('pseudo',pseudo).maybeSingle();
+    fb.textContent=data?'✗ Déjà pris':'✓ Disponible';
+    fb.style.color=data?'#e57373':'#4caf50';
+  },500);
+}
+
+async function authLogin(){
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  if(!email||!password) return showAuthMsg('auth-login-msg','Veuillez remplir tous les champs.','error');
+  const btn=document.getElementById('auth-login-btn');
+  btn.disabled=true;btn.textContent='...';
+  const{data,error}=await db.auth.signInWithPassword({email,password});
+  btn.disabled=false;btn.textContent='Se Connecter';
+  if(error) return showAuthMsg('auth-login-msg','Email ou mot de passe invalide.','error');
+  currentSession=data.session;
+  currentUser=data.user;
+  const{data:prof}=await db.from('users').select('*').eq('email',email).maybeSingle();
+  currentProfile=prof;
+  closeAuthModal();
+  if(authPendingAction==='payment') openModal();
+  else toast('✅ Connecté !');
+}
+
+async function authRegister(){
+  const pseudo=document.getElementById('authPseudo').value.trim();
+  const gender=document.getElementById('authGender').value;
+  const country=document.getElementById('authCountry').value;
+  const email=document.getElementById('authRegEmail').value.trim();
+  const password=document.getElementById('authRegPassword').value;
+  const confirm=document.getElementById('authRegConfirm').value;
+  if(!pseudo||!gender||!country||!email||!password) return showAuthMsg('auth-reg-msg','Veuillez remplir tous les champs.','error');
+  if(password.length<8||!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password))
+    return showAuthMsg('auth-reg-msg','Mot de passe : 8+ caractères, majuscule, minuscule, chiffre.','error');
+  if(password!==confirm) return showAuthMsg('auth-reg-msg','Les mots de passe ne correspondent pas.','error');
+  const btn=document.getElementById('auth-reg-btn');
+  btn.disabled=true;btn.textContent='...';
+  const{data:existing}=await db.from('users').select('id').eq('pseudo',pseudo).maybeSingle();
+  if(existing){btn.disabled=false;btn.textContent='Créer mon compte';return showAuthMsg('auth-reg-msg','Ce pseudo est déjà pris.','error');}
+  const{data,error}=await db.auth.signUp({email,password});
+  if(error){btn.disabled=false;btn.textContent='Créer mon compte';return showAuthMsg('auth-reg-msg',error.message,'error');}
+  const inviteCode=Math.random().toString(36).substring(2,10).toUpperCase();
+  await db.from('users').insert({pseudo,email,gender,country,total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,current_streak:0,display_mode:'pseudo',invite_code:inviteCode});
+  currentSession=data.session;
+  currentUser=data.user;
+  const{data:prof}=await db.from('users').select('*').eq('email',email).maybeSingle();
+  currentProfile=prof;
+  btn.disabled=false;btn.textContent='Créer mon compte';
+  closeAuthModal();
+  if(authPendingAction==='payment') openModal();
+  else toast('✅ Compte créé !');
+}
+
+async function authGoogle(){
+  const{error}=await db.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.href}
+  });
+  if(error) toast('Erreur Google: '+error.message);
+}
+
+async function authForgotPassword(){
+  const email=document.getElementById('authForgotEmail').value.trim();
+  if(!email||!email.includes('@')) return showAuthMsg('auth-forgot-msg','Email invalide.','error');
+  const{error}=await db.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/Elitum/profile.html'});
+  if(error) return showAuthMsg('auth-forgot-msg',error.message,'error');
+  showAuthMsg('auth-forgot-msg','Lien envoyé ! Vérifiez votre email.','success');
+}
+
+async function authCompleteProfile(){
+  const pseudo=document.getElementById('authCompletePseudo').value.trim();
+  const gender=document.getElementById('authCompleteGender').value;
+  const country=document.getElementById('authCompleteCountry').value;
+  if(!pseudo||!gender||!country) return showAuthMsg('auth-complete-msg','Veuillez remplir tous les champs.','error');
+  const btn=document.getElementById('auth-complete-btn');
+  btn.disabled=true;btn.textContent='...';
+  const{data:existing}=await db.from('users').select('id').eq('pseudo',pseudo).maybeSingle();
+  if(existing){btn.disabled=false;btn.textContent='Rejoindre Elitum';return showAuthMsg('auth-complete-msg','Ce pseudo est déjà pris.','error');}
+  const inviteCode=Math.random().toString(36).substring(2,10).toUpperCase();
+  const email=currentUser.email;
+  const{error}=await db.from('users').insert({pseudo,email,gender,country,total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,current_streak:0,display_mode:'pseudo',invite_code:inviteCode});
+  if(error){btn.disabled=false;btn.textContent='Rejoindre Elitum';return showAuthMsg('auth-complete-msg',error.message,'error');}
+  const{data:prof}=await db.from('users').select('*').eq('email',email).maybeSingle();
+  currentProfile=prof;
+  btn.disabled=false;btn.textContent='Rejoindre Elitum';
+  closeAuthModal();
+  if(authPendingAction==='payment') openModal();
+  else{ toast('✅ Bienvenue sur Elitum !'); loadLeaderboard(); }
+}
+
+// Handle Google OAuth return on index.html
+function initAuthStateListener(){
+  db.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_IN' && session && !currentSession){
+    currentSession=session;
+    currentUser=session.user;
+    const{data:prof}=await db.from('users').select('*').eq('email',session.user.email).maybeSingle();
+    if(!prof){
+      // New Google user — show complete profile panel
+      openAuthModal('complete','payment');
+    } else {
+      currentProfile=prof;
+      closeAuthModal();
+      if(authPendingAction==='payment') openModal();
+      else toast('✅ Connecté !');
+    }
+  }
+  });
+}
+
 // ===== PWA INSTALL =====
 function triggerInstall(){
   if(deferredPrompt){
@@ -2121,6 +2452,7 @@ function showInstallBtn(){
     document.getElementById('pwa-header-btn').style.display='inline-flex';
   }
 }
+
 
 // ===== PWA INSTALL =====
 let deferredPrompt = null;
