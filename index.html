@@ -222,17 +222,17 @@
       </linearGradient>
     </defs>
     <!-- Decorative lines -->
-    <line x1="0" y1="44" x2="80" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
-    <line x1="400" y1="44" x2="480" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <line x1="0" y1="44" x2="50" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
+    <line x1="430" y1="44" x2="480" y2="44" stroke="url(#goldGrad2)" stroke-width="0.5" opacity="0.4"/>
     <!-- Diamond ornaments - well clear of text -->
-    <polygon points="72,44 79,37 86,44 79,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
-    <polygon points="394,44 401,37 408,44 401,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <polygon points="50,44 57,37 64,44 57,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
+    <polygon points="416,44 423,37 430,44 423,51" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6"/>
     <!-- Main text -->
     <text x="240" y="56" font-family="Cormorant Garamond, serif" font-size="52" font-weight="300"
           letter-spacing="18" text-anchor="middle" fill="url(#goldGrad)">ELITUM</text>
     <!-- Subtitle -->
-    <text x="240" y="76" font-family="Montserrat, sans-serif" font-size="9" font-weight="400"
-          letter-spacing="6" text-anchor="middle" fill="#c9a84c" opacity="0.6">RICHER THAN YOU</text>
+    <text x="240" y="76" font-family="Montserrat, sans-serif" font-size="13" font-weight="400"
+          letter-spacing="5" text-anchor="middle" fill="#c9a84c" opacity="0.7">RICHER THAN YOU</text>
   </svg>
 
   <div style="text-align:center"><div class="season-badge" id="seasonBadge">🏅 Season of Gold — 2026</div></div>
@@ -248,7 +248,7 @@
     <button class="nav-page active" onclick="showPage('leaderboard')" id="np-leaderboard">Rankings</button>
     <button class="nav-page" onclick="showPage('hof')" id="np-hof">Hall of Fame</button>
     <button class="nav-page" onclick="showPage('titles')" id="np-titles">Titles</button>
-    <button class="nav-page" onclick="showPage('invite')" id="np-invite">Invite</button>
+    
     <button class="nav-page" onclick="showPage('friends')" id="np-friends">Friends</button>
     <button class="nav-page" onclick="showPage('countries')" id="np-countries">Countries</button>
     <button class="nav-page np-notif" onclick="showPage('notifications')" id="np-notifications">🔔<span class="notif-dot" id="notifDot"></span></button>
@@ -710,7 +710,6 @@ function applyLang(){
   document.getElementById('np-leaderboard').textContent=t('nav-leaderboard');
   document.getElementById('np-hof').textContent=t('nav-hof');
   document.getElementById('np-titles').textContent=t('nav-titles');
-  document.getElementById('np-invite').textContent=t('nav-invite');
   document.getElementById('np-friends').textContent=t('nav-friends');
   document.getElementById('np-countries').textContent=t('nav-countries');
   // Notifications and admin have icons, don't overwrite
