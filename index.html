@@ -1087,7 +1087,6 @@ function renderTitles(){
     <div class="title-card" data-emoji="${tt.emoji}" style="border-color:${tt.color}33">
       <div class="title-name" style="color:${tt.color}">${tt.emoji} ${getTitleName(tt)}</div>
       <div class="title-threshold" style="color:${tt.color}88">${tt.max===Infinity?'€'+fmt2(tt.min)+'+':'€'+fmt2(tt.min)+' – €'+fmt2(tt.max)}</div>
-      <div class="title-desc">${t('titles-desc').split('.')[0]}.</div>
     </div>`).join('');
 }
 
