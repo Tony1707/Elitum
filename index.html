@@ -725,7 +725,6 @@ function setLang(l){
   localStorage.setItem('elitum-lang',l);
   applySeason(currentSeason);
   applyLang();
-  await loadTitles();
   renderTitles();
   // Re-check admin after short delay (session might load late)
   setTimeout(()=>{ if(currentProfile&&currentProfile.is_admin) document.getElementById("np-admin").style.display="block"; },2000);
