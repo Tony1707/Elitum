@@ -367,13 +367,11 @@ const S={
     'reg-title':'Create your account','reg-sub':'Join Elitum and claim your rank.',
     'reg-lbl-pseudo':'Pseudo','reg-lbl-gender':'Gender','reg-lbl-country':'Country',
     'reg-lbl-email':'Email','reg-lbl-password':'Password',
-    'reg-btn':'Create Account','reg-magic-btn':'✉ Sign up with Magic Link',
-    'reg-switch':'Already have an account?','reg-switch-link':'Sign in',
-    'login-title':'Sign In','login-sub':'Enter your email to sign in or use magic link.',
+    'reg-btn':'Create Account','reg-switch':'Already have an account?','reg-switch-link':'Sign in',
+    'login-title':'Sign In','login-sub':'Enter your email and password to sign in.',
     'login-lbl-email':'Email','login-lbl-password':'Password',
     'remember-text':'Remember me','forgot-link':'Forgot password?',
-    'login-btn':'Sign In','login-magic-btn':'✉ Sign in with Magic Link',
-    'login-switch':'No account yet?','login-switch-link':'Create one',
+    'login-btn':'Sign In','login-switch':'No account yet?','login-switch-link':'Create one',
     'forgot-title':'Reset Password','forgot-sub':"Enter your email and we'll send you a reset link.",
     'forgot-lbl-email':'Email','forgot-btn':'Send Reset Link','forgot-back':'← Back to Sign In',
     'sent-title':'Check your inbox','sent-sub':'We sent you a link by email.\nClick it to continue.',
@@ -398,7 +396,6 @@ const S={
     'err-invalid':'Invalid email or password.',
     'err-no-account':'No account found. Please create one.',
     'success-reset':'Reset link sent! Check your email.',
-    'success-magic':'Magic link sent! Check your email.',
     'success-pw':'Password updated!',
     'success-verify':'Request submitted! We will contact you within 48h.',
     'no-payments':'No payments yet.',
@@ -409,13 +406,11 @@ const S={
     'reg-title':'Créer votre compte','reg-sub':'Rejoignez Elitum et réclamez votre rang.',
     'reg-lbl-pseudo':'Pseudo','reg-lbl-gender':'Genre','reg-lbl-country':'Pays',
     'reg-lbl-email':'Email','reg-lbl-password':'Mot de passe',
-    'reg-btn':'Créer mon compte','reg-magic-btn':'✉ Inscription par Magic Link',
-    'reg-switch':'Déjà un compte ?','reg-switch-link':'Se connecter',
+    'reg-btn':'Créer mon compte','reg-switch':'Déjà un compte ?','reg-switch-link':'Se connecter',
     'login-title':'Connexion','login-sub':'Entrez votre email pour vous connecter.',
     'login-lbl-email':'Email','login-lbl-password':'Mot de passe',
     'remember-text':'Se souvenir de moi','forgot-link':'Mot de passe oublié ?',
-    'login-btn':'Se Connecter','login-magic-btn':'✉ Connexion par Magic Link',
-    'login-switch':'Pas encore de compte ?','login-switch-link':'En créer un',
+    'login-btn':'Se Connecter','login-switch':'Pas encore de compte ?','login-switch-link':'En créer un',
     'forgot-title':'Réinitialiser le mot de passe','forgot-sub':'Entrez votre email et nous vous enverrons un lien.',
     'forgot-lbl-email':'Email','forgot-btn':'Envoyer le lien','forgot-back':'← Retour à la connexion',
     'sent-title':'Vérifiez votre boîte mail','sent-sub':'Nous vous avons envoyé un lien par email.\nCliquez dessus pour continuer.',
@@ -440,7 +435,6 @@ const S={
     'err-invalid':'Email ou mot de passe invalide.',
     'err-no-account':'Aucun compte trouvé. Veuillez en créer un.',
     'success-reset':'Lien envoyé ! Vérifiez votre email.',
-    'success-magic':'Lien magique envoyé ! Vérifiez votre email.',
     'success-pw':'Mot de passe mis à jour !',
     'success-verify':'Demande soumise ! Nous vous contacterons sous 48h.',
     'no-payments':'Aucun paiement pour l\'instant.',
@@ -683,21 +677,6 @@ async function login(){
   await loadProfile();
 }
 
-// ===== MAGIC LINK =====
-async function sendMagicLink(mode){
-  const emailId=mode==='register'?'regEmail':'loginEmail';
-  const msgId=mode==='register'?'reg-msg':'login-msg';
-  const email=document.getElementById(emailId).value.trim();
-  if(!email||!email.includes('@')) return showMsg(msgId,t('err-email'),'error');
-
-  const{error}=await db.auth.signInWithOtp({
-    email,
-    options:{emailRedirectTo:window.location.href}
-  });
-
-  if(error) return showMsg(msgId,error.message,'error');
-  showScreen('email-sent');
-}
 
 // ===== FORGOT PASSWORD =====
 async function forgotPassword(){

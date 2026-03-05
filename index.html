@@ -373,39 +373,6 @@
   </div>
 
   <!-- INVITE -->
-  <div class="page" id="page-invite">
-    <div class="section-title" id="lbl-invite-page">Invite Friends</div>
-
-    <div class="invite-box">
-      <div class="invite-title" id="invite-title">Challenge Your Friends</div>
-      <div class="invite-sub" id="invite-sub">Share Elitum with friends and see who's really richer. The leaderboard doesn't lie.</div>
-      <div class="invite-link-box">
-        <input class="invite-link" id="inviteLink" readonly value="https://elitum.github.io/Elitum"/>
-        <button class="share-btn copy" onclick="copyInviteLink()" id="invite-copy-btn">📋 Copy</button>
-      </div>
-    </div>
-
-    <div class="section-title" id="lbl-share-on">Share On</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px">
-      <button class="share-btn twitter" onclick="shareTwitter()">🐦 Twitter / X</button>
-      <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
-      <button class="share-btn" onclick="shareFacebook()">👍 Facebook</button>
-      <button class="share-btn" onclick="shareTelegram()">✈️ Telegram</button>
-      <button class="share-btn" onclick="shareLinkedIn()">💼 LinkedIn</button>
-      <button class="share-btn" onclick="shareEmail()">📧 Email</button>
-      <button class="share-btn" onclick="shareNative()" id="share-more-btn">📤 More</button>
-    </div>
-
-    <div class="section-title" id="lbl-share-rank">Share Your Rank</div>
-    <p style="font-size:11px;color:var(--white-mid);margin-bottom:16px;line-height:1.7" id="share-rank-desc">
-      Enter your email to generate a personalized share card with your rank.
-    </p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <input class="finput" style="flex:1;min-width:200px" id="shareEmail" placeholder="your@email.com" type="email"/>
-      <button class="submit-btn" style="width:auto;padding:11px 20px" onclick="generateShareCard()" id="share-card-btn">Generate</button>
-    </div>
-    <div id="shareCardResult" style="margin-top:16px"></div>
-  </div>
 
   <!-- FRIENDS PAGE -->
   <div class="page" id="page-friends">
@@ -1446,10 +1413,7 @@ function getShareCodeText(){
     : `My Elitum code: ${code}\nJoin my group at https://tony1707.github.io/Elitum/ 👑 #RicherThanYou`;
 }
 
-function copyCode(){
-  const code = document.getElementById('myCode').textContent;
-  navigator.clipboard.writeText(code).then(()=>toast(t('toast-copied'))).catch(()=>{});
-}
+
 
 function shareCodeWhatsApp(){
   window.open('https://wa.me/?text='+encodeURIComponent(getShareCodeText()),'_blank');
