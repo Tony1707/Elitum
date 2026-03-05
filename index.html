@@ -616,13 +616,7 @@
       <button class="share-btn copy" onclick="copyInviteLink()">📋</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="share-btn x-social" onclick="shareTwitter();closeInvite()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
-      <button class="share-btn whatsapp" onclick="shareWhatsApp();closeInvite()">💬 WhatsApp</button>
-      <button class="share-btn" onclick="shareFacebook();closeInvite()">👍 Facebook</button>
-      <button class="share-btn" onclick="shareTelegram()">✈️ Telegram</button>
-      <button class="share-btn" onclick="shareLinkedIn()">💼 LinkedIn</button>
-      <button class="share-btn" onclick="shareEmail()">📧 Email</button>
-      <button class="share-btn" onclick="shareNative()">📤 More</button>
+      <button class="share-btn" style="padding:10px 24px;font-size:11px;letter-spacing:.3em" onclick="shareNative()">↑ Share</button>
     </div>
   </div>
 </div>
@@ -973,11 +967,7 @@ function renderLeaderboard(data,col){
 
   // Share bar
   var sp=top.pseudo, sa=fmt(topAmt);
-  document.getElementById('heroShare').innerHTML=
-    '<button class="share-btn x-social" onclick="shareTwitter(1,\x27'+sp+'\x27,\x27'+sa+'\x27)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>'
-    +'<button class="share-btn whatsapp" onclick="shareWhatsApp(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">💬 WhatsApp</button>'
-    +'<button class="share-btn telegram" onclick="shareTelegram(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✈️ Telegram</button>'
-    +'<button class="share-btn email" onclick="shareEmail(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">✉️ Email</button>';
+  document.getElementById('heroShare').innerHTML='<button class="share-btn" style="padding:10px 24px;font-size:11px;letter-spacing:.3em" onclick="nativeShare(1,\x27'+sp+'\x27,\x27'+sa+'\x27)">↑ Share</button>';
   document.getElementById('shareBar').style.display='block';
 
   // Full leaderboard list
@@ -1191,10 +1181,10 @@ function nativeShare(rank, pseudo, amt){
     menu.innerHTML=`
       <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px">Share via</div>
       <button class="share-btn x-social" onclick="shareTwitter(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
-      <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">💬 WhatsApp</button>
-      <button class="share-btn telegram" onclick="shareTelegram(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✈️ Telegram</button>
-      <button class="share-btn email" onclick="shareEmail(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✉️ Email</button>
-      <button class="share-btn" onclick="this.closest('div[style]').remove()" style="margin-top:4px;opacity:.5">✕ Cancel</button>
+      <button class="share-btn" style="color:#25D366;border-color:#25D36633" onclick="shareWhatsApp(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">💬 WhatsApp</button>
+      <button class="share-btn" style="color:#229ED9;border-color:#229ED933" onclick="shareTelegram(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✈️ Telegram</button>
+      <button class="share-btn" onclick="shareEmail(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✉️ Email</button>
+      <button class="share-btn" onclick="this.closest('div[style]').remove()" style="margin-top:4px;opacity:.5">✕ Fermer</button>
     `;
     document.body.appendChild(menu);
   }
@@ -1263,8 +1253,7 @@ async function generateShareCard(){
       <div style="font-size:28px;color:var(--gold);font-weight:600">#${rank}</div>
       <div style="font-size:12px;color:var(--white-mid);margin-top:4px">${fmt(Number(data.total_paid))} all-time</div>
       <div style="display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap">
-        <button class="share-btn x-social" onclick="shareTwitter(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X</button>
-        <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">💬 WhatsApp</button>
+        <button class="share-btn" style="padding:10px 24px;font-size:11px;letter-spacing:.3em" onclick="nativeShare(${rank},'${data.pseudo}','${fmt(Number(data.total_paid))}')">↑ Share</button>
       </div>
     </div>`;
 }
