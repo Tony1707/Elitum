@@ -532,7 +532,7 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
   // Hide back button on profile
-  document.getElementById('back-btn').style.display=id==='profile'?'block':'block';
+  document.getElementById('back-btn').style.display='block';
 }
 
 // ===== PASSWORD UTILS =====
@@ -613,31 +613,59 @@ async function register(){
   const gender=document.getElementById('regGender').value;
   const country=document.getElementById('regCountry').value;
   const email=document.getElementById('regEmail').value.trim();
-  const password=document.getElementById('regPassword').value;
+  const isGoogle=currentUser&&currentUser.app_metadata?.provider==='google';
 
-  if(!pseudo||!gender||!country||!email||!password) return showMsg('reg-msg',t('err-fill'),'error');
+  if(!pseudo||!gender||!country||!email) return showMsg('reg-msg',t('err-fill'),'error');
   if(!email.includes('@')) return showMsg('reg-msg',t('err-email'),'error');
-  if(password.length<8||!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password))
-    return showMsg('reg-msg','Password must be 8+ chars with uppercase, lowercase and a number.','error');
-  const confirm=document.getElementById('regConfirm').value;
-  if(password!==confirm) return showMsg('reg-msg','Passwords do not match.','error');
+
+  // Password validation only for non-Google users
+  if(!isGoogle){
+    const password=document.getElementById('regPassword').value;
+    const confirm=document.getElementById('regConfirm').value;
+    if(!password) return showMsg('reg-msg',t('err-fill'),'error');
+    if(password.length<8||!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password))
+      return showMsg('reg-msg',lang==='fr'?'Le mot de passe doit contenir 8+ caractères avec majuscule, minuscule et chiffre.':'Password must be 8+ chars with uppercase, lowercase and a number.','error');
+    if(password!==confirm) return showMsg('reg-msg',lang==='fr'?'Les mots de passe ne correspondent pas.':'Passwords do not match.','error');
+  }
 
   const btn=document.getElementById('reg-btn');
   btn.disabled=true;
+  btn.textContent='...';
 
-  // Check pseudo
+  // Check pseudo availability
   const{data:existingPseudo}=await db.from('users').select('id').eq('pseudo',pseudo).maybeSingle();
-  if(existingPseudo){btn.disabled=false;return showMsg('reg-msg',t('err-pseudo-taken'),'error')}
+  if(existingPseudo){
+    btn.disabled=false;
+    btn.textContent=t('reg-btn');
+    return showMsg('reg-msg',t('err-pseudo-taken'),'error');
+  }
 
-  // Create Supabase auth user
-  const{data,error}=await db.auth.signUp({
-    email,password,
-    options:{emailRedirectTo:window.location.origin+'/Elitum/profile.html'}
-  });
+  if(isGoogle){
+    // Google user — just create profile row, auth already done
+    const inviteCode=Math.random().toString(36).substring(2,10).toUpperCase();
+    const{error}=await db.from('users').insert({
+      pseudo,email:currentUser.email,gender,country,
+      total_paid:0,monthly_paid:0,yearly_paid:0,daily_paid:0,
+      current_streak:0,display_mode:'pseudo',invite_code:inviteCode
+    });
+    btn.disabled=false;
+    btn.textContent=t('reg-btn');
+    if(error) return showMsg('reg-msg',error.message,'error');
+    window.location.href='index.html';
+    return;
+  }
 
-  if(error){btn.disabled=false;return showMsg('reg-msg',error.message,'error')}
+  // Email/password user — create auth account (no email confirmation)
+  const password=document.getElementById('regPassword').value;
+  const{data,error}=await db.auth.signUp({email,password});
 
-  // Create user profile
+  if(error){
+    btn.disabled=false;
+    btn.textContent=t('reg-btn');
+    return showMsg('reg-msg',error.message,'error');
+  }
+
+  // Create profile row immediately
   const inviteCode=Math.random().toString(36).substring(2,10).toUpperCase();
   await db.from('users').insert({
     pseudo,email,gender,country,
@@ -646,14 +674,10 @@ async function register(){
   });
 
   btn.disabled=false;
+  btn.textContent=t('reg-btn');
 
-  // If email confirmation required, show sent screen
-  if(!data.session){
-    showScreen('email-sent');
-  } else {
-    currentUser=data.session.user;
-    await loadProfile();
-  }
+  currentUser=data.user||data.session?.user;
+  window.location.href='index.html';
 }
 
 // ===== LOGIN =====
@@ -817,7 +841,7 @@ async function signInWithGoogle(){
   const{error}=await db.auth.signInWithOAuth({
     provider:'google',
     options:{
-      redirectTo: window.location.origin+'/Elitum/index.html'
+      redirectTo: window.location.origin+'/Elitum/profile.html'
     }
   });
   if(error) showMsg('login-msg', error.message, 'error');
