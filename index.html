@@ -1592,14 +1592,16 @@ async function loadFriendRequests(){
       const u=r.users;
       const title=getTitle(Number(u.total_paid));
       const rid=r.id;
-      return'<div class="lb-row" style="gap:10px">'
-        +'<div class="lb-info" style="flex:1">'
+      return'<div class="lb-row" style="display:flex;align-items:center;gap:10px">'
+        +'<div style="flex:1;min-width:0">'
         +'<div class="lb-pseudo">'+getFlag(u.country)+' '+u.pseudo+'</div>'
         +'<div class="lb-sub"><span style="color:'+title.color+'">'+title.emoji+' '+getTitleName(title)+'</span> · '+fmt(Number(u.total_paid))+'</div>'
         +'</div>'
-        +'<button class="submit-btn" style="padding:6px 14px;font-size:9px;width:auto" onclick="respondRequest(this,\x27'+rid+'\x27,\x27accepted\x27)">✓ Accepter</button>'
-        +'<button class="share-btn" style="padding:6px 14px;font-size:9px" onclick="respondRequest(this,\x27'+rid+'\x27,\x27declined\x27)">✗ Refuser</button>'
-        +'<button class="share-btn" style="padding:6px 14px;font-size:9px;opacity:.6" onclick="respondRequest(this,\x27'+rid+'\x27,\x27blocked\x27)">🚫</button>'
+        +'<div style="display:flex;gap:6px;flex-shrink:0">'
+        +'<button class="submit-btn" style="padding:6px 12px;font-size:9px;width:auto;white-space:nowrap" onclick="respondRequest(this,\x27'+rid+'\x27,\x27accepted\x27)">✓</button>'
+        +'<button class="share-btn" style="padding:6px 12px;font-size:9px;white-space:nowrap" onclick="respondRequest(this,\x27'+rid+'\x27,\x27declined\x27)">✗</button>'
+        +'<button class="share-btn" style="padding:6px 10px;font-size:9px;opacity:.6" onclick="respondRequest(this,\x27'+rid+'\x27,\x27blocked\x27)">🚫</button>'
+        +'</div>'
         +'</div>';
     }).join('');
   }
@@ -1615,8 +1617,8 @@ async function loadFriendRequests(){
   } else {
     sentList.innerHTML=(sent||[]).map(r=>{
       const u=r.users;
-      return'<div class="lb-row" style="gap:10px">'
-        +'<div class="lb-info" style="flex:1">'
+      return'<div class="lb-row" style="display:flex;align-items:center;gap:10px">'
+        +'<div style="flex:1;min-width:0">'
         +'<div class="lb-pseudo">'+getFlag(u.country)+' '+u.pseudo+'</div>'
         +'<div class="lb-sub" style="color:var(--gold-dim)">⏳ En attente...</div>'
         +'</div>'
