@@ -499,32 +499,41 @@ window.addEventListener('load',async()=>{
   applyLang();
   await loadTitles();
 
-  // Check existing session
-  const{data:{session}}=await db.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    await loadProfile();
-  } else {
-    // Check URL for magic link / password reset tokens
-    const hash=window.location.hash;
-    if(hash.includes('type=recovery')){
-      showScreen('reset');
-    } else {
-      showScreen('login');
-    }
-  }
-
-  // Auth state changes (magic link click)
+  // Handle auth state changes FIRST (catches OAuth redirects)
   db.auth.onAuthStateChange(async(event,session)=>{
     if(event==='PASSWORD_RECOVERY'){
       showScreen('reset');
       return;
     }
-    if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED')&&session){
+    if(event==='SIGNED_IN' && session && !currentUser){
       currentUser=session.user;
       await loadProfile();
+      return;
+    }
+    if(event==='SIGNED_OUT'){
+      currentUser=null;
+      currentProfile=null;
+      showScreen('login');
     }
   });
+
+  // Check existing session
+  const{data:{session}}=await db.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    await loadProfile();
+    return;
+  }
+
+  // No session — check for recovery token in URL
+  const hash=window.location.hash;
+  if(hash.includes('type=recovery')){
+    showScreen('reset');
+    return;
+  }
+
+  // Default: show login
+  showScreen('login');
 });
 
 // ===== SCREENS =====
