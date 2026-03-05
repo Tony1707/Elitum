@@ -1170,6 +1170,27 @@ function getShareText(rank,name,amt){
   return t('share-text',name,rank,amt);
 }
 
+function nativeShare(rank, pseudo, amt){
+  const text=t('share-text').replace('{rank}',rank).replace('{pseudo}',pseudo).replace('{amt}',amt);
+  const url='https://tony1707.github.io/Elitum/';
+  if(navigator.share){
+    navigator.share({title:'Elitum — RicherThanYou', text:text, url:url}).catch(()=>{});
+  } else {
+    // Desktop fallback - show share options
+    const menu=document.createElement('div');
+    menu.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;border:1px solid rgba(201,168,76,.3);padding:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;min-width:220px';
+    menu.innerHTML=`
+      <div style="font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px">Share via</div>
+      <button class="share-btn" onclick="shareTwitter(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✕ X / Twitter</button>
+      <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">💬 WhatsApp</button>
+      <button class="share-btn telegram" onclick="shareTelegram(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✈️ Telegram</button>
+      <button class="share-btn email" onclick="shareEmail(${rank},'${pseudo}','${amt}');this.closest('div[style]').remove()">✉️ Email</button>
+      <button class="share-btn" onclick="this.closest('div[style]').remove()" style="margin-top:4px;opacity:.5">✕ Cancel</button>
+    `;
+    document.body.appendChild(menu);
+  }
+}
+
 function shareTwitter(rank,name,amt){
   const text=encodeURIComponent(getShareText(rank||1,name||'Someone',amt||'€?'));
   const url=encodeURIComponent(SITE_URL);
@@ -1696,10 +1717,8 @@ async function openPubProfile(userId){
       <div class="pub-stat"><span class="pub-stat-val">${fmt(Number(u.total_paid))}</span><span class="pub-stat-lbl">All-Time</span></div>
       <div class="pub-stat"><span class="pub-stat-val">${u.current_streak || 0}🔥</span><span class="pub-stat-lbl">Streak</span></div>
     </div>
-    <div style="margin-top:16px;font-size:9px;letter-spacing:.4em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px">Challenge them</div>
-    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
-      <button class="share-btn twitter" onclick="shareTwitter(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">🐦 Share</button>
-      <button class="share-btn whatsapp" onclick="shareWhatsApp(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">💬 Challenge</button>
+    <div style="margin-top:16px;text-align:center">
+      <button class="share-btn" style="padding:10px 24px;font-size:11px;letter-spacing:.3em" onclick="nativeShare(${rank},'${u.pseudo}','${fmt(Number(u.total_paid))}')">↑ Share</button>
     </div>`;
 }
 
