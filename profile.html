@@ -721,8 +721,8 @@ async function loadProfile(){
   if(!data){
     // Auth user exists but no profile — send to register to fill details
     showScreen('register');
-    document.getElementById('regEmail').value=currentUser.email;
-    document.getElementById('regEmail').disabled=true;
+    const re=document.getElementById('regEmail');
+    if(re){re.value=currentUser.email;re.disabled=true;}
     return;
   }
 
@@ -754,7 +754,8 @@ async function loadProfile(){
   }
 
   loadPayments(data.id);
-  showScreen('profile');
+  // Redirect to main site after login
+  window.location.href='index.html';
 }
 
 async function loadPayments(userId){
